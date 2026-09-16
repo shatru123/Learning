@@ -1,8 +1,14 @@
 // LearningOS 3D Interactive Curriculum Roadmap (Powered by Three.js)
+// Supports 4 Distinct 3D Architectural Visualizations:
+// 1. Cosmic Helix (Ascending orbital momentum spiral)
+// 2. 3D Neural Knowledge Graph (Clustered domain galaxy with cross-topic dependency synapses)
+// 3. Cyberpunk Subway Grid (Multi-track elevated tech runway with holographic grid)
+// 4. 3D Skill Tree Pyramid (Tiered ziggurat ascension summit)
 
 let scene3D, camera3D, renderer3D, controls3D;
 let nodesGroup, linesGroup, particlesGroup, labelsGroup;
-let dayNodesMap = new Map(); // dayNumber -> { mesh, data, initialScale, position }
+let dependencyLinesGroup, cyberGridGroup, pyramidRingsGroup;
+let dayNodesMap = new Map(); // dayNumber -> { mesh, data, initialScale, position, targetPosition, helixPos, graphPos, cyberPos, pyramidPos }
 let dayDataList = [];
 let hoveredNode = null;
 let selectedNode = null;
@@ -11,8 +17,9 @@ let animationFrameId = null;
 let raycaster, mouse;
 let isAutoRotating = true;
 let pulseProgress = 0;
-let curvePath = null;
-let particlePoints = null;
+let current3DMode = 'helix'; // 'helix' | 'graph' | 'cyber' | 'pyramid'
+let isMorphing = false;
+let morphProgress = 1.0;
 let targetCameraPos = null;
 let targetLookAt = null;
 
@@ -81,7 +88,7 @@ function init3DScene(container) {
 
   // 1. Scene & Background
   scene3D = new THREE.Scene();
-  scene3D.fog = new THREE.FogExp2(0x030712, 0.0035);
+  scene3D.fog = new THREE.FogExp2(0x030712, 0.0032);
 
   // 2. Camera
   camera3D = new THREE.PerspectiveCamera(55, width / height, 0.1, 2000);
@@ -92,7 +99,7 @@ function init3DScene(container) {
   renderer3D.setSize(width, height);
   renderer3D.setPixelRatio(Math.min(window.devicePixelRatio, 2));
   renderer3D.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer3D.toneMappingExposure = 1.1;
+  renderer3D.toneMappingExposure = 1.15;
   container.appendChild(renderer3D.domElement);
 
   // 4. OrbitControls
@@ -131,15 +138,26 @@ function init3DScene(container) {
   linesGroup = new THREE.Group();
   particlesGroup = new THREE.Group();
   labelsGroup = new THREE.Group();
+  dependencyLinesGroup = new THREE.Group();
+  cyberGridGroup = new THREE.Group();
+  pyramidRingsGroup = new THREE.Group();
+
   scene3D.add(linesGroup);
   scene3D.add(particlesGroup);
+  scene3D.add(dependencyLinesGroup);
+  scene3D.add(cyberGridGroup);
+  scene3D.add(pyramidRingsGroup);
   scene3D.add(nodesGroup);
   scene3D.add(labelsGroup);
 
-  // 8. Build 3D Curriculum Track & Nodes
-  buildCurriculumHelix();
+  // 8. Build Sceneries for all modes
+  buildCyberGridScenery();
+  buildPyramidRingsScenery();
 
-  // 9. Raycasting Setup
+  // 9. Build 3D Curriculum Track & Nodes
+  buildAllNodePositions();
+
+  // 10. Raycasting Setup
   raycaster = new THREE.Raycaster();
   mouse = new THREE.Vector2(-999, -999);
 
@@ -150,6 +168,7 @@ function init3DScene(container) {
   window.addEventListener('resize', on3DResize);
 
   is3DInitialized = true;
+  switch3DLayout('helix', true);
   animate3D();
 }
 
@@ -172,11 +191,11 @@ function createStarfield() {
     // Subtle star colors (blue-white, gold, purple)
     const tint = Math.random();
     if (tint > 0.8) {
-      colors[i * 3] = 0.65; colors[i * 3 + 1] = 0.85; colors[i * 3 + 2] = 1.0; // Cyan-white
+      colors[i * 3] = 0.65; colors[i * 3 + 1] = 0.85; colors[i * 3 + 2] = 1.0;
     } else if (tint > 0.6) {
-      colors[i * 3] = 0.95; colors[i * 3 + 1] = 0.85; colors[i * 3 + 2] = 0.5; // Golden
+      colors[i * 3] = 0.95; colors[i * 3 + 1] = 0.85; colors[i * 3 + 2] = 0.5;
     } else {
-      colors[i * 3] = 0.8; colors[i * 3 + 1] = 0.8; colors[i * 3 + 2] = 0.9; // Silver
+      colors[i * 3] = 0.8; colors[i * 3 + 1] = 0.8; colors[i * 3 + 2] = 0.9;
     }
   }
 
@@ -194,42 +213,163 @@ function createStarfield() {
   scene3D.add(starfield);
 }
 
-// Builds the 3D helical cosmic highway connecting all 100 days
-function buildCurriculumHelix() {
+// Build Scenery for Cyber Grid Mode
+function buildCyberGridScenery() {
+  cyberGridGroup.clear();
+
+  // Futuristic Ground Matrix Grid
+  const gridHelper = new THREE.GridHelper(160, 32, 0x06b6d4, 0x1e293b);
+  gridHelper.position.y = -8;
+  cyberGridGroup.add(gridHelper);
+
+  // 5 Multi-track Neon Rails
+  const trackXOffsets = [-48, -24, 0, 24, 48];
+  const trackColors = [0x38bdf8, 0x10b981, 0xa855f7, 0x6366f1, 0xf59e0b];
+
+  trackXOffsets.forEach((xPos, idx) => {
+    const railPoints = [
+      new THREE.Vector3(xPos, -2, -75),
+      new THREE.Vector3(xPos, -2, 75)
+    ];
+    const railGeom = new THREE.BufferGeometry().setFromPoints(railPoints);
+    const railMat = new THREE.LineBasicMaterial({
+      color: trackColors[idx],
+      linewidth: 3,
+      transparent: true,
+      opacity: 0.75
+    });
+    const railLine = new THREE.Line(railGeom, railMat);
+    cyberGridGroup.add(railLine);
+  });
+
+  cyberGridGroup.visible = false;
+}
+
+// Build Scenery for Pyramid Ascension Mode
+function buildPyramidRingsScenery() {
+  pyramidRingsGroup.clear();
+
+  const tiers = [
+    { y: -35, radius: 55, color: 0x38bdf8 },
+    { y: -15, radius: 42, color: 0x10b981 },
+    { y: 5,   radius: 30, color: 0xa855f7 },
+    { y: 25,  radius: 18, color: 0x6366f1 },
+    { y: 45,  radius: 9,  color: 0xf59e0b }
+  ];
+
+  tiers.forEach(tier => {
+    const ringGeom = new THREE.RingGeometry(tier.radius - 0.4, tier.radius + 0.4, 64);
+    const ringMat = new THREE.MeshBasicMaterial({
+      color: tier.color,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.5
+    });
+    const ringMesh = new THREE.Mesh(ringGeom, ringMat);
+    ringMesh.rotation.x = Math.PI / 2;
+    ringMesh.position.y = tier.y;
+    pyramidRingsGroup.add(ringMesh);
+  });
+
+  // Central Vertical Summit Laser Beam
+  const beamPoints = [new THREE.Vector3(0, -45, 0), new THREE.Vector3(0, 70, 0)];
+  const beamGeom = new THREE.BufferGeometry().setFromPoints(beamPoints);
+  const beamMat = new THREE.LineBasicMaterial({ color: 0xf59e0b, transparent: true, opacity: 0.65 });
+  const beamLine = new THREE.Line(beamGeom, beamMat);
+  pyramidRingsGroup.add(beamLine);
+
+  pyramidRingsGroup.visible = false;
+}
+
+// Compute all 4 spatial coordinate layouts for each of the 100 days
+function buildAllNodePositions() {
   nodesGroup.clear();
   linesGroup.clear();
   labelsGroup.clear();
+  dependencyLinesGroup.clear();
   dayNodesMap.clear();
 
-  const points = [];
   const totalDays = dayDataList.length > 0 ? dayDataList.length : 100;
+
+  // Graph Cluster Centers
+  const graphClusters = {
+    1: new THREE.Vector3(-52, -18, -15),
+    2: new THREE.Vector3(-22, 22, 35),
+    3: new THREE.Vector3(42, 28, -25),
+    4: new THREE.Vector3(50, -22, 25),
+    5: new THREE.Vector3(0, 52, 0)
+  };
+
+  // Cyber Track X Offsets
+  const cyberTrackX = { 1: -48, 2: -24, 3: 0, 4: 24, 5: 48 };
+
+  // Pyramid Tiers
+  const pyramidTiers = {
+    1: { y: -35, radius: 55 },
+    2: { y: -15, radius: 42 },
+    3: { y: 5,   radius: 30 },
+    4: { y: 25,  radius: 18 },
+    5: { y: 45,  radius: 9 }
+  };
+
+  // Phase Day Ranges
+  const phaseRanges = {
+    1: [1, 25],
+    2: [26, 50],
+    3: [51, 75],
+    4: [76, 90],
+    5: [91, 100]
+  };
+
+  const helixPoints = [];
 
   for (let i = 0; i < totalDays; i++) {
     const dayData = dayDataList[i] || { dayNumber: i + 1, title: `Day ${i + 1}`, status: 'Planned' };
     const dayNum = dayData.dayNumber || (i + 1);
+    const phaseId = getPhaseFromDayNumber(dayNum);
+    const range = phaseRanges[phaseId];
+    const indexInPhase = dayNum - range[0];
+    const totalInPhase = range[1] - range[0] + 1;
 
-    // Mathematical helical coordinates
-    // Spiral upward with expanding radius and distinct phase altitudes
-    const t = i / (totalDays - 1); // 0.0 to 1.0
+    // 1. HELIX COORDINATES
+    const t = i / (totalDays - 1);
     const turns = 4.5;
     const angle = t * Math.PI * 2 * turns;
-    
-    // Altitude: -45 to +50
-    const y = -45 + t * 95;
-    
-    // Radius curves outward and narrows slightly at the summit
-    const radius = 32 + Math.sin(t * Math.PI) * 16;
-    const x = Math.cos(angle) * radius;
-    const z = Math.sin(angle) * radius;
+    const yHelix = -45 + t * 95;
+    const rHelix = 32 + Math.sin(t * Math.PI) * 16;
+    const helixPos = new THREE.Vector3(Math.cos(angle) * rHelix, yHelix, Math.sin(angle) * rHelix);
+    helixPoints.push(helixPos);
 
-    const pos = new THREE.Vector3(x, y, z);
-    points.push(pos);
+    // 2. NEURAL GRAPH COORDINATES (Clustered Fibonacci Sphere)
+    const center = graphClusters[phaseId];
+    const phi = Math.acos(1 - 2 * (indexInPhase + 0.5) / totalInPhase);
+    const goldenRatio = 1.61803398875;
+    const theta = 2 * Math.PI * indexInPhase / goldenRatio;
+    const rGraph = 14 + (indexInPhase % 4) * 2.5;
+    const graphPos = new THREE.Vector3(
+      center.x + rGraph * Math.sin(phi) * Math.cos(theta),
+      center.y + rGraph * Math.sin(phi) * Math.sin(theta),
+      center.z + rGraph * Math.cos(phi)
+    );
+
+    // 3. CYBER METRO GRID COORDINATES
+    const tTrack = indexInPhase / Math.max(1, totalInPhase - 1);
+    const zCyber = -68 + tTrack * 136;
+    const xCyber = cyberTrackX[phaseId];
+    const yCyber = (phaseId === 5 ? 12 : (phaseId === 3 ? 8 : 4));
+    const cyberPos = new THREE.Vector3(xCyber, yCyber, zCyber);
+
+    // 4. SKILL PYRAMID COORDINATES
+    const tier = pyramidTiers[phaseId];
+    const anglePyramid = (indexInPhase / totalInPhase) * Math.PI * 2;
+    const pyramidPos = new THREE.Vector3(
+      Math.cos(anglePyramid) * tier.radius,
+      tier.y,
+      Math.sin(anglePyramid) * tier.radius
+    );
 
     // Create 3D Day Sphere Node
-    const phaseId = getPhaseFromDayNumber(dayNum);
     const statusColor = STATUS_COLORS[dayData.status] || STATUS_COLORS.Planned;
-
-    // Milestone days (25, 50, 75, 90, 100) are larger
     const isMilestone = [25, 50, 75, 90, 100].includes(dayNum);
     const sphereRadius = isMilestone ? 2.8 : (dayNum === 1 ? 2.4 : 1.8);
 
@@ -237,16 +377,16 @@ function buildCurriculumHelix() {
     const sphereMat = new THREE.MeshStandardMaterial({
       color: statusColor,
       emissive: statusColor,
-      emissiveIntensity: dayData.status === 'InProgress' ? 0.7 : (dayData.status === 'Completed' ? 0.5 : 0.25),
+      emissiveIntensity: dayData.status === 'InProgress' ? 0.75 : (dayData.status === 'Completed' ? 0.55 : 0.25),
       roughness: 0.2,
       metalness: 0.8
     });
 
     const nodeMesh = new THREE.Mesh(sphereGeom, sphereMat);
-    nodeMesh.position.copy(pos);
+    nodeMesh.position.copy(helixPos);
     nodeMesh.userData = { dayData, dayNum, phaseId, isMilestone };
 
-    // Add glowing orbit ring for Milestone days and InProgress days
+    // Glowing orbit ring for Milestone days and InProgress days
     if (isMilestone || dayData.status === 'InProgress') {
       const ringGeom = new THREE.RingGeometry(sphereRadius * 1.35, sphereRadius * 1.65, 32);
       const ringMat = new THREE.MeshBasicMaterial({
@@ -261,22 +401,28 @@ function buildCurriculumHelix() {
     }
 
     nodesGroup.add(nodeMesh);
+
     dayNodesMap.set(dayNum, {
       mesh: nodeMesh,
       data: dayData,
-      position: pos,
+      position: nodeMesh.position,
+      targetPosition: helixPos.clone(),
+      helixPos,
+      graphPos,
+      cyberPos,
+      pyramidPos,
       initialScale: nodeMesh.scale.clone()
     });
 
-    // Add Phase Milestone Labels in 3D Space
+    // Milestone Labels in 3D Space
     if (dayNum === 1 || isMilestone) {
-      addPhase3DLabel(pos, dayNum);
+      addPhase3DLabel(helixPos, dayNum);
     }
   }
 
-  // Build Glowing Tube Spline along path
-  if (points.length > 1) {
-    curvePath = new THREE.CatmullRomCurve3(points);
+  // Build Glowing Tube Spline for Helix Mode
+  if (helixPoints.length > 1) {
+    const curvePath = new THREE.CatmullRomCurve3(helixPoints);
     const tubeGeom = new THREE.TubeGeometry(curvePath, 250, 0.45, 8, false);
     const tubeMat = new THREE.MeshStandardMaterial({
       color: 0x38bdf8,
@@ -288,14 +434,62 @@ function buildCurriculumHelix() {
     });
     const tubeMesh = new THREE.Mesh(tubeGeom, tubeMat);
     linesGroup.add(tubeMesh);
-
-    // Build Pulsing Momentum Particles traveling along spline
     buildMomentumParticleStream(curvePath);
   }
+
+  // Build Cross-Topic Knowledge Dependency Synapses for Graph Mode
+  buildKnowledgeGraphSynapses();
+}
+
+// Cross-topic conceptual dependencies linking domains in 3D Neural Graph
+function buildKnowledgeGraphSynapses() {
+  dependencyLinesGroup.clear();
+
+  // Meaningful architectural dependencies
+  const dependencies = [
+    [1, 15],  // Memory -> SQL
+    [15, 29], // SQL -> RabbitMQ
+    [27, 34], // YARP -> OpenTelemetry
+    [29, 31], // RabbitMQ -> Outbox Pattern
+    [31, 32], // Outbox -> Saga Pattern
+    [34, 68], // OpenTelemetry -> AI Observability
+    [41, 43], // Docker -> Kubernetes
+    [43, 81], // Kubernetes -> Helm
+    [55, 56], // Embeddings -> pgvector
+    [56, 59], // pgvector -> RAG
+    [59, 61], // RAG -> Tool Calling
+    [61, 63], // Tool Calling -> AI Agents
+    [63, 65], // Agents -> Multi-Agent Systems
+    [63, 73], // Agents -> Coding Agent Architecture
+    [56, 78], // pgvector -> Capstone Ingestion Pipeline
+    [61, 79], // Tool Calling -> Capstone RAG & Cache
+    [43, 80], // Kubernetes -> Capstone Observability
+    [72, 92], // AI System Design -> High-Scale System Design
+    [75, 95]  // AI Review -> System Design Interview
+  ];
+
+  dependencies.forEach(([fromDay, toDay]) => {
+    const fromEntry = dayNodesMap.get(fromDay);
+    const toEntry = dayNodesMap.get(toDay);
+    if (fromEntry && toEntry) {
+      const lineGeom = new THREE.BufferGeometry().setFromPoints([fromEntry.graphPos, toEntry.graphPos]);
+      const lineMat = new THREE.LineBasicMaterial({
+        color: 0xa855f7,
+        transparent: true,
+        opacity: 0.45
+      });
+      const line = new THREE.Line(lineGeom, lineMat);
+      line.userData = { fromDay, toDay };
+      dependencyLinesGroup.add(line);
+    }
+  });
+
+  dependencyLinesGroup.visible = false;
 }
 
 // Particle Stream traveling along the 3D curve
 function buildMomentumParticleStream(curve) {
+  particlesGroup.clear();
   const particleCount = 60;
   const geometry = new THREE.BufferGeometry();
   const positions = new Float32Array(particleCount * 3);
@@ -316,7 +510,8 @@ function buildMomentumParticleStream(curve) {
     opacity: 0.9
   });
 
-  particlePoints = new THREE.Points(geometry, material);
+  const particlePoints = new THREE.Points(geometry, material);
+  particlePoints.userData = { curve };
   particlesGroup.add(particlePoints);
 }
 
@@ -336,7 +531,6 @@ function addPhase3DLabel(pos, dayNum) {
   canvas.height = 80;
   const ctx = canvas.getContext('2d');
 
-  // Glassmorphic badge background
   ctx.fillStyle = "rgba(15, 23, 42, 0.85)";
   ctx.roundRect(4, 4, 248, 72, 12);
   ctx.fill();
@@ -344,7 +538,6 @@ function addPhase3DLabel(pos, dayNum) {
   ctx.lineWidth = 2;
   ctx.stroke();
 
-  // Text
   ctx.font = "bold 20px -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
   ctx.fillStyle = "#ffffff";
   ctx.textAlign = "center";
@@ -358,10 +551,76 @@ function addPhase3DLabel(pos, dayNum) {
   const spriteMaterial = new THREE.SpriteMaterial({ map: texture, transparent: true });
   const sprite = new THREE.Sprite(spriteMaterial);
 
-  // Position label slightly offset from node
   sprite.position.set(pos.x + 6, pos.y + 3.5, pos.z);
   sprite.scale.set(16, 5, 1);
   labelsGroup.add(sprite);
+}
+
+// Smoothly morphs all 100 nodes into a different 3D layout architecture!
+function switch3DLayout(mode, immediate = false) {
+  current3DMode = mode;
+
+  // Update layout buttons UI
+  const modes = ['helix', 'graph', 'cyber', 'pyramid'];
+  modes.forEach(m => {
+    const btn = document.getElementById(`btn-layout-${m}`);
+    if (btn) {
+      if (m === mode) {
+        btn.className = "px-3 py-1.5 rounded-lg text-xs font-bold transition bg-blue-600 text-white shadow";
+      } else {
+        btn.className = "px-3 py-1.5 rounded-lg text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition";
+      }
+    }
+  });
+
+  // Assign target positions for all 100 nodes
+  dayNodesMap.forEach(entry => {
+    let target;
+    if (mode === 'helix') target = entry.helixPos;
+    else if (mode === 'graph') target = entry.graphPos;
+    else if (mode === 'cyber') target = entry.cyberPos;
+    else if (mode === 'pyramid') target = entry.pyramidPos;
+    else target = entry.helixPos;
+
+    entry.targetPosition.copy(target);
+    if (immediate) {
+      entry.mesh.position.copy(target);
+    }
+  });
+
+  // Toggle mode-specific scenery
+  if (linesGroup) linesGroup.visible = (mode === 'helix');
+  if (particlesGroup) particlesGroup.visible = (mode === 'helix');
+  if (dependencyLinesGroup) dependencyLinesGroup.visible = (mode === 'graph');
+  if (cyberGridGroup) cyberGridGroup.visible = (mode === 'cyber');
+  if (pyramidRingsGroup) pyramidRingsGroup.visible = (mode === 'pyramid');
+
+  // Smooth camera transitions tailored for each perspective
+  if (!immediate && camera3D && controls3D) {
+    if (mode === 'helix') {
+      targetCameraPos = new THREE.Vector3(0, 30, 160);
+      targetLookAt = new THREE.Vector3(0, 5, 0);
+    } else if (mode === 'graph') {
+      targetCameraPos = new THREE.Vector3(0, 35, 170);
+      targetLookAt = new THREE.Vector3(0, 15, 0);
+    } else if (mode === 'cyber') {
+      targetCameraPos = new THREE.Vector3(0, 65, 130);
+      targetLookAt = new THREE.Vector3(0, 0, 0);
+    } else if (mode === 'pyramid') {
+      targetCameraPos = new THREE.Vector3(0, 35, 150);
+      targetLookAt = new THREE.Vector3(0, 10, 0);
+    }
+  }
+
+  // Update mode badge in title
+  const modeTitles = {
+    helix: "Cosmic Helix Track",
+    graph: "Neural Knowledge Graph & Synapses",
+    cyber: "Cyberpunk Subway Grid",
+    pyramid: "Skill Ascension Pyramid"
+  };
+  const titleEl = document.getElementById('roadmap-3d-mode-title');
+  if (titleEl) titleEl.textContent = modeTitles[mode] || "3D Constellation";
 }
 
 // Refresh node materials and colors when data updates
@@ -388,20 +647,31 @@ function animate3D() {
     controls3D.update();
   }
 
-  // Animate pulse particles along spline
-  if (curvePath && particlePoints) {
-    pulseProgress = (pulseProgress + 0.0012) % 1.0;
-    const positions = particlePoints.geometry.attributes.position.array;
-    const count = positions.length / 3;
-
-    for (let i = 0; i < count; i++) {
-      const t = (pulseProgress + i / count) % 1.0;
-      const pt = curvePath.getPoint(t);
-      positions[i * 3] = pt.x;
-      positions[i * 3 + 1] = pt.y;
-      positions[i * 3 + 2] = pt.z;
+  // Smooth position interpolation for all 100 nodes when morphing between layouts
+  dayNodesMap.forEach(entry => {
+    if (entry.mesh.position.distanceTo(entry.targetPosition) > 0.05) {
+      entry.mesh.position.lerp(entry.targetPosition, 0.08);
     }
-    particlePoints.geometry.attributes.position.needsUpdate = true;
+  });
+
+  // Animate pulse particles along spline (in Helix mode)
+  if (current3DMode === 'helix' && particlesGroup && particlesGroup.children.length > 0) {
+    const particlePoints = particlesGroup.children[0];
+    const curve = particlePoints.userData.curve;
+    if (curve) {
+      pulseProgress = (pulseProgress + 0.0012) % 1.0;
+      const positions = particlePoints.geometry.attributes.position.array;
+      const count = positions.length / 3;
+
+      for (let i = 0; i < count; i++) {
+        const t = (pulseProgress + i / count) % 1.0;
+        const pt = curve.getPoint(t);
+        positions[i * 3] = pt.x;
+        positions[i * 3 + 1] = pt.y;
+        positions[i * 3 + 2] = pt.z;
+      }
+      particlePoints.geometry.attributes.position.needsUpdate = true;
+    }
   }
 
   // Smooth camera interpolation towards target presets
@@ -644,21 +914,31 @@ function update3DHUDStats() {
 
 // Camera Preset Views
 function reset3DCameraView() {
-  targetCameraPos = new THREE.Vector3(0, 30, 160);
-  targetLookAt = new THREE.Vector3(0, 5, 0);
+  if (current3DMode === 'helix') {
+    targetCameraPos = new THREE.Vector3(0, 30, 160);
+    targetLookAt = new THREE.Vector3(0, 5, 0);
+  } else if (current3DMode === 'graph') {
+    targetCameraPos = new THREE.Vector3(0, 35, 170);
+    targetLookAt = new THREE.Vector3(0, 15, 0);
+  } else if (current3DMode === 'cyber') {
+    targetCameraPos = new THREE.Vector3(0, 65, 130);
+    targetLookAt = new THREE.Vector3(0, 0, 0);
+  } else {
+    targetCameraPos = new THREE.Vector3(0, 35, 150);
+    targetLookAt = new THREE.Vector3(0, 10, 0);
+  }
   if (controls3D) controls3D.autoRotate = isAutoRotating;
   close3DInspector();
 }
 
 function focusOnTodayNode() {
-  // Find first InProgress or Planned day
   const today = dayDataList.find(d => d.status === 'InProgress') ||
                 dayDataList.find(d => d.status === 'Planned') ||
                 dayDataList[0];
 
   if (today && dayNodesMap.has(today.dayNumber)) {
     const entry = dayNodesMap.get(today.dayNumber);
-    selectDayNode(today, entry.position);
+    selectDayNode(today, entry.mesh.position);
   }
 }
 
@@ -676,9 +956,9 @@ function focusOnPhase(phaseId) {
 
   if (dayNodesMap.has(midDay)) {
     const entry = dayNodesMap.get(midDay);
-    const offset = new THREE.Vector3(0, 15, 60);
-    targetCameraPos = entry.position.clone().add(offset);
-    targetLookAt = entry.position.clone();
+    const offset = new THREE.Vector3(0, 15, 55);
+    targetCameraPos = entry.mesh.position.clone().add(offset);
+    targetLookAt = entry.mesh.position.clone();
     if (controls3D) controls3D.autoRotate = false;
   }
 }

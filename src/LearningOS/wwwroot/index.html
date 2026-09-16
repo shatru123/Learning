@@ -76,8 +76,11 @@
       <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
         <span>📅</span> 100-Day Roadmap
       </button>
-      <button onclick="switchTab('roadmap3d')" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
+      <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
         <span>🌌</span> 3D Roadmap
+      </button>
+      <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>🕸️</span> 3D Knowledge Graph
       </button>
       <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
         <span>🔄</span> Recovery Queue <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">0</span>
@@ -246,13 +249,29 @@
       <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
         <div>
           <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <span>🌌</span> 3D Curriculum Constellation & Roadmap
+            <span>🌌</span> 3D Roadmap: <span id="roadmap-3d-mode-title" class="text-blue-400">Cosmic Helix Track</span>
           </h2>
-          <p class="text-xs text-slate-400 mt-1">Interactive 3D WebGL journey across all 100 Learning Days, helical momentum paths, and 5 mastery phases.</p>
+          <p class="text-xs text-slate-400 mt-1">Interactive 3D WebGL journeys: Cosmic Helix, 3D Neural Knowledge Graph, Cyber Grid, or Skill Pyramid.</p>
         </div>
 
         <!-- 3D Controls Toolbar -->
         <div class="flex flex-wrap items-center gap-2 text-xs">
+          <!-- 3D Architectural Layout Mode Switcher -->
+          <div class="flex items-center bg-slate-950 border border-slate-700/80 rounded-lg p-1 gap-1">
+            <button id="btn-layout-helix" onclick="switch3DLayout('helix')" class="px-2.5 py-1 rounded text-xs font-bold transition bg-blue-600 text-white shadow" title="Cosmic Helical Highway">
+              🌌 Cosmic Helix
+            </button>
+            <button id="btn-layout-graph" onclick="switch3DLayout('graph')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition" title="Clustered Knowledge Galaxy & Dependencies">
+              🕸️ Neural Graph
+            </button>
+            <button id="btn-layout-cyber" onclick="switch3DLayout('cyber')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition" title="Cyberpunk Runway & Subway Tracks">
+              🏙️ Cyber Grid
+            </button>
+            <button id="btn-layout-pyramid" onclick="switch3DLayout('pyramid')" class="px-2.5 py-1 rounded text-xs font-medium text-slate-300 hover:text-white hover:bg-slate-800 transition" title="Ascending Skill Ziggurat">
+              ⛰️ Skill Pyramid
+            </button>
+          </div>
+
           <!-- Preset Views -->
           <div class="flex items-center bg-slate-950 border border-slate-800 rounded-lg p-1">
             <button onclick="reset3DCameraView()" class="px-2.5 py-1 rounded text-slate-300 hover:text-white hover:bg-slate-800 font-medium transition" title="Fit full 100-day galaxy">🌌 Full</button>
