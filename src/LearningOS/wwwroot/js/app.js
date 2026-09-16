@@ -18,7 +18,7 @@ async function initApp() {
 
 // TAB NAVIGATION
 function switchTab(tabName) {
-  const tabs = ['dashboard', 'roadmap', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings'];
+  const tabs = ['dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings'];
   tabs.forEach(t => {
     const el = document.getElementById(`view-${t}`);
     const navEl = document.getElementById(`nav-${t}`);
@@ -32,6 +32,7 @@ function switchTab(tabName) {
 
   if (tabName === 'dashboard') loadDashboard();
   if (tabName === 'roadmap') loadRoadmap();
+  if (tabName === 'roadmap3d') loadRoadmap3D();
   if (tabName === 'recovery') loadRecoveryQueue();
   if (tabName === 'curriculum') loadCurrentTrackerSubTab();
   if (tabName === 'analytics') loadAnalytics();

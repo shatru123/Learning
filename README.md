@@ -45,7 +45,18 @@ LearningOS is a production-grade, full-stack learning operating system designed 
 - 🌴 **Rest Day**: Planned rest day bridging active days (preserves streak!).
 - 🏖️ **Leave Day**: Sick leave, vacation, wedding, travel, or personal work (preserves streak!).
 
-### 3. Missed Day & Smart Recovery Manager
+### 3. Interactive 3D Cosmic Roadmap (WebGL / Three.js)
+- **New Dedicated Tab**: Explore the 100-day journey in an immersive, interactive 3D WebGL space.
+- **Helical Momentum Highway**: 100 color-coded nodes plotted along a 3D spiral curve with animated pulsing energy streams.
+- **5 Demarcated Phase Sectors**: Visual color zones, floating canvas milestone badges, and phase boundary markers.
+- **Interactive Controls & Inspector**:
+  - Orbit, pan, and smooth zoom controls with auto-rotation toggle.
+  - Hover tooltips and click raycasting.
+  - Floating glassmorphism inspector drawer: toggle task completion, inspect day objectives, or jump directly into the full day plan.
+  - Camera presets: Full Galaxy, Today's Focus, and 1-click jumps to Phases 1–5.
+  - Filter 3D nodes by status (Completed, In Progress, Planned, Missed).
+
+### 4. Missed Day & Smart Recovery Manager
 When a day is missed:
 - Click **"Mark Day as Missed"** and select a reason (*Work, Health, Family, Travel, Personal, Workload, Lack of time, Other*) with optional notes.
 - **Original tasks and history remain completely visible and intact.**
