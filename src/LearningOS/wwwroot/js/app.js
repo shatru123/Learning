@@ -17,7 +17,15 @@ async function initApp() {
 }
 
 // TAB NAVIGATION
+let currentTab = 'dashboard';
+let previousTabBeforeDetail = 'roadmap';
+
 function switchTab(tabName) {
+  if (currentTab !== tabName && currentTab !== 'daydetail') {
+    previousTabBeforeDetail = currentTab;
+  }
+  currentTab = tabName;
+
   const tabs = ['dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings'];
   tabs.forEach(t => {
     const el = document.getElementById(`view-${t}`);
@@ -201,7 +209,7 @@ function renderRoadmapGrid(days) {
     const totalCount = d.tasks ? d.tasks.length : 0;
 
     return `
-      <div class="rounded-xl border border-slate-800 bg-slate-900/70 p-4 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
+      <div id="day-card-${d.id}" class="rounded-xl border border-slate-800 bg-slate-900/70 p-4 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
         <div>
           <div class="flex items-center justify-between gap-2 mb-2">
             <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-300">
@@ -254,6 +262,41 @@ function renderRoadmapGrid(days) {
 }
 
 // 3. DAY DETAIL VIEW
+function goBackFromDayDetail() {
+  const targetTab = previousTabBeforeDetail || 'roadmap';
+  switchTab(targetTab);
+
+  // If returning to roadmap, smoothly scroll to and highlight the card
+  if (targetTab === 'roadmap' && currentActiveDay) {
+    setTimeout(() => {
+      const card = document.getElementById(`day-card-${currentActiveDay.id}`);
+      if (card) {
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('ring-2', 'ring-blue-500', 'border-blue-500');
+        setTimeout(() => {
+          card.classList.remove('ring-2', 'ring-blue-500', 'border-blue-500');
+        }, 2500);
+      }
+    }, 150);
+  }
+}
+
+async function openDayDetail(dayNumber) {
+  try {
+    if (!allDaysCache || allDaysCache.length === 0) {
+      allDaysCache = await apiCall('/api/days');
+    }
+    const day = allDaysCache.find(d => d.dayNumber === dayNumber);
+    if (day) {
+      await viewDayDetail(day.id);
+    } else {
+      showToast(`Day ${dayNumber} not found`, "error");
+    }
+  } catch (err) {
+    showToast("Failed to open day details", "error");
+  }
+}
+
 async function viewDayDetail(dayId) {
   try {
     const day = await apiCall(`/api/days/${dayId}`);
@@ -273,6 +316,28 @@ function viewCurrentDayFull() {
 }
 
 function renderDayDetail(day) {
+  // Update back buttons and breadcrumbs dynamically
+  const originNames = {
+    'roadmap': '100-Day Roadmap',
+    'roadmap3d': '3D Cosmic Roadmap',
+    'dashboard': 'Dashboard',
+    'curriculum': 'Trackers',
+    'recovery': 'Recovery Queue',
+    'analytics': 'Analytics',
+    'audit': 'Audit History'
+  };
+  const originName = originNames[previousTabBeforeDetail] || '100-Day Roadmap';
+
+  const backLabel = document.getElementById('btn-back-label');
+  const backLabelBottom = document.querySelector('.btn-back-label-bottom');
+  const breadcrumbOrigin = document.getElementById('breadcrumb-origin');
+  const breadcrumbCurrent = document.getElementById('breadcrumb-current-day');
+
+  if (backLabel) backLabel.textContent = `Back to ${originName}`;
+  if (backLabelBottom) backLabelBottom.textContent = `Back to ${originName}`;
+  if (breadcrumbOrigin) breadcrumbOrigin.textContent = originName;
+  if (breadcrumbCurrent) breadcrumbCurrent.textContent = day.isLearningDay ? `Day ${day.dayNumber}` : 'Day Details';
+
   document.getElementById('detail-day-label').textContent = day.isLearningDay ? `Day ${day.dayNumber}` : 'Special Day';
   document.getElementById('detail-date').textContent = day.calendarDate;
   document.getElementById('detail-title').textContent = day.title;
@@ -1243,7 +1308,12 @@ function openProfileModal() {
 
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    closeModal('modal-profile');
+    const openModals = document.querySelectorAll('.modal-backdrop:not(.hidden)');
+    if (openModals.length > 0) {
+      openModals.forEach(m => m.classList.add('hidden'));
+    } else if (currentTab === 'daydetail') {
+      goBackFromDayDetail();
+    }
   }
 });
 
