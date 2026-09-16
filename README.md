@@ -2,6 +2,8 @@
 
 > **"The roadmap can change. The schedule can change. A day can be missed. But my learning history should never disappear."**
 
+**Created by**: **Shatrughna Ambhore** • ✉️ [ambhoreshatrughna@gmail.com](mailto:ambhoreshatrughna@gmail.com) • 📞 [+91 9604466334](tel:+919604466334)
+
 LearningOS is a production-grade, full-stack learning operating system designed for real-life software engineering learning journeys. Built with **ASP.NET Core 8.0**, **Entity Framework Core**, and **PostgreSQL** as the authoritative persistent datastore, LearningOS protects against unrealistic workloads, preserves your complete audit trail, and provides smart recovery strategies for missed or skipped days.
 
 ---
@@ -166,3 +168,14 @@ Open `http://localhost:5000` in your browser.
 - Render binds web services dynamically using the `$PORT` environment variable. `Program.cs` automatically detects `$PORT` and binds Kestrel to `http://0.0.0.0:$PORT`.
 - Health check path is set to `/health` with a 200 OK response required before routing traffic.
 - If PostgreSQL is unreachable on startup in Production, the container fails fast and reports unhealthy to Render.
+
+---
+
+## 👨‍💻 Creator & Contact
+
+- **Created by**: **Shatrughna Ambhore**
+- **Email**: [ambhoreshatrughna@gmail.com](mailto:ambhoreshatrughna@gmail.com)
+- **Phone**: [+91 9604466334](tel:+919604466334)
+- **GitHub Repository**: [shatru123/Learning](https://github.com/shatru123/Learning)
+- **License**: MIT
+

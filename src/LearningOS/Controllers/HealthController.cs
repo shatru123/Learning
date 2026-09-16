@@ -42,6 +42,9 @@ public class HealthController : ControllerBase
                 database = _db.Database.ProviderName,
                 isAuthoritativeRelational = _db.Database.IsRelational(),
                 totalLearningDays = dayCount,
+                createdBy = "Shatrughna Ambhore",
+                email = "ambhoreshatrughna@gmail.com",
+                phone = "+91 9604466334",
                 environment = _env.EnvironmentName,
                 timestamp = DateTime.UtcNow
             });

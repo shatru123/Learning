@@ -4,6 +4,8 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Authors>Shatrughna Ambhore</Authors>
+    <Description>LearningOS — 100-Day Engineering &amp; AI Mastery created by Shatrughna Ambhore (ambhoreshatrughna@gmail.com, +91 9604466334)</Description>
   </PropertyGroup>
 
   <ItemGroup>
