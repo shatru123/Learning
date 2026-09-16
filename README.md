@@ -173,9 +173,14 @@ Open `http://localhost:5000` in your browser.
 
 ## 👨‍💻 Creator & Contact
 
+<p align="left">
+  <img src="src/LearningOS/wwwroot/images/shatrughna.jpg" width="120" height="120" style="border-radius: 50%; object-fit: cover;" alt="Shatrughna Ambhore" />
+</p>
+
 - **Created by**: **Shatrughna Ambhore**
 - **Email**: [ambhoreshatrughna@gmail.com](mailto:ambhoreshatrughna@gmail.com)
 - **Phone**: [+91 9604466334](tel:+919604466334)
 - **GitHub Repository**: [shatru123/Learning](https://github.com/shatru123/Learning)
 - **License**: MIT
+
 
