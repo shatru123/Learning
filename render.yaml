@@ -2,7 +2,7 @@ services:
   - type: web
     name: learning-os-web
     runtime: docker
-    plan: standard
+    plan: starter
     region: oregon
     dockerfilePath: ./Dockerfile
     healthCheckPath: /health
@@ -18,7 +18,7 @@ services:
 
 databases:
   - name: learning-os-postgres
-    plan: standard
+    plan: starter
     region: oregon
     databaseName: learningos
     user: learningos_admin

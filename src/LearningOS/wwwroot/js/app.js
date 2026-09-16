@@ -18,7 +18,7 @@ async function initApp() {
 
 // TAB NAVIGATION
 function switchTab(tabName) {
-  const tabs = ['dashboard', 'roadmap', 'recovery', 'daydetail', 'curriculum', 'audit', 'settings'];
+  const tabs = ['dashboard', 'roadmap', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings'];
   tabs.forEach(t => {
     const el = document.getElementById(`view-${t}`);
     const navEl = document.getElementById(`nav-${t}`);
@@ -33,8 +33,10 @@ function switchTab(tabName) {
   if (tabName === 'dashboard') loadDashboard();
   if (tabName === 'roadmap') loadRoadmap();
   if (tabName === 'recovery') loadRecoveryQueue();
-  if (tabName === 'audit') loadAuditHistory();
   if (tabName === 'curriculum') loadCurrentTrackerSubTab();
+  if (tabName === 'analytics') loadAnalytics();
+  if (tabName === 'audit') loadAuditHistory();
+  if (tabName === 'settings') loadSettings();
 }
 
 // 1. DASHBOARD
@@ -699,7 +701,7 @@ async function loadAuditHistory() {
 let currentTrackerSubTab = 'dsa';
 function switchTrackerSubTab(subTab) {
   currentTrackerSubTab = subTab;
-  const tabs = ['dsa', 'systemdesign', 'interview', 'jobs', 'journal', 'resources'];
+  const tabs = ['dsa', 'ai', 'systemdesign', 'projects', 'interview', 'jobs', 'journal', 'resources'];
   tabs.forEach(t => {
     const btn = document.getElementById(`subtab-${t}`);
     const view = document.getElementById(`tracker-subview-${t}`);
@@ -716,11 +718,105 @@ function switchTrackerSubTab(subTab) {
 
 async function loadCurrentTrackerSubTab() {
   if (currentTrackerSubTab === 'dsa') loadDSAProblems();
+  if (currentTrackerSubTab === 'ai') loadAIModules();
   if (currentTrackerSubTab === 'systemdesign') loadSystemDesignTopics();
+  if (currentTrackerSubTab === 'projects') loadPortfolioProjects();
   if (currentTrackerSubTab === 'interview') loadInterviewQuestions();
   if (currentTrackerSubTab === 'jobs') loadJobApplications();
   if (currentTrackerSubTab === 'journal') loadJournalEntries();
   if (currentTrackerSubTab === 'resources') loadLearningResources();
+}
+
+async function loadAIModules() {
+  const container = document.getElementById('ai-modules-list');
+  if (!container) return;
+  try {
+    if (allDaysCache.length === 0) {
+      allDaysCache = await apiCall('/api/days');
+    }
+    const aiDays = allDaysCache.filter(d => d.dayNumber >= 51 && d.dayNumber <= 75);
+    container.innerHTML = aiDays.map(d => {
+      const completedTasks = (d.tasks || []).filter(t => t.status === 'Completed').length;
+      const totalTasks = (d.tasks || []).length;
+      return `
+        <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 hover:border-slate-700 transition">
+          <div class="flex items-start justify-between">
+            <div>
+              <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-purple-950 text-purple-300 border border-purple-800">Day ${d.dayNumber}</span>
+              <h4 class="font-bold text-white text-sm mt-1.5">${escapeHtml(d.title)}</h4>
+              <p class="text-xs text-purple-400/80 font-mono mt-0.5">Focus: ${escapeHtml(d.theme)}</p>
+            </div>
+            <span class="badge-status ${getStatusBadgeClass(d.status)}">${getStatusIcon(d.status)} ${formatStatusName(d.status)}</span>
+          </div>
+          <div class="mt-3 space-y-1.5 border-t border-slate-800/80 pt-2.5">
+            ${(d.tasks || []).map(t => `
+              <div class="flex items-center gap-2 text-xs">
+                <span class="${t.status === 'Completed' ? 'text-emerald-400' : 'text-slate-500'}">${t.status === 'Completed' ? '✔' : '○'}</span>
+                <span class="${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-300'} truncate">${escapeHtml(t.title)}</span>
+                <span class="text-[10px] text-slate-500 ml-auto">${t.estimatedMinutes}m</span>
+              </div>
+            `).join('')}
+          </div>
+          <div class="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+            <span class="text-slate-500">${completedTasks}/${totalTasks} Tasks Done</span>
+            <button onclick="openDayDetail(${d.dayNumber})" class="text-blue-400 hover:text-blue-300 font-semibold">Open Day Plan →</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = `<div class="text-red-400 py-3">Failed to load AI Engineering modules.</div>`;
+  }
+}
+
+async function loadPortfolioProjects() {
+  const container = document.getElementById('projects-list');
+  if (!container) return;
+  try {
+    if (allDaysCache.length === 0) {
+      allDaysCache = await apiCall('/api/days');
+    }
+    const projectDays = allDaysCache.filter(d => d.dayNumber >= 76 && d.dayNumber <= 90);
+    container.innerHTML = projectDays.map(d => {
+      const completedTasks = (d.tasks || []).filter(t => t.status === 'Completed').length;
+      const totalTasks = (d.tasks || []).length;
+      return `
+        <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 hover:border-slate-700 transition">
+          <div class="flex items-start justify-between">
+            <div class="flex-1">
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold uppercase px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800">Sprint Day ${d.dayNumber}</span>
+                <span class="text-xs text-slate-400 font-mono">${d.calendarDate}</span>
+              </div>
+              <h4 class="font-bold text-white text-base mt-1.5">${escapeHtml(d.title)}</h4>
+              <p class="text-xs text-slate-400 mt-1">${escapeHtml(d.theme)}</p>
+            </div>
+            <span class="badge-status ${getStatusBadgeClass(d.status)}">${getStatusIcon(d.status)} ${formatStatusName(d.status)}</span>
+          </div>
+          <div class="mt-3 space-y-2 border-t border-slate-800/80 pt-2.5">
+            ${(d.tasks || []).map(t => `
+              <div class="flex items-center justify-between text-xs p-2 rounded bg-slate-900/60 border border-slate-800/50">
+                <div class="flex items-center gap-2">
+                  <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} onchange="toggleTaskStatus(${t.id}, this.checked)" class="w-3.5 h-3.5 rounded text-blue-600 bg-slate-950 border-slate-700 cursor-pointer">
+                  <span class="${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-200 font-medium'}">${escapeHtml(t.title)}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="text-[10px] px-1.5 py-0.5 rounded ${getPriorityClass(t.priority)}">${t.priority}</span>
+                  <span class="text-[11px] text-slate-500">⏱️ ${t.estimatedMinutes}m</span>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          <div class="mt-3 flex items-center justify-between pt-2 border-t border-slate-800/60 text-xs">
+            <span class="text-slate-400 font-medium">${completedTasks}/${totalTasks} Tasks Completed</span>
+            <button onclick="openDayDetail(${d.dayNumber})" class="text-indigo-400 hover:text-indigo-300 font-semibold">View Sprint Details →</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  } catch (err) {
+    container.innerHTML = `<div class="text-red-400 py-3">Failed to load Portfolio Projects.</div>`;
+  }
 }
 
 async function loadDSAProblems() {
@@ -859,9 +955,17 @@ async function loadLearningResources() {
 async function loadSettings() {
   try {
     const s = await apiCall('/api/settings');
-    document.getElementById('settings-recovery-cap').value = s.maxExtraRecoveryMinutesPerDay || 60;
-    document.getElementById('settings-daily-target').value = s.dailyTargetStudyMinutes || 120;
-    document.getElementById('recovery-cap-display').textContent = `${s.maxExtraRecoveryMinutesPerDay || 60} mins/day`;
+    if (document.getElementById('settings-recovery-cap')) document.getElementById('settings-recovery-cap').value = s.maxExtraRecoveryMinutesPerDay || 60;
+    if (document.getElementById('settings-daily-target')) document.getElementById('settings-daily-target').value = s.dailyTargetStudyMinutes || 120;
+    if (document.getElementById('recovery-cap-display')) document.getElementById('recovery-cap-display').textContent = `${s.maxExtraRecoveryMinutesPerDay || 60} mins/day`;
+
+    if (document.getElementById('sched-workday-start')) document.getElementById('sched-workday-start').value = s.workdayStartHour ?? 9;
+    if (document.getElementById('sched-workday-end')) document.getElementById('sched-workday-end').value = s.workdayEndHour ?? 18;
+    if (document.getElementById('sched-study-start')) document.getElementById('sched-study-start').value = s.preferredStudyStartTime || "20:00";
+    if (document.getElementById('sched-study-end')) document.getElementById('sched-study-end').value = s.preferredStudyEndTime || "22:30";
+    if (document.getElementById('sched-weekday-mins')) document.getElementById('sched-weekday-mins').value = s.weekdayDailyAvailableMinutes || 120;
+    if (document.getElementById('sched-weekend-mins')) document.getElementById('sched-weekend-mins').value = s.weekendDailyAvailableMinutes || 240;
+    if (document.getElementById('sched-protect-workhours')) document.getElementById('sched-protect-workhours').checked = s.protectWorkingHours ?? true;
   } catch { }
 }
 
@@ -878,6 +982,160 @@ async function saveUserSettings() {
     showToast("Workload protection settings saved to PostgreSQL!");
   } catch (err) {
     showToast("Failed to save settings", "error");
+  }
+}
+
+async function saveWorkingHoursSchedule() {
+  const workdayStart = parseInt(document.getElementById('sched-workday-start').value) || 9;
+  const workdayEnd = parseInt(document.getElementById('sched-workday-end').value) || 18;
+  const studyStart = document.getElementById('sched-study-start').value || "20:00";
+  const studyEnd = document.getElementById('sched-study-end').value || "22:30";
+  const weekdayMins = parseInt(document.getElementById('sched-weekday-mins').value) || 120;
+  const weekendMins = parseInt(document.getElementById('sched-weekend-mins').value) || 240;
+  const protectWorkhours = document.getElementById('sched-protect-workhours').checked;
+  const cap = parseInt(document.getElementById('settings-recovery-cap').value) || 60;
+  const target = parseInt(document.getElementById('settings-daily-target').value) || 120;
+
+  try {
+    await apiCall('/api/settings', 'PUT', {
+      workdayStartHour: workdayStart,
+      workdayEndHour: workdayEnd,
+      preferredStudyStartTime: studyStart,
+      preferredStudyEndTime: studyEnd,
+      weekdayDailyAvailableMinutes: weekdayMins,
+      weekendDailyAvailableMinutes: weekendMins,
+      protectWorkingHours: protectWorkhours,
+      maxExtraRecoveryMinutesPerDay: cap,
+      dailyTargetStudyMinutes: target
+    });
+    showToast("Working-hours schedule saved to PostgreSQL!");
+  } catch (err) {
+    showToast("Failed to save working-hours schedule", "error");
+  }
+}
+
+// 16. ANALYTICS & VELOCITY
+async function loadAnalytics() {
+  try {
+    const dash = await apiCall('/api/dashboard');
+    if (allDaysCache.length === 0) {
+      allDaysCache = await apiCall('/api/days');
+    }
+
+    const completedDays = dash.completedDaysCount || 0;
+    const partialDays = dash.partiallyCompletedDaysCount || 0;
+    const restDays = dash.restDaysCount || 0;
+    const missedDays = dash.missedDaysCount || 0;
+    const skippedDays = dash.skippedDaysCount || 0;
+
+    const totalElapsed = completedDays + partialDays + restDays + missedDays + skippedDays;
+    const consistencyRate = totalElapsed > 0
+      ? Math.round(((completedDays + partialDays + restDays) / totalElapsed) * 100)
+      : 100;
+    
+    const crEl = document.getElementById('analytics-consistency-rate');
+    if (crEl) crEl.textContent = `${consistencyRate}%`;
+
+    // Total study hours from completed tasks
+    let totalCompletedMinutes = 0;
+    allDaysCache.forEach(d => {
+      (d.tasks || []).forEach(t => {
+        if (t.status === 'Completed') {
+          totalCompletedMinutes += (t.estimatedMinutes || 0);
+        }
+      });
+    });
+    const totalHours = (totalCompletedMinutes / 60).toFixed(1);
+    const thEl = document.getElementById('analytics-total-hours');
+    if (thEl) thEl.textContent = `${totalHours} hrs`;
+
+    // Recovery Efficiency
+    const recoveryQueueCount = dash.recoveryQueueCount || 0;
+    const recoveryRate = (missedDays === 0 && recoveryQueueCount === 0)
+      ? 100
+      : Math.round(Math.max(0, 100 - (recoveryQueueCount * 20)));
+    const rrEl = document.getElementById('analytics-recovery-rate');
+    if (rrEl) rrEl.textContent = `${Math.min(100, Math.max(0, recoveryRate))}%`;
+
+    // Phase breakdown (5 phases)
+    const phases = [
+      { id: 1, name: "Phase 1: Advanced C#, .NET Internals & High-Perf Data Access", range: [1, 25], color: "blue" },
+      { id: 2, name: "Phase 2: Microservices, Distributed Systems & Cloud-Native .NET", range: [26, 50], color: "emerald" },
+      { id: 3, name: "Phase 3: Applied AI & LLM Engineering for .NET Developers", range: [51, 75], color: "purple" },
+      { id: 4, name: "Phase 4: Production Enterprise AI Capstone Projects", range: [76, 90], color: "indigo" },
+      { id: 5, name: "Phase 5: High-Scale System Design, Advanced DSA & Interview Mastery", range: [91, 100], color: "amber" }
+    ];
+
+    const phasesContainer = document.getElementById('analytics-phases-container');
+    if (phasesContainer) {
+      phasesContainer.innerHTML = phases.map(p => {
+        const phaseDays = allDaysCache.filter(d => d.dayNumber >= p.range[0] && d.dayNumber <= p.range[1]);
+        let pCompletedTasks = 0;
+        let pTotalTasks = 0;
+        let pCompletedDays = 0;
+
+        phaseDays.forEach(d => {
+          if (d.status === 'Completed') pCompletedDays++;
+          (d.tasks || []).forEach(t => {
+            pTotalTasks++;
+            if (t.status === 'Completed') pCompletedTasks++;
+          });
+        });
+
+        const pct = pTotalTasks > 0 ? Math.round((pCompletedTasks / pTotalTasks) * 100) : 0;
+
+        return `
+          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60 space-y-2">
+            <div class="flex items-center justify-between text-xs">
+              <span class="font-bold text-slate-200">${p.name} (Days ${p.range[0]}–${p.range[1]})</span>
+              <span class="font-bold text-blue-400">${pct}% (${pCompletedTasks}/${pTotalTasks} Tasks)</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-2">
+              <div class="bg-blue-500 h-2 rounded-full transition-all duration-500" style="width: ${pct}%"></div>
+            </div>
+            <div class="flex items-center justify-between text-[11px] text-slate-500">
+              <span>${pCompletedDays}/${phaseDays.length} Days Fully Completed</span>
+              <span>Target: ${p.range[1] - p.range[0] + 1} Days</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Workload by Category
+    const categoryStats = {};
+    allDaysCache.forEach(d => {
+      (d.tasks || []).forEach(t => {
+        const cat = t.category || 'Core';
+        if (!categoryStats[cat]) categoryStats[cat] = { total: 0, completed: 0, minutes: 0 };
+        categoryStats[cat].total++;
+        if (t.status === 'Completed') categoryStats[cat].completed++;
+        categoryStats[cat].minutes += (t.estimatedMinutes || 0);
+      });
+    });
+
+    const catContainer = document.getElementById('analytics-categories-container');
+    if (catContainer) {
+      catContainer.innerHTML = Object.entries(categoryStats).map(([cat, stat]) => {
+        const catPct = stat.total > 0 ? Math.round((stat.completed / stat.total) * 100) : 0;
+        return `
+          <div class="p-3.5 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-xs font-bold text-slate-300 truncate">${escapeHtml(cat)}</div>
+            <div class="flex items-baseline justify-between mt-2">
+              <span class="text-lg font-extrabold text-white">${catPct}%</span>
+              <span class="text-xs text-slate-500">${stat.completed}/${stat.total}</span>
+            </div>
+            <div class="w-full bg-slate-800 rounded-full h-1.5 mt-2">
+              <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${catPct}%"></div>
+            </div>
+            <div class="text-[10px] text-slate-500 mt-1.5">⏱️ ${(stat.minutes / 60).toFixed(1)}h total workload</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+  } catch (err) {
+    console.error("Analytics load failed", err);
   }
 }
 

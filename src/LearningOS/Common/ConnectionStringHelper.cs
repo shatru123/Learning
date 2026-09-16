@@ -12,16 +12,25 @@ public static class ConnectionStringHelper
             return (ConvertPostgresUrlToNpgsql(databaseUrl), true);
         }
 
+        bool isProduction = environment.IsProduction() || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("RENDER"));
+
         var configured = configuration.GetConnectionString("DefaultConnection");
         if (!string.IsNullOrWhiteSpace(configured))
         {
             bool isPg = configured.Contains("Host=", StringComparison.OrdinalIgnoreCase) ||
                         configured.Contains("Server=", StringComparison.OrdinalIgnoreCase) ||
-                        configured.Contains("Port=", StringComparison.OrdinalIgnoreCase);
+                        configured.Contains("Port=", StringComparison.OrdinalIgnoreCase) ||
+                        configured.Contains("Username=", StringComparison.OrdinalIgnoreCase);
+
+            if (isProduction && !isPg)
+            {
+                throw new InvalidOperationException(
+                    "CRITICAL ERROR: Authoritative PostgreSQL database connection is REQUIRED in Production/Render environment. " +
+                    "Configured connection string is not PostgreSQL. Silent fallback or use of SQLite/in-memory in production is strictly prohibited.");
+            }
+
             return (configured, isPg);
         }
-
-        bool isProduction = environment.IsProduction() || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("RENDER"));
 
         if (isProduction)
         {

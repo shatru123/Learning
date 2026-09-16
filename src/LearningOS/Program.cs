@@ -14,8 +14,21 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
+// Dynamic Render PORT support
+var renderPort = Environment.GetEnvironmentVariable("PORT");
+if (!string.IsNullOrWhiteSpace(renderPort))
+{
+    builder.WebHost.UseUrls($"http://0.0.0.0:{renderPort}");
+}
+
 // Configure authoritative database
 var (connectionString, isPostgreSql) = ConnectionStringHelper.ResolveConnectionString(builder.Configuration, builder.Environment);
+
+bool isProduction = builder.Environment.IsProduction() || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("RENDER"));
+if (isProduction && !isPostgreSql)
+{
+    throw new InvalidOperationException("CRITICAL: Authoritative PostgreSQL is required in Production/Render. SQLite is strictly forbidden.");
+}
 
 builder.Services.AddDbContext<LearningDbContext>(options =>
 {

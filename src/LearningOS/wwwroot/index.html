@@ -68,7 +68,7 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Tabs (Updated with Analytics) -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/60 flex space-x-1 sm:space-x-4 overflow-x-auto py-2 text-sm scrollbar-none">
       <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400">
         <span>📊</span> Dashboard
@@ -83,13 +83,16 @@
         <span>📝</span> Day Tasks & Review
       </button>
       <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>🧠</span> Trackers (DSA & AI)
+        <span>🧠</span> Trackers (DSA, AI, Projects)
+      </button>
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
+        <span>📈</span> Analytics
       </button>
       <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
         <span>📜</span> Audit History
       </button>
       <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>⚙️</span> Data & Settings
+        <span>⚙️</span> Schedule & Data
       </button>
     </div>
   </header>
@@ -194,6 +197,9 @@
               <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Today's Focus</span>
               <h2 id="today-title" class="text-xl font-bold text-white mt-1">Loading today's plan...</h2>
               <p id="today-theme" class="text-sm text-slate-400 mt-0.5">...</p>
+              <div id="today-schedule-window" class="mt-2 text-[11px] text-indigo-400 font-mono flex items-center gap-1.5">
+                <span>🕒</span> <span>Study Window: 20:00 - 22:30 (Work Hours 09:00-18:00 Protected)</span>
+              </div>
             </div>
             <div id="today-status-badge" class="badge-status status-planned">Planned</div>
           </div>
@@ -365,12 +371,14 @@
       </div>
     </section>
 
-    <!-- VIEW 5: CURRICULUM TRACKERS (DSA, System Design, AI, Interview, Jobs) -->
+    <!-- VIEW 5: CURRICULUM TRACKERS (DSA, AI, System Design, Projects, Interview, Jobs) -->
     <section id="view-curriculum" class="hidden space-y-6">
       <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800">
         <div class="flex border-b border-slate-800 pb-3 gap-4 overflow-x-auto text-sm">
           <button onclick="switchTrackerSubTab('dsa')" id="subtab-dsa" class="font-bold text-blue-400 border-b-2 border-blue-400 pb-2">💻 DSA Tracker</button>
+          <button onclick="switchTrackerSubTab('ai')" id="subtab-ai" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🤖 AI Engineering</button>
           <button onclick="switchTrackerSubTab('systemdesign')" id="subtab-systemdesign" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🏛️ System Design</button>
+          <button onclick="switchTrackerSubTab('projects')" id="subtab-projects" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🚀 Portfolio Projects</button>
           <button onclick="switchTrackerSubTab('interview')" id="subtab-interview" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🎯 Interview Prep</button>
           <button onclick="switchTrackerSubTab('jobs')" id="subtab-jobs" class="font-medium text-slate-400 hover:text-slate-200 pb-2">💼 Job Applications</button>
           <button onclick="switchTrackerSubTab('journal')" id="subtab-journal" class="font-medium text-slate-400 hover:text-slate-200 pb-2">📖 Engineering Journal</button>
@@ -383,9 +391,15 @@
             <span class="text-xs text-slate-400">Curated NeetCode/LeetCode problems for the 100 days</span>
             <button onclick="openAddDSAModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Problem</button>
           </div>
-          <div id="dsa-problems-list" class="space-y-2">
-            <!-- Rendered by JS -->
+          <div id="dsa-problems-list" class="space-y-2"></div>
+        </div>
+
+        <!-- Sub-View: AI Engineering (Requirement 14) -->
+        <div id="tracker-subview-ai" class="hidden mt-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-400">Core AI/LLM Engineering Mastery Modules (Phase 3: Days 51–75)</span>
           </div>
+          <div id="ai-modules-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
         <!-- Sub-View: System Design -->
@@ -394,31 +408,33 @@
             <span class="text-xs text-slate-400">Core High-Scale System Design Topics</span>
             <button onclick="openAddSystemDesignModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Topic</button>
           </div>
-          <div id="systemdesign-list" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Rendered by JS -->
+          <div id="systemdesign-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Sub-View: Portfolio Projects (Requirement 14) -->
+        <div id="tracker-subview-projects" class="hidden mt-6 space-y-4">
+          <div class="flex items-center justify-between">
+            <span class="text-xs text-slate-400">Enterprise AI Portfolio Projects (Phase 4: Days 76–90)</span>
           </div>
+          <div id="projects-list" class="space-y-4"></div>
         </div>
 
         <!-- Sub-View: Interview -->
         <div id="tracker-subview-interview" class="hidden mt-6 space-y-4">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400">Deep-Dive Interview Questions (.NET, Distributed, AI)</span>
+            <span class="text-xs text-slate-400">Deep-Dive Interview Questions (.NET, Distributed, AI, Behavioral)</span>
             <button onclick="openAddInterviewModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Question</button>
           </div>
-          <div id="interview-list" class="space-y-3">
-            <!-- Rendered by JS -->
-          </div>
+          <div id="interview-list" class="space-y-3"></div>
         </div>
 
         <!-- Sub-View: Jobs -->
         <div id="tracker-subview-jobs" class="hidden mt-6 space-y-4">
           <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400">Job Application Pipeline</span>
+            <span class="text-xs text-slate-400">Job Application Pipeline Tracker</span>
             <button onclick="openAddJobModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Track Application</button>
           </div>
-          <div id="jobs-list" class="space-y-2">
-            <!-- Rendered by JS -->
-          </div>
+          <div id="jobs-list" class="space-y-2"></div>
         </div>
 
         <!-- Sub-View: Journal -->
@@ -427,9 +443,7 @@
             <span class="text-xs text-slate-400">Engineering Journal & Discoveries</span>
             <button onclick="openAddJournalModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ New Journal Entry</button>
           </div>
-          <div id="journal-list" class="space-y-4">
-            <!-- Rendered by JS -->
-          </div>
+          <div id="journal-list" class="space-y-4"></div>
         </div>
 
         <!-- Sub-View: Resources -->
@@ -438,14 +452,58 @@
             <span class="text-xs text-slate-400">Curated Books, Repositories, and Docs</span>
             <button onclick="openAddResourceModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Resource</button>
           </div>
-          <div id="resources-list" class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <!-- Rendered by JS -->
-          </div>
+          <div id="resources-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
         </div>
       </div>
     </section>
 
-    <!-- VIEW 6: AUDIT HISTORY (Requirement 14 & 15) -->
+    <!-- VIEW 6: ANALYTICS (Requirement 14) -->
+    <section id="view-analytics" class="hidden space-y-6">
+      <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-6">
+        <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+              <span>📈</span> Learning Analytics & Velocity
+            </h2>
+            <p class="text-xs text-slate-400 mt-1">Real-time breakdown of your 100-day journey by phase, category, and study velocity.</p>
+          </div>
+          <button onclick="loadAnalytics()" class="text-xs text-blue-400 hover:underline">Refresh</button>
+        </div>
+
+        <!-- Velocity Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-xs uppercase text-slate-400 font-semibold">Active Consistency Rate</div>
+            <div id="analytics-consistency-rate" class="text-2xl font-extrabold text-emerald-400 mt-2">100%</div>
+            <div class="text-[11px] text-slate-500 mt-1">Completed + Rest days vs total elapsed</div>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-xs uppercase text-slate-400 font-semibold">Estimated Total Study Hours</div>
+            <div id="analytics-total-hours" class="text-2xl font-extrabold text-blue-400 mt-2">0 hrs</div>
+            <div class="text-[11px] text-slate-500 mt-1">Based on completed tasks</div>
+          </div>
+          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-xs uppercase text-slate-400 font-semibold">Recovery Efficiency</div>
+            <div id="analytics-recovery-rate" class="text-2xl font-extrabold text-purple-400 mt-2">100%</div>
+            <div class="text-[11px] text-slate-500 mt-1">Missed workload resolved</div>
+          </div>
+        </div>
+
+        <!-- 5-Phase Breakdown -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Phase Progress Breakdown</h3>
+          <div id="analytics-phases-container" class="space-y-3"></div>
+        </div>
+
+        <!-- Category Workload Distribution -->
+        <div class="space-y-4 pt-4 border-t border-slate-800">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Workload By Technology Domain</h3>
+          <div id="analytics-categories-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 7: AUDIT HISTORY (Requirement 14 & 15) -->
     <section id="view-audit" class="hidden space-y-6">
       <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800">
         <div class="border-b border-slate-800 pb-3">
@@ -456,15 +514,73 @@
             Permanent, immutable record of every completed task, missed day, reschedule, note, and roadmap change.
           </p>
         </div>
-        <div id="full-audit-timeline" class="mt-6 space-y-3">
-          <!-- Rendered by JS -->
-        </div>
+        <div id="full-audit-timeline" class="mt-6 space-y-3"></div>
       </div>
     </section>
 
-    <!-- VIEW 7: SETTINGS & BACKUP (Requirement 16, 21, 23) -->
+    <!-- VIEW 8: SCHEDULE, SETTINGS & BACKUP (Requirement 15, 16, 21, 23) -->
     <section id="view-settings" class="hidden space-y-6">
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+        <!-- Working-Hours-Aware Schedule (Requirement 15) -->
+        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>🕒</span> Working-Hours-Aware Schedule
+            </h3>
+            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-900/50 text-indigo-300 border border-indigo-700/50">Editable</span>
+          </div>
+          <p class="text-xs text-slate-400">
+            Configure your professional working hours so recovery sessions and study plans never conflict with your workday.
+          </p>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Workday Start Hour</label>
+              <input type="number" id="sched-workday-start" min="0" max="23" value="9" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
+              <span class="text-[10px] text-slate-500">e.g. 9 for 09:00 AM</span>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Workday End Hour</label>
+              <input type="number" id="sched-workday-end" min="0" max="23" value="18" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
+              <span class="text-[10px] text-slate-500">e.g. 18 for 06:00 PM</span>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Study Start Time</label>
+              <input type="time" id="sched-study-start" value="20:00" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Study End Time</label>
+              <input type="time" id="sched-study-end" value="22:30" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Weekday Daily Minutes</label>
+              <input type="number" id="sched-weekday-mins" min="30" max="360" step="15" value="120" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Weekend Daily Minutes</label>
+              <input type="number" id="sched-weekend-mins" min="60" max="600" step="30" value="240" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
+            </div>
+          </div>
+
+          <label class="flex items-center gap-2 cursor-pointer text-xs pt-1">
+            <input type="checkbox" id="sched-protect-workhours" checked class="text-blue-600 rounded">
+            <span class="text-slate-300 font-medium">Protect Working Hours (Never allocate recovery tasks during work hours)</span>
+          </label>
+
+          <div class="pt-2 flex justify-end">
+            <button onclick="saveWorkingHoursSchedule()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow transition">
+              Save Working Hours Schedule
+            </button>
+          </div>
+        </div>
+
         <!-- Workload & Smart Recovery Settings -->
         <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4">
           <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
@@ -482,30 +598,32 @@
             <label class="block text-xs font-semibold text-slate-300 mb-1">Daily Target Study Time (Minutes)</label>
             <input type="number" id="settings-daily-target" min="30" max="480" step="30" value="120" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
           </div>
-          <button onclick="saveUserSettings()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow">
-            Save Settings
-          </button>
+          <div class="pt-2 flex justify-end">
+            <button onclick="saveUserSettings()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow">
+              Save Workload Cap
+            </button>
+          </div>
         </div>
 
         <!-- Database Persistence & Architecture Info -->
-        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4">
+        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4 col-span-1 lg:col-span-2">
           <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span>🛡️</span> Authoritative Persistence Architecture
+            <span>🛡️</span> Authoritative Persistence Architecture & Health Diagnostic
           </h3>
           <p class="text-xs text-slate-300 leading-relaxed">
             All user learning state, tasks, history, notes, and records are stored exclusively in <strong class="text-emerald-400">PostgreSQL</strong>.
-            The ASP.NET Core web service is completely stateless on Render.
+            The ASP.NET Core web service is completely stateless on Render. If PostgreSQL is unavailable in production, the service fails fast with an explicit error.
           </p>
           <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs font-mono text-slate-400 space-y-1">
-            <div>Browser → ASP.NET Core 8.0 → EF Core → PostgreSQL</div>
+            <div>Browser → ASP.NET Core 8.0 → EF Core → PostgreSQL (Authoritative)</div>
             <div class="text-emerald-400">✔ Zero-Downtime Survives Restarts & Redeploys</div>
             <div class="text-blue-400">✔ Full Historical Audit Logging Enforced</div>
           </div>
-          <div class="pt-2">
-            <button onclick="checkSystemHealth()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700">
-              Run Live Health Diagnostic
+          <div class="pt-2 flex items-center gap-3">
+            <button onclick="checkSystemHealth()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700">
+              Run Live Health Diagnostic (/health)
             </button>
-            <span id="health-check-result" class="ml-2 text-xs text-slate-400"></span>
+            <span id="health-check-result" class="text-xs text-slate-400"></span>
           </div>
         </div>
 
@@ -515,7 +633,7 @@
             <span>💾</span> Data Backup & Restore Center
           </h3>
           <p class="text-xs text-slate-400">
-            Download your complete learning history at any time. You can also validate and restore a backup file.
+            Download your complete learning history at any time. You can also validate and restore a backup file safely.
           </p>
 
           <div class="flex flex-wrap gap-4 pt-2">
@@ -536,9 +654,7 @@
                 Validate Backup Schema
               </button>
             </div>
-            <div id="restore-preview-box" class="hidden mt-4 p-4 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-300">
-              <!-- Validation summary inserted here -->
-            </div>
+            <div id="restore-preview-box" class="hidden mt-4 p-4 rounded-lg bg-slate-950 border border-slate-800 text-xs text-slate-300"></div>
           </div>
         </div>
       </div>
@@ -814,9 +930,7 @@
         </div>
         <button onclick="closeModal('modal-taskhistory')" class="text-slate-400 hover:text-white">✕</button>
       </div>
-      <div id="task-history-timeline" class="mt-4 space-y-3 max-h-96 overflow-y-auto text-xs">
-        <!-- Rendered by JS -->
-      </div>
+      <div id="task-history-timeline" class="mt-4 space-y-3 max-h-96 overflow-y-auto text-xs"></div>
       <div class="mt-6 flex justify-end">
         <button onclick="closeModal('modal-taskhistory')" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-300">Close</button>
       </div>

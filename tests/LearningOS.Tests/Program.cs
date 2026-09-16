@@ -13,7 +13,8 @@ var testClasses = new Type[]
     typeof(LearningOS.Tests.StreakCalculationTests),
     typeof(LearningOS.Tests.RecoveryLogicTests),
     typeof(LearningOS.Tests.BackupRestoreTests),
-    typeof(LearningOS.Tests.ControllerIntegrationTests)
+    typeof(LearningOS.Tests.ControllerIntegrationTests),
+    typeof(LearningOS.Tests.CurriculumIntegrityTests)
 };
 
 int total = 0;

@@ -11,22 +11,17 @@ public static class DbInitializer
         bool isPostgres = db.Database.ProviderName?.Contains("Npgsql", StringComparison.OrdinalIgnoreCase) == true;
         if (isPostgres)
         {
-            try
+            logger.LogInformation("Checking and applying pending EF Core migrations on PostgreSQL...");
+            var pending = await db.Database.GetPendingMigrationsAsync();
+            if (pending.Any())
             {
-                var pending = await db.Database.GetPendingMigrationsAsync();
-                if (pending.Any())
-                {
-                    await db.Database.MigrateAsync();
-                }
-                else
-                {
-                    await db.Database.EnsureCreatedAsync();
-                }
+                logger.LogInformation("Applying pending migration(s): {Migrations}", string.Join(", ", pending));
+                await db.Database.MigrateAsync();
+                logger.LogInformation("EF Core migrations applied successfully to PostgreSQL.");
             }
-            catch (Exception ex)
+            else
             {
-                logger.LogWarning(ex, "Migrate note: fallback to EnsureCreatedAsync");
-                await db.Database.EnsureCreatedAsync();
+                logger.LogInformation("PostgreSQL schema is up to date. No pending migrations.");
             }
         }
         else

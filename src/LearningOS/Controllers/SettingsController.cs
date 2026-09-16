@@ -44,6 +44,13 @@ public class SettingsController : ControllerBase
 
         settings.MaxExtraRecoveryMinutesPerDay = updated.MaxExtraRecoveryMinutesPerDay > 0 ? updated.MaxExtraRecoveryMinutesPerDay : 60;
         settings.DailyTargetStudyMinutes = updated.DailyTargetStudyMinutes > 0 ? updated.DailyTargetStudyMinutes : 120;
+        settings.WorkdayStartHour = updated.WorkdayStartHour >= 0 && updated.WorkdayStartHour <= 23 ? updated.WorkdayStartHour : 9;
+        settings.WorkdayEndHour = updated.WorkdayEndHour >= 0 && updated.WorkdayEndHour <= 23 ? updated.WorkdayEndHour : 18;
+        settings.PreferredStudyStartTime = !string.IsNullOrWhiteSpace(updated.PreferredStudyStartTime) ? updated.PreferredStudyStartTime : "20:00";
+        settings.PreferredStudyEndTime = !string.IsNullOrWhiteSpace(updated.PreferredStudyEndTime) ? updated.PreferredStudyEndTime : "22:30";
+        settings.WeekdayDailyAvailableMinutes = updated.WeekdayDailyAvailableMinutes > 0 ? updated.WeekdayDailyAvailableMinutes : 120;
+        settings.WeekendDailyAvailableMinutes = updated.WeekendDailyAvailableMinutes > 0 ? updated.WeekendDailyAvailableMinutes : 240;
+        settings.ProtectWorkingHours = updated.ProtectWorkingHours;
         settings.UpdatedAt = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
@@ -52,7 +59,7 @@ public class SettingsController : ControllerBase
             "SettingsUpdated",
             "UserSettings",
             settings.Id.ToString(),
-            $"Updated settings: Max recovery extra cap = {settings.MaxExtraRecoveryMinutesPerDay}m, Daily study target = {settings.DailyTargetStudyMinutes}m");
+            $"Updated settings: Workday {settings.WorkdayStartHour:D2}:00-{settings.WorkdayEndHour:D2}:00, Study {settings.PreferredStudyStartTime}-{settings.PreferredStudyEndTime}, Weekday={settings.WeekdayDailyAvailableMinutes}m, Weekend={settings.WeekendDailyAvailableMinutes}m, Cap={settings.MaxExtraRecoveryMinutesPerDay}m");
 
         return Ok(settings);
     }

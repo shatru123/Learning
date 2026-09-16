@@ -68,7 +68,21 @@ When a day is missed:
 - Warns: *"LearningOS is temporarily unavailable. Your local changes have not been confirmed as saved."*
 - Form inputs (notes, review, journal) are cached in temporary browser draft storage until confirmed saved by PostgreSQL with `200 OK`.
 
-### 7. Backup & Restore Center
+### 7. Working-Hours-Aware Scheduling (Workday Protection)
+- Dedicated settings panel for professional software engineers:
+  - **Workday Window**: e.g., 09:00 to 18:00 (editable).
+  - **Study Window**: e.g., 20:00 to 22:30.
+  - **Daily Available Minutes**: Weekday (120 mins) vs. Weekend (240 mins).
+  - **Protect Working Hours**: Recovery tasks and study sessions are strictly scheduled outside your work hours.
+
+### 8. Learning Analytics & Velocity Dashboard
+- Real-time tracking of your 100-day journey:
+  - **Active Consistency Rate**: Completed + rest days vs total elapsed.
+  - **Estimated Total Study Hours**: Calculated dynamically from completed tasks.
+  - **5-Phase Progress Breakdown**: Visual progress bars across all 5 curriculum phases.
+  - **Workload by Domain**: Distribution across C# Internals, Microservices, AI/LLM, System Design, DSA, and DevOps.
+
+### 9. Backup & Restore Center
 - **Export Everything**: Download full JSON backup (`LearningOS_Backup_YYYY-MM-DD.json`) and CSV summaries.
 - **Restore Backup**: Validates schema and entity counts before asking for explicit confirmation. Never silently overwrites data.
 
@@ -76,13 +90,31 @@ When a day is missed:
 
 ## 📚 100-Day Curriculum Highlights
 
-The system comes pre-seeded with a comprehensive curriculum across 5 phases:
+The system comes pre-seeded with an authoritative 100-day curriculum across 5 phases:
 
 1. **Phase 1 (Days 1–25)**: Advanced C# Internals (Memory, Span/Memory, GC Tuning, AsyncStateMachine), ASP.NET Core Internals (Middleware, DI Lifetimes, Minimal APIs), SQL Internals (B-Tree, Execution Plans, MVCC, Isolation Levels), Dapper & EF Core Optimization, Redis Caching & Distributed Locks, and Fundamental DSA.
 2. **Phase 2 (Days 26–50)**: Microservices Architecture, API Gateways (YARP), Resilient HTTP (Refit & Polly), Event-Driven Messaging (RabbitMQ, Dead-Letter Queues, MassTransit), Outbox & Saga Patterns, Distributed Idempotency, OpenTelemetry, Prometheus, Grafana, Jaeger, Docker, Kubernetes, CI/CD, Terraform, and Graph/DP DSA.
 3. **Phase 3 (Days 51–75)**: AI/LLM Engineering (Transformers, Tokenization, OpenAI, Claude, Gemini, Ollama), Advanced Prompt Engineering, Embeddings, PostgreSQL pgvector, Qdrant/Pinecone, Hybrid Search (BM25 + Dense RRF), Reranking, Function/Tool Calling, AI Agents (ReAct, Semantic Kernel), AI Security, Observability (LangSmith, OpenLLMetry), Semantic Caching, and Cost/Latency Optimization.
 4. **Phase 4 (Days 76–90)**: Production Enterprise AI Portfolio Project, Multi-Tenancy, Automated CI/CD Pipelines, Helm, Load Testing (k6), Architecture Documentation (C4 Model, ADRs), and Disaster Recovery.
 5. **Phase 5 (Days 91–100)**: System Design Interview Drills (Flash Sale, Collab Doc, Video Streaming), Technical CLR/.NET & Distributed Deep Dives, Behavioral STAR Stories, Resume/LinkedIn ATS Optimization, and Job Application Pipeline Tracking.
+
+---
+
+## 🧪 Automated Verification Test Suite (25 Tests)
+
+The repository includes a comprehensive 25-test verification suite covering:
+
+- **Data Survival Tests (1–6)**: Verifies that notes, task completions, missed day records, journal entries, resources, and multi-day progress survive application restarts, container redeployments, and host restarts.
+- **Streak Calculation Tests (7–10)**: Verifies completed days increment streaks, planned rest days protect streaks, recorded leave days protect streaks, and unexplained missed days break streaks.
+- **Recovery Logic Tests (11–13)**: Verifies workload-capped smart recovery, multi-day compression, and roadmap extension.
+- **Backup & Restore Tests (14–16)**: Verifies JSON backup export, validated restore with explicit confirmation, and safety failure without confirmation.
+- **Controller Integration Tests (17–21)**: Verifies `/health` endpoint (100 days healthy), dashboard metrics, missed day marking, task history audit trail, and daily review submission.
+- **Curriculum Integrity Tests (22–25)**: Verifies exact 100 learning days without gaps or duplicates, rest and leave days stored separately from learning days, working-hours schedule persistence in user settings, and coverage of all 5 curriculum phases.
+
+Run the test suite:
+```bash
+dotnet run --project tests/LearningOS.Tests
+```
 
 ---
 
@@ -94,17 +126,17 @@ The system comes pre-seeded with a comprehensive curriculum across 5 phases:
 
 ### Commands
 ```bash
-# Build the solution
-dotnet build LearningOS.sln
+# Build the application
+dotnet build src/LearningOS/LearningOS.csproj
 
-# Run all automated unit and data survival tests
+# Run all 25 automated tests
 dotnet run --project tests/LearningOS.Tests
 
 # Start the web service
 dotnet run --project src/LearningOS
 ```
 
-Open `http://localhost:5000` or `http://localhost:8080` in your browser.
+Open `http://localhost:5000` in your browser.
 
 ---
 
@@ -115,10 +147,11 @@ Open `http://localhost:5000` or `http://localhost:8080` in your browser.
 2. Log into [Render Dashboard](https://dashboard.render.com).
 3. Click **New +** -> **Blueprint**.
 4. Select your repository. Render will automatically provision:
-   - `learning-os-postgres`: Managed Render PostgreSQL database.
-   - `learning-os-web`: Docker web service with health check at `/health` and `DATABASE_URL` linked to the database.
+   - `learning-os-postgres`: Managed Render PostgreSQL database (`starter` plan).
+   - `learning-os-web`: Docker web service (`starter` plan) with health check at `/health` and `DATABASE_URL` linked to the PostgreSQL database.
 5. Click **Apply**.
 
-### Environment Variables
-- `DATABASE_URL`: PostgreSQL connection string (automatically set by Render PostgreSQL).
-- `ASPNETCORE_ENVIRONMENT`: `Production`
+### Dynamic Port & Health Checks
+- Render binds web services dynamically using the `$PORT` environment variable. `Program.cs` automatically detects `$PORT` and binds Kestrel to `http://0.0.0.0:$PORT`.
+- Health check path is set to `/health` with a 200 OK response required before routing traffic.
+- If PostgreSQL is unreachable on startup in Production, the container fails fast and reports unhealthy to Render.
