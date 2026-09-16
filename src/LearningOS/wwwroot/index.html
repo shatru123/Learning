@@ -812,11 +812,11 @@
         <div class="bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-blue-950/40 p-6 rounded-xl border border-blue-900/50 space-y-4 col-span-1 lg:col-span-2 shadow-lg">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div class="flex items-center gap-3.5">
-              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xl shadow">
-                👨‍💻
-              </div>
+              <button type="button" onclick="openProfileModal()" class="focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-2xl group cursor-pointer transition transform hover:scale-105 active:scale-95 shrink-0" title="Click to view full profile photo">
+                <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-blue-500/60 group-hover:ring-blue-400 shadow-lg shadow-blue-500/10 transition">
+              </button>
               <div>
-                <h3 class="text-base font-bold text-white tracking-tight">Creator & Architect Information</h3>
+                <h3 class="text-base font-bold text-white tracking-tight">Creator &amp; Architect Information</h3>
                 <p class="text-xs text-slate-400">Designed and built for disciplined, career-grade engineering mastery</p>
               </div>
             </div>
@@ -829,7 +829,7 @@
             <div class="p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
               <div class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Created By</div>
               <div class="text-base font-bold text-white flex items-center gap-2">
-                <span>Shatrughna Ambhore</span>
+                <button type="button" onclick="openProfileModal()" class="hover:text-blue-400 transition underline decoration-slate-600 hover:decoration-blue-400 cursor-pointer text-left">Shatrughna Ambhore</button>
               </div>
               <div class="text-[11px] text-slate-500 mt-1">Software Engineer & Architect</div>
             </div>
