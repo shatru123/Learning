@@ -44,11 +44,7 @@
             <h1 class="font-bold text-lg text-white tracking-tight">LearningOS</h1>
             <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">100-Day Mastery</span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:flex items-center gap-1.5">
-            <span>Real-Life Resilient Learning Operating System</span>
-            <span class="text-slate-600">•</span>
-            <span>Created by <strong class="text-slate-200 font-medium">Shatrughna Ambhore</strong></span>
-          </p>
+          <p class="text-xs text-slate-400 hidden sm:block">Real-Life Resilient Learning Operating System</p>
         </div>
       </div>
 
@@ -69,15 +65,6 @@
         <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 transition flex items-center gap-1">
           <span>⏩</span> <span class="hidden md:inline">Extend</span> Roadmap
         </button>
-
-        <!-- Creator Profile Avatar -->
-        <div class="flex items-center gap-2 pl-2 border-l border-slate-800">
-          <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-8 h-8 rounded-full ring-2 ring-blue-500/60 object-cover shadow" title="Shatrughna Ambhore">
-          <div class="hidden xl:block text-left">
-            <div class="text-xs font-bold text-white leading-tight">Shatrughna A.</div>
-            <div class="text-[10px] text-slate-400 leading-tight">Creator</div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -825,7 +812,9 @@
         <div class="bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-blue-950/40 p-6 rounded-xl border border-blue-900/50 space-y-4 col-span-1 lg:col-span-2 shadow-lg">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div class="flex items-center gap-3.5">
-              <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-blue-500/60 shadow-lg shadow-blue-500/10">
+              <div class="w-12 h-12 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center font-bold text-white text-xl shadow">
+                👨‍💻
+              </div>
               <div>
                 <h3 class="text-base font-bold text-white tracking-tight">Creator & Architect Information</h3>
                 <p class="text-xs text-slate-400">Designed and built for disciplined, career-grade engineering mastery</p>
@@ -871,11 +860,14 @@
   <!-- App Footer -->
   <footer class="mt-auto border-t border-slate-800/80 bg-slate-900/80 backdrop-blur py-6">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
-      <div class="flex items-center gap-3">
-        <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-10 h-10 rounded-full ring-2 ring-blue-500/50 object-cover shadow">
+      <div class="flex items-center gap-3.5">
+        <!-- Clickable Profile Picture that opens full profile photo -->
+        <button type="button" onclick="openProfileModal()" class="focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-full group cursor-pointer transition transform hover:scale-110 active:scale-95 shrink-0" title="Click to view full profile photo">
+          <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-11 h-11 rounded-full ring-2 ring-blue-500/60 group-hover:ring-blue-400 object-cover shadow-lg transition">
+        </button>
         <div>
           <div class="font-semibold text-slate-200">LearningOS — 100-Day Engineering &amp; AI Mastery</div>
-          <div class="text-slate-400">Created by <strong class="text-slate-100 font-semibold">Shatrughna Ambhore</strong></div>
+          <div class="text-slate-400">Created by <button type="button" onclick="openProfileModal()" class="text-slate-100 font-semibold hover:text-blue-400 underline decoration-slate-600 hover:decoration-blue-400 transition cursor-pointer">Shatrughna Ambhore</button></div>
         </div>
       </div>
 
@@ -1168,6 +1160,57 @@
       <div id="task-history-timeline" class="mt-4 space-y-3 max-h-96 overflow-y-auto text-xs"></div>
       <div class="mt-6 flex justify-end">
         <button onclick="closeModal('modal-taskhistory')" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-300">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Creator Profile Photo & Details Modal -->
+  <div id="modal-profile" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-profile')">
+    <div class="modal-content p-6 max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl relative overflow-hidden" onclick="event.stopPropagation()">
+      <button onclick="closeModal('modal-profile')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition text-base leading-none z-10" title="Close">
+        ✕
+      </button>
+
+      <div class="flex flex-col items-center text-center pt-2">
+        <div class="relative group mb-4">
+          <div class="absolute -inset-1.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-70 blur-md group-hover:opacity-100 transition duration-300"></div>
+          <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" title="Click to view full original photo in new tab">
+            <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="relative w-48 h-48 rounded-full object-cover ring-4 ring-slate-900 shadow-2xl cursor-zoom-in transition transform group-hover:scale-105">
+          </a>
+          <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" class="absolute bottom-2 right-2 bg-slate-900/95 text-blue-300 border border-blue-500/40 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow hover:bg-blue-600 hover:text-white transition flex items-center gap-1">
+            <span>🔍</span> Full View
+          </a>
+        </div>
+
+        <h3 class="text-xl font-extrabold text-white tracking-tight">Shatrughna Ambhore</h3>
+        <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/30 mt-1">
+          Lead Creator &amp; Software Engineer
+        </span>
+
+        <p class="text-xs text-slate-300 mt-3 leading-relaxed max-w-sm">
+          Architected LearningOS to deliver a resilient, career-grade 100-day engineering and AI learning system.
+        </p>
+
+        <div class="w-full space-y-2 mt-5 text-xs">
+          <a href="mailto:ambhoreshatrughna@gmail.com" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 text-blue-300 border border-slate-700/80 hover:border-blue-500/50 transition font-medium">
+            <span>✉️</span> ambhoreshatrughna@gmail.com
+          </a>
+          <a href="tel:+919604466334" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-600/20 text-emerald-300 border border-slate-700/80 hover:border-emerald-500/50 transition font-medium">
+            <span>📞</span> +91 9604466334
+          </a>
+          <a href="https://github.com/shatru123/Learning" target="_blank" rel="noopener noreferrer" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/80 hover:bg-purple-600/20 text-purple-300 border border-slate-700/80 hover:border-purple-500/50 transition font-medium">
+            <span>🐙</span> GitHub Repository
+          </a>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between w-full text-xs">
+          <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-white transition flex items-center gap-1">
+            <span>🖼️</span> Open full photo ↗
+          </a>
+          <button onclick="closeModal('modal-profile')" class="px-4 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold transition">
+            Close
+          </button>
+        </div>
       </div>
     </div>
   </div>

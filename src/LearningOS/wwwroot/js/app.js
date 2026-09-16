@@ -1237,6 +1237,16 @@ function closeModal(id) {
   if (el) el.classList.add('hidden');
 }
 
+function openProfileModal() {
+  openModal('modal-profile');
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    closeModal('modal-profile');
+  }
+});
+
 // HELPERS
 function getStatusBadgeClass(status) {
   const s = (status || '').toLowerCase();
