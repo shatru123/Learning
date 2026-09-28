@@ -2,6 +2,7 @@
 
 > **"The roadmap can change. The schedule can change. A day can be missed. But my learning history should never disappear."**
 
+🌐 **Live Production Application**: [https://learning-ttf6.onrender.com/](https://learning-ttf6.onrender.com/)  
 **Created by**: **Shatrughna Ambhore** • ✉️ [ambhoreshatrughna@gmail.com](mailto:ambhoreshatrughna@gmail.com) • 📞 [+91 9604466334](tel:+919604466334)
 
 LearningOS is a production-grade, full-stack learning operating system designed for real-life software engineering learning journeys. Built with **ASP.NET Core 8.0**, **Entity Framework Core**, and **PostgreSQL** as the authoritative persistent datastore, LearningOS protects against unrealistic workloads, preserves your complete audit trail, and provides smart recovery strategies for missed or skipped days.
@@ -155,6 +156,9 @@ Open `http://localhost:5000` in your browser.
 
 ## ☁️ Deployment on Render
 
+- 🌐 **Live Production URL**: [https://learning-ttf6.onrender.com/](https://learning-ttf6.onrender.com/)
+- 🩺 **Live Health Diagnostic**: [https://learning-ttf6.onrender.com/health](https://learning-ttf6.onrender.com/health)
+
 ### Using render.yaml (Blueprint)
 1. Push your repository to GitHub.
 2. Log into [Render Dashboard](https://dashboard.render.com).
@@ -178,6 +182,7 @@ Open `http://localhost:5000` in your browser.
 </p>
 
 - **Created by**: **Shatrughna Ambhore**
+- **Live Production App**: [https://learning-ttf6.onrender.com/](https://learning-ttf6.onrender.com/)
 - **Email**: [ambhoreshatrughna@gmail.com](mailto:ambhoreshatrughna@gmail.com)
 - **Phone**: [+91 9604466334](tel:+919604466334)
 - **GitHub Repository**: [shatru123/Learning](https://github.com/shatru123/Learning)
