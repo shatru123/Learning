@@ -221,7 +221,7 @@
               <button onclick="openReviewModalForCurrent()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition flex items-center gap-1">
                 <span>📋</span> Daily Review
               </button>
-              <button onclick="openMissedModalForCurrent()" class="px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-300 border border-red-700/50 font-medium text-xs transition flex items-center gap-1">
+              <button id="today-btn-missed" onclick="openMissedModalForCurrent()" class="px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-300 border border-red-700/50 font-medium text-xs transition flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
                 <span>❌</span> Mark Day as Missed
               </button>
             </div>

@@ -92,6 +92,11 @@ async function loadDashboard() {
       document.getElementById('today-title').textContent = "All 100 Learning Days Scheduled!";
       document.getElementById('today-theme').textContent = "Ready to start your next session.";
       document.getElementById('today-tasks-container').innerHTML = `<div class="text-xs text-slate-500 py-4">No active day selected. Check roadmap to pick a day.</div>`;
+      const missedBtn = document.getElementById('today-btn-missed');
+      if (missedBtn) {
+        missedBtn.disabled = true;
+        missedBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+      }
     }
 
     // Recent Activity Feed
@@ -99,6 +104,25 @@ async function loadDashboard() {
 
   } catch (err) {
     console.error("Dashboard load failed", err);
+  }
+}
+
+function checkDashboardMissedButtonState() {
+  const missedBtn = document.getElementById('today-btn-missed');
+  if (!missedBtn) return;
+  const container = document.getElementById('today-tasks-container');
+  if (!container) return;
+  const checkboxes = container.querySelectorAll('input[type="checkbox"]');
+  if (checkboxes.length > 0) {
+    const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+    missedBtn.disabled = allChecked;
+    if (allChecked) {
+      missedBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+      missedBtn.title = "Completed days cannot be marked as missed";
+    } else {
+      missedBtn.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+      missedBtn.title = "Mark Day as Missed";
+    }
   }
 }
 
@@ -110,6 +134,21 @@ function renderTodayPlan(day) {
   badge.className = `badge-status ${getStatusBadgeClass(day.status)}`;
   badge.innerHTML = getStatusIcon(day.status) + ' ' + formatStatusName(day.status);
 
+  // Disable Missed button if the day on dashboard is completed
+  const missedBtn = document.getElementById('today-btn-missed');
+  if (missedBtn) {
+    const isCompleted = (day.status || '').toLowerCase() === 'completed' || 
+                        (day.tasks && day.tasks.length > 0 && day.tasks.every(t => (t.status || '').toLowerCase() === 'completed'));
+    missedBtn.disabled = isCompleted;
+    if (isCompleted) {
+      missedBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+      missedBtn.title = "Completed days cannot be marked as missed";
+    } else {
+      missedBtn.classList.remove('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+      missedBtn.title = "Mark Day as Missed";
+    }
+  }
+
   const container = document.getElementById('today-tasks-container');
   if (!day.tasks || day.tasks.length === 0) {
     container.innerHTML = `<div class="text-xs text-slate-500 py-3">No tasks assigned to this day.</div>`;
@@ -119,7 +158,7 @@ function renderTodayPlan(day) {
   container.innerHTML = day.tasks.map(t => `
     <div class="flex items-start justify-between p-3 rounded-lg border border-slate-800 bg-slate-950/60 hover:border-slate-700 transition">
       <div class="flex items-start gap-3">
-        <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} onchange="toggleTaskStatus(${t.id}, this.checked)" class="mt-1 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 focus:ring-0 cursor-pointer">
+        <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} onchange="toggleTaskStatus(${t.id}, this.checked); checkDashboardMissedButtonState();" class="mt-1 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 focus:ring-0 cursor-pointer">
         <div>
           <div class="font-semibold text-sm ${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-200'}">
             ${escapeHtml(t.title)}
@@ -547,7 +586,15 @@ function openMissedModal(dayId) {
 }
 
 function openMissedModalForCurrent() {
-  if (currentActiveDay) openMissedModal(currentActiveDay.id);
+  if (currentActiveDay) {
+    const isCompleted = (currentActiveDay.status || '').toLowerCase() === 'completed' || 
+                        (currentActiveDay.tasks && currentActiveDay.tasks.length > 0 && currentActiveDay.tasks.every(t => (t.status || '').toLowerCase() === 'completed'));
+    if (isCompleted) {
+      showToast("Completed days cannot be marked as missed", "warning");
+      return;
+    }
+    openMissedModal(currentActiveDay.id);
+  }
 }
 
 function openMissedModalForDetail() {
