@@ -1482,6 +1482,7 @@ function updateAuthUi() {
   const userBadgeContainer = document.getElementById('user-badge-container');
   const btnOpenLogin = document.getElementById('btn-open-login');
   const navLearners = document.getElementById('nav-learners');
+  const settingsRoleBadge = document.getElementById('settings-user-role-badge');
 
   if (user && AuthManager.isAuthenticated()) {
     if (userBadgeContainer) userBadgeContainer.classList.remove('hidden');
@@ -1490,6 +1491,10 @@ function updateAuthUi() {
     const userNameEl = document.getElementById('header-user-name');
     if (userNameEl) {
       userNameEl.textContent = user.role === 'Admin' ? `${user.fullName} (Admin)` : user.fullName;
+    }
+
+    if (settingsRoleBadge) {
+      settingsRoleBadge.textContent = `${user.role} (${user.email})`;
     }
 
     if (user.role === 'Admin') {
@@ -1502,6 +1507,7 @@ function updateAuthUi() {
     if (userBadgeContainer) userBadgeContainer.classList.add('hidden');
     if (btnOpenLogin) btnOpenLogin.classList.remove('hidden');
     if (navLearners) navLearners.classList.add('hidden');
+    if (settingsRoleBadge) settingsRoleBadge.textContent = 'Not Signed In';
   }
 }
 
@@ -1644,6 +1650,123 @@ function handleLogout() {
   showToast("Logged out successfully");
   switchTab('dashboard');
   loadDashboard();
+}
+
+function openChangePasswordModal() {
+  if (!AuthManager.isAuthenticated()) {
+    openAuthModal('login');
+    return;
+  }
+  const errEl = document.getElementById('change-password-error');
+  const succEl = document.getElementById('change-password-success');
+  if (errEl) errEl.classList.add('hidden');
+  if (succEl) succEl.classList.add('hidden');
+  const form = document.getElementById('form-change-password');
+  if (form) form.reset();
+  openModal('modal-change-password');
+}
+
+async function submitChangePassword(e) {
+  e.preventDefault();
+  const currentPassword = document.getElementById('cp-current-password').value;
+  const newPassword = document.getElementById('cp-new-password').value;
+  const confirmNewPassword = document.getElementById('cp-confirm-password').value;
+  const errEl = document.getElementById('change-password-error');
+  const succEl = document.getElementById('change-password-success');
+  const btn = document.getElementById('btn-submit-change-password');
+
+  errEl.classList.add('hidden');
+  succEl.classList.add('hidden');
+
+  if (newPassword.length < 6) {
+    errEl.textContent = "New password must be at least 6 characters.";
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    errEl.textContent = "New password and confirmation do not match.";
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = `<span class="animate-spin">⏳</span> Updating...`;
+
+  try {
+    const res = await apiCall('/api/auth/change-password', 'POST', {
+      currentPassword,
+      newPassword,
+      confirmNewPassword
+    });
+
+    succEl.textContent = res.message || "Password updated successfully!";
+    succEl.classList.remove('hidden');
+    showToast(res.message || "Password updated successfully!");
+    document.getElementById('form-change-password').reset();
+
+    setTimeout(() => {
+      closeModal('modal-change-password');
+    }, 1500);
+  } catch (err) {
+    errEl.textContent = err.message || "Failed to update password.";
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>💾</span> Update Password`;
+  }
+}
+
+async function submitSettingsChangePassword(e) {
+  e.preventDefault();
+  if (!AuthManager.isAuthenticated()) {
+    openAuthModal('login');
+    return;
+  }
+
+  const currentPassword = document.getElementById('settings-cp-current').value;
+  const newPassword = document.getElementById('settings-cp-new').value;
+  const confirmNewPassword = document.getElementById('settings-cp-confirm').value;
+  const errEl = document.getElementById('settings-password-error');
+  const succEl = document.getElementById('settings-password-success');
+  const btn = document.getElementById('btn-settings-update-password');
+
+  errEl.classList.add('hidden');
+  succEl.classList.add('hidden');
+
+  if (newPassword.length < 6) {
+    errEl.textContent = "New password must be at least 6 characters.";
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  if (newPassword !== confirmNewPassword) {
+    errEl.textContent = "New password and confirmation do not match.";
+    errEl.classList.remove('hidden');
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = `<span class="animate-spin">⏳</span> Updating...`;
+
+  try {
+    const res = await apiCall('/api/auth/change-password', 'POST', {
+      currentPassword,
+      newPassword,
+      confirmNewPassword
+    });
+
+    succEl.textContent = res.message || "Password updated successfully!";
+    succEl.classList.remove('hidden');
+    showToast(res.message || "Password updated successfully!");
+    document.getElementById('form-settings-change-password').reset();
+  } catch (err) {
+    errEl.textContent = err.message || "Failed to update password.";
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>💾</span> Update Password`;
+  }
 }
 
 // ==========================================

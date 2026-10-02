@@ -243,4 +243,95 @@ public class MultiUserAuthTests : IDisposable
         Assert.Contains(learners, l => l.Email == "ambhoreshatrughna@gmail.com" && l.Role == "Admin");
         Assert.Contains(learners, l => l.Email == "dave@test.com" && l.Role == "Learner");
     }
+
+    [Fact]
+    public async Task ChangePassword_WithValidCredentials_UpdatesPasswordAndAllowsSubsequentLogin()
+    {
+        var config = CreateTestConfig();
+        var hasher = new PasswordHasher();
+        var tokenService = new TokenService(config);
+
+        using var db = new LearningDbContext(_dbOptions);
+        var prov = new CurriculumProvisioningService(db, NullLogger<CurriculumProvisioningService>.Instance);
+
+        var adminUser = await db.Users.FirstAsync(u => u.Role == "Admin");
+        var adminContext = MockUserContext(adminUser.Id, "Admin", adminUser.Email);
+        var authController = new AuthController(db, hasher, tokenService, prov, adminContext, NullLogger<AuthController>.Instance);
+
+        // 1. Change password from Admin@2026 to NewSecurePass@2026
+        var changeResult = await authController.ChangePassword(new ChangePasswordDto
+        {
+            CurrentPassword = "Admin@2026",
+            NewPassword = "NewSecurePass@2026",
+            ConfirmNewPassword = "NewSecurePass@2026"
+        });
+
+        Assert.IsType<OkObjectResult>(changeResult);
+
+        // 2. Old password should fail login
+        var oldLoginResult = await authController.Login(new LoginRequestDto
+        {
+            Email = adminUser.Email,
+            Password = "Admin@2026"
+        });
+        Assert.IsType<UnauthorizedObjectResult>(oldLoginResult.Result);
+
+        // 3. New password should succeed login
+        var newLoginResult = await authController.Login(new LoginRequestDto
+        {
+            Email = adminUser.Email,
+            Password = "NewSecurePass@2026"
+        });
+        var okLogin = Assert.IsType<OkObjectResult>(newLoginResult.Result);
+        var authResp = Assert.IsType<AuthResponseDto>(okLogin.Value);
+        Assert.False(string.IsNullOrWhiteSpace(authResp.Token));
+    }
+
+    [Fact]
+    public async Task ChangePassword_WithInvalidCurrentPassword_ReturnsBadRequest()
+    {
+        var config = CreateTestConfig();
+        var hasher = new PasswordHasher();
+        var tokenService = new TokenService(config);
+
+        using var db = new LearningDbContext(_dbOptions);
+        var prov = new CurriculumProvisioningService(db, NullLogger<CurriculumProvisioningService>.Instance);
+
+        var adminUser = await db.Users.FirstAsync(u => u.Role == "Admin");
+        var adminContext = MockUserContext(adminUser.Id, "Admin", adminUser.Email);
+        var authController = new AuthController(db, hasher, tokenService, prov, adminContext, NullLogger<AuthController>.Instance);
+
+        var result = await authController.ChangePassword(new ChangePasswordDto
+        {
+            CurrentPassword = "WrongPassword123!",
+            NewPassword = "NewSecurePass@2026",
+            ConfirmNewPassword = "NewSecurePass@2026"
+        });
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
+
+    [Fact]
+    public async Task ChangePassword_WithMismatchedConfirmation_ReturnsBadRequest()
+    {
+        var config = CreateTestConfig();
+        var hasher = new PasswordHasher();
+        var tokenService = new TokenService(config);
+
+        using var db = new LearningDbContext(_dbOptions);
+        var prov = new CurriculumProvisioningService(db, NullLogger<CurriculumProvisioningService>.Instance);
+
+        var adminUser = await db.Users.FirstAsync(u => u.Role == "Admin");
+        var adminContext = MockUserContext(adminUser.Id, "Admin", adminUser.Email);
+        var authController = new AuthController(db, hasher, tokenService, prov, adminContext, NullLogger<AuthController>.Instance);
+
+        var result = await authController.ChangePassword(new ChangePasswordDto
+        {
+            CurrentPassword = "Admin@2026",
+            NewPassword = "NewSecurePass@2026",
+            ConfirmNewPassword = "DifferentPass@2026"
+        });
+
+        Assert.IsType<BadRequestObjectResult>(result);
+    }
 }

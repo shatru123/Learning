@@ -171,6 +171,39 @@ public class AuthController : ControllerBase
         return Ok(MapUser(user));
     }
 
+    [Authorize]
+    [HttpPost("change-password")]
+    public async Task<ActionResult> ChangePassword([FromBody] ChangePasswordDto req)
+    {
+        var userId = _currentUserService.UserId;
+        if (!userId.HasValue) return Unauthorized();
+
+        if (string.IsNullOrWhiteSpace(req.CurrentPassword) || string.IsNullOrWhiteSpace(req.NewPassword))
+            return BadRequest(new { message = "Current password and new password are required." });
+
+        if (req.NewPassword.Length < 6)
+            return BadRequest(new { message = "New password must be at least 6 characters long." });
+
+        if (req.NewPassword != req.ConfirmNewPassword)
+            return BadRequest(new { message = "New password and confirmation do not match." });
+
+        var user = await _db.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Id == userId.Value);
+        if (user == null) return NotFound(new { message = "User not found." });
+
+        if (!_hasher.VerifyPassword(req.CurrentPassword, user.PasswordHash))
+            return BadRequest(new { message = "Current password is incorrect." });
+
+        if (_hasher.VerifyPassword(req.NewPassword, user.PasswordHash))
+            return BadRequest(new { message = "New password cannot be the same as your current password." });
+
+        user.PasswordHash = _hasher.HashPassword(req.NewPassword);
+        await _db.SaveChangesAsync();
+
+        _logger.LogInformation("Password successfully updated for user {UserId} ({Email})", user.Id, user.Email);
+
+        return Ok(new { message = "Password updated successfully!" });
+    }
+
     private static UserProfileDto MapUser(AppUser u) => new()
     {
         Id = u.Id,
