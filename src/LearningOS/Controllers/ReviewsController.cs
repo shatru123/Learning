@@ -2,6 +2,7 @@ using LearningOS.Data;
 using LearningOS.Dtos;
 using LearningOS.Models;
 using LearningOS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -30,6 +31,7 @@ public class ReviewsController : ControllerBase
         return Ok(review);
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<ActionResult<DailyReview>> SubmitReview([FromBody] DailyReviewDto dto)
     {

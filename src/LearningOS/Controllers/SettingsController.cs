@@ -1,6 +1,7 @@
 using LearningOS.Data;
 using LearningOS.Models;
 using LearningOS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -32,6 +33,7 @@ public class SettingsController : ControllerBase
         return Ok(settings);
     }
 
+    [Authorize]
     [HttpPut]
     public async Task<ActionResult<UserSettings>> UpdateSettings([FromBody] UserSettings updated)
     {

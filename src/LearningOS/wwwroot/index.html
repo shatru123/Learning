@@ -54,17 +54,19 @@
           <span class="w-2 h-2 rounded-full bg-emerald-500"></span> PostgreSQL Connected
         </div>
 
-        <button onclick="openRestDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-emerald-950/60 text-emerald-300 border border-emerald-800/80 hover:bg-emerald-900/50 transition flex items-center gap-1">
-          <span>🌴</span> <span class="hidden md:inline">Add</span> Rest Day
-        </button>
+        <div id="header-study-actions" class="hidden flex items-center gap-2 sm:gap-3">
+          <button onclick="openRestDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-emerald-950/60 text-emerald-300 border border-emerald-800/80 hover:bg-emerald-900/50 transition flex items-center gap-1">
+            <span>🌴</span> <span class="hidden md:inline">Add</span> Rest Day
+          </button>
 
-        <button onclick="openLeaveDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 transition flex items-center gap-1">
-          <span>🏖️</span> <span class="hidden md:inline">Add</span> Leave Day
-        </button>
+          <button onclick="openLeaveDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 transition flex items-center gap-1">
+            <span>🏖️</span> <span class="hidden md:inline">Add</span> Leave Day
+          </button>
 
-        <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 transition flex items-center gap-1">
-          <span>⏩</span> <span class="hidden md:inline">Extend</span> Roadmap
-        </button>
+          <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 transition flex items-center gap-1">
+            <span>⏩</span> <span class="hidden md:inline">Extend</span> Roadmap
+          </button>
+        </div>
 
         <!-- User Authentication & Profile Pill -->
         <div id="auth-user-bar" class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
@@ -124,11 +126,136 @@
     </div>
   </header>
 
+  <!-- Preview Mode Floating Banner (visible when exploring roadmap without login) -->
+  <div id="preview-mode-banner" class="hidden bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 border-b border-blue-800/60 px-4 py-2.5 shadow-md">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-2 text-slate-200">
+        <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 font-bold border border-blue-500/40 uppercase text-[10px] tracking-wider shrink-0">👀 Read-Only Preview</span>
+        <span>You are exploring the 100-day engineering curriculum in preview mode. Checkboxes, reviews, and edits are locked until you sign in.</span>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="switchTab('login')" class="px-3.5 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow flex items-center gap-1.5 cursor-pointer">
+          <span>🔑</span> Sign In / Register
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Main Container -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
 
+    <!-- VIEW 0: LOGIN & ONBOARDING (Shown first when not authenticated) -->
+    <section id="view-login" class="space-y-6 max-w-xl mx-auto py-4">
+      <!-- Welcome Hero Card -->
+      <div class="text-center space-y-3">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-700/60 text-blue-300 text-xs font-semibold shadow-sm">
+          <span>🚀</span> LearningOS • Elite Engineering Platform
+        </div>
+        <h2 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+          Welcome to Your Learning Workspace
+        </h2>
+        <p class="text-xs sm:text-sm text-slate-400 max-w-md mx-auto leading-relaxed">
+          Sign in to track your personal 100-day roadmap, DSA solutions, system designs, and streaks.
+        </p>
+      </div>
+
+      <!-- Authentication Card with Tabs -->
+      <div class="bg-slate-900/80 p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-md">
+        <!-- Auth View Switcher -->
+        <div class="flex border-b border-slate-800 pb-3 mb-6 gap-3 text-sm">
+          <button type="button" onclick="switchLoginViewTab('signin')" id="tab-login-signin" class="font-bold text-blue-400 border-b-2 border-blue-400 pb-2 px-1 transition cursor-pointer">
+            Sign In
+          </button>
+          <button type="button" onclick="switchLoginViewTab('register')" id="tab-login-register" class="font-medium text-slate-400 hover:text-slate-200 pb-2 px-1 transition cursor-pointer">
+            Register New Account
+          </button>
+        </div>
+
+        <!-- Inline Sign In Form -->
+        <form id="form-landing-login" onsubmit="handleLandingLogin(event)" class="space-y-4">
+          <div id="landing-login-error" class="hidden p-3 rounded-lg bg-red-950/80 border border-red-800/80 text-xs text-red-300"></div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Email or Username</label>
+            <input type="text" id="landing-login-email" required placeholder="ambhoreshatrughna@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+            <input type="password" id="landing-login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          </div>
+
+          <button type="submit" id="btn-landing-login" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>🔑</span> Sign In
+          </button>
+        </form>
+
+        <!-- Inline Register Form -->
+        <form id="form-landing-register" onsubmit="handleLandingRegister(event)" class="hidden space-y-4">
+          <div id="landing-register-error" class="hidden p-3 rounded-lg bg-red-950/80 border border-red-800/80 text-xs text-red-300"></div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+            <input type="text" id="landing-register-name" required placeholder="e.g. Alex Chen" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+            <input type="email" id="landing-register-email" required placeholder="alex@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Password (Min. 6 characters)</label>
+            <input type="password" id="landing-register-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Roadmap Start Date</label>
+              <input type="date" id="landing-register-date" required class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-300 mb-1">Invite Code (Optional)</label>
+              <input type="text" id="landing-register-invite" placeholder="e.g. MASTERY-2026" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 uppercase focus:outline-none focus:border-blue-500">
+            </div>
+          </div>
+          <p class="text-[11px] text-slate-500">
+            * Entering an invite code grants instant activation. Without a code, your account will be reviewed by Shatrughna Ambhore.
+          </p>
+
+          <button type="submit" id="btn-landing-register" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-sm font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
+            <span>✨</span> Create Account & Start Roadmap
+          </button>
+        </form>
+
+        <!-- Read-Only Preview Option -->
+        <div class="mt-6 pt-5 border-t border-slate-800 text-center space-y-2">
+          <p class="text-xs text-slate-400">Want to inspect the curriculum first?</p>
+          <button type="button" onclick="enterRoadmapPreview()" class="w-full py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700 hover:border-blue-500/50 text-xs font-semibold shadow transition flex items-center justify-center gap-2 cursor-pointer group">
+            <span>👀</span>
+            <span>Explore 100-Day Roadmap (Read-Only Preview)</span>
+            <span class="group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Creator Attribution Info Card -->
+      <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/50">
+          <div>
+            <div class="text-xs font-bold text-white">Shatrughna Ambhore</div>
+            <div class="text-[11px] text-slate-400">Lead Creator & Software Engineer</div>
+          </div>
+        </div>
+        <button onclick="openProfileModal()" class="text-xs text-blue-400 hover:underline cursor-pointer">
+          View Creator Info →
+        </button>
+      </div>
+    </section>
+
     <!-- VIEW 1: DASHBOARD -->
-    <section id="view-dashboard" class="space-y-6">
+    <section id="view-dashboard" class="hidden space-y-6">
       <!-- Recovery Queue Warning Card (Requirement 12) -->
       <div id="dash-recovery-banner" class="hidden rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 shadow-lg backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div class="flex items-start gap-3">

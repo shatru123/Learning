@@ -2,6 +2,7 @@ using LearningOS.Data;
 using LearningOS.Dtos;
 using LearningOS.Models;
 using LearningOS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -77,6 +78,7 @@ public class DaysController : ControllerBase
         return Ok(MapDayPlan(day));
     }
 
+    [Authorize]
     [HttpPost("{id}/status")]
     public async Task<ActionResult<DayPlanDto>> UpdateStatus(int id, [FromBody] DayStatus newStatus)
     {
@@ -111,6 +113,7 @@ public class DaysController : ControllerBase
         return Ok(MapDayPlan(day));
     }
 
+    [Authorize]
     [HttpPost("{id}/missed")]
     public async Task<ActionResult<DayPlanDto>> MarkDayMissed(int id, [FromBody] MissedDayRequestDto request)
     {
@@ -125,6 +128,7 @@ public class DaysController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("{id}/recover")]
     public async Task<ActionResult<DayPlanDto>> RecoverDay(int id, [FromBody] RecoverDayRequestDto request)
     {
@@ -139,6 +143,7 @@ public class DaysController : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost("rest")]
     public async Task<ActionResult<DayPlanDto>> AddRestDay([FromBody] AddRestDayRequestDto request)
     {
@@ -146,6 +151,7 @@ public class DaysController : ControllerBase
         return Ok(MapDayPlan(day));
     }
 
+    [Authorize]
     [HttpPost("leave")]
     public async Task<ActionResult<DayPlanDto>> AddLeaveDay([FromBody] AddLeaveDayRequestDto request)
     {
@@ -153,6 +159,7 @@ public class DaysController : ControllerBase
         return Ok(MapDayPlan(day));
     }
 
+    [Authorize]
     [HttpPost("extend")]
     public async Task<ActionResult> ExtendRoadmap([FromBody] ExtendRoadmapRequestDto request)
     {

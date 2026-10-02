@@ -101,22 +101,22 @@ public class LearningDbContext : DbContext
                   .HasForeignKey<DailyReview>(r => r.DayPlanId)
                   .OnDelete(DeleteBehavior.Cascade);
 
-            // Multi-tenant Query Filter
-            entity.HasQueryFilter(d => CurrentUserId == null || d.UserId == CurrentUserId);
+            // Multi-tenant Query Filter (Unauthenticated fallback to template UserId = 1)
+            entity.HasQueryFilter(d => CurrentUserId == null ? d.UserId == 1 : d.UserId == CurrentUserId);
         });
 
         // Multi-tenant Query Filters for User-scoped entities
-        modelBuilder.Entity<UserSettings>().HasQueryFilter(s => CurrentUserId == null || s.UserId == CurrentUserId);
-        modelBuilder.Entity<RecoveryPlan>().HasQueryFilter(r => CurrentUserId == null || r.UserId == CurrentUserId);
-        modelBuilder.Entity<DSAProblem>().HasQueryFilter(p => CurrentUserId == null || p.UserId == CurrentUserId);
-        modelBuilder.Entity<SystemDesignTopic>().HasQueryFilter(s => CurrentUserId == null || s.UserId == CurrentUserId);
-        modelBuilder.Entity<InterviewQuestion>().HasQueryFilter(q => CurrentUserId == null || q.UserId == CurrentUserId);
-        modelBuilder.Entity<JobApplication>().HasQueryFilter(j => CurrentUserId == null || j.UserId == CurrentUserId);
-        modelBuilder.Entity<JournalEntry>().HasQueryFilter(j => CurrentUserId == null || j.UserId == CurrentUserId);
-        modelBuilder.Entity<LearningResource>().HasQueryFilter(r => CurrentUserId == null || r.UserId == CurrentUserId);
-        modelBuilder.Entity<StudySession>().HasQueryFilter(s => CurrentUserId == null || s.UserId == CurrentUserId);
-        modelBuilder.Entity<Goal>().HasQueryFilter(g => CurrentUserId == null || g.UserId == CurrentUserId);
-        modelBuilder.Entity<ActivityAuditLog>().HasQueryFilter(a => CurrentUserId == null || a.UserId == CurrentUserId);
+        modelBuilder.Entity<UserSettings>().HasQueryFilter(s => CurrentUserId == null ? s.UserId == 1 : s.UserId == CurrentUserId);
+        modelBuilder.Entity<RecoveryPlan>().HasQueryFilter(r => CurrentUserId == null ? r.UserId == 1 : r.UserId == CurrentUserId);
+        modelBuilder.Entity<DSAProblem>().HasQueryFilter(p => CurrentUserId == null ? p.UserId == 1 : p.UserId == CurrentUserId);
+        modelBuilder.Entity<SystemDesignTopic>().HasQueryFilter(s => CurrentUserId == null ? s.UserId == 1 : s.UserId == CurrentUserId);
+        modelBuilder.Entity<InterviewQuestion>().HasQueryFilter(q => CurrentUserId == null ? q.UserId == 1 : q.UserId == CurrentUserId);
+        modelBuilder.Entity<JobApplication>().HasQueryFilter(j => CurrentUserId == null ? j.UserId == 1 : j.UserId == CurrentUserId);
+        modelBuilder.Entity<JournalEntry>().HasQueryFilter(j => CurrentUserId == null ? j.UserId == 1 : j.UserId == CurrentUserId);
+        modelBuilder.Entity<LearningResource>().HasQueryFilter(r => CurrentUserId == null ? r.UserId == 1 : r.UserId == CurrentUserId);
+        modelBuilder.Entity<StudySession>().HasQueryFilter(s => CurrentUserId == null ? s.UserId == 1 : s.UserId == CurrentUserId);
+        modelBuilder.Entity<Goal>().HasQueryFilter(g => CurrentUserId == null ? g.UserId == 1 : g.UserId == CurrentUserId);
+        modelBuilder.Entity<ActivityAuditLog>().HasQueryFilter(a => CurrentUserId == null ? a.UserId == 1 : a.UserId == CurrentUserId);
 
         // Configure LearningTask
         modelBuilder.Entity<LearningTask>(entity =>

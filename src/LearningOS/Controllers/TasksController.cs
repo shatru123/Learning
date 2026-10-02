@@ -2,6 +2,7 @@ using LearningOS.Data;
 using LearningOS.Dtos;
 using LearningOS.Models;
 using LearningOS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,6 +34,7 @@ public class TasksController : ControllerBase
         return Ok(MapTask(task));
     }
 
+    [Authorize]
     [HttpPut("{id}/status")]
     public async Task<ActionResult<LearningTaskDto>> UpdateStatus(int id, [FromBody] TaskStatusUpdateDto request)
     {

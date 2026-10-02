@@ -1,6 +1,7 @@
 using LearningOS.Data;
 using LearningOS.Models;
 using LearningOS.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -29,6 +30,7 @@ public class CurriculumController : ControllerBase
         return Ok(await query.OrderBy(d => d.Id).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("dsa")]
     public async Task<ActionResult<DSAProblem>> CreateDSAProblem([FromBody] DSAProblem problem)
     {
@@ -39,6 +41,7 @@ public class CurriculumController : ControllerBase
         return Ok(problem);
     }
 
+    [Authorize]
     [HttpPut("dsa/{id}/status")]
     public async Task<ActionResult<DSAProblem>> UpdateDSAStatus(int id, [FromBody] string status)
     {
@@ -58,6 +61,7 @@ public class CurriculumController : ControllerBase
         return Ok(await _db.SystemDesignTopics.OrderBy(s => s.Id).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("systemdesign")]
     public async Task<ActionResult<SystemDesignTopic>> CreateSystemDesignTopic([FromBody] SystemDesignTopic topic)
     {
@@ -67,6 +71,7 @@ public class CurriculumController : ControllerBase
         return Ok(topic);
     }
 
+    [Authorize]
     [HttpPut("systemdesign/{id}/status")]
     public async Task<ActionResult<SystemDesignTopic>> UpdateSystemDesignStatus(int id, [FromBody] string status)
     {
@@ -86,6 +91,7 @@ public class CurriculumController : ControllerBase
         return Ok(await query.OrderBy(q => q.Id).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("interview")]
     public async Task<ActionResult<InterviewQuestion>> CreateInterviewQuestion([FromBody] InterviewQuestion q)
     {
@@ -102,6 +108,7 @@ public class CurriculumController : ControllerBase
         return Ok(await _db.JobApplications.OrderByDescending(j => j.AppliedDate).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("jobs")]
     public async Task<ActionResult<JobApplication>> CreateJobApplication([FromBody] JobApplication job)
     {
@@ -112,6 +119,7 @@ public class CurriculumController : ControllerBase
         return Ok(job);
     }
 
+    [Authorize]
     [HttpPut("jobs/{id}/status")]
     public async Task<ActionResult<JobApplication>> UpdateJobStatus(int id, [FromBody] string status)
     {
@@ -129,6 +137,7 @@ public class CurriculumController : ControllerBase
         return Ok(await _db.JournalEntries.OrderByDescending(j => j.EntryDate).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("journal")]
     public async Task<ActionResult<JournalEntry>> CreateJournalEntry([FromBody] JournalEntry entry)
     {
@@ -147,6 +156,7 @@ public class CurriculumController : ControllerBase
         return Ok(await _db.LearningResources.OrderByDescending(r => r.AddedAt).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("resources")]
     public async Task<ActionResult<LearningResource>> CreateResource([FromBody] LearningResource res)
     {
@@ -164,6 +174,7 @@ public class CurriculumController : ControllerBase
         return Ok(await _db.Goals.OrderBy(g => g.Id).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("goals")]
     public async Task<ActionResult<Goal>> CreateGoal([FromBody] Goal goal)
     {
@@ -180,6 +191,7 @@ public class CurriculumController : ControllerBase
         return Ok(await _db.StudySessions.OrderByDescending(s => s.SessionDate).ToListAsync());
     }
 
+    [Authorize]
     [HttpPost("sessions")]
     public async Task<ActionResult<StudySession>> LogStudySession([FromBody] StudySession session)
     {

@@ -12,9 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function initApp() {
   await checkAuthOnBoot();
-  await loadDashboard();
-  loadRoadmap();
-  loadSettings();
+  if (!AuthManager.isAuthenticated()) {
+    switchTab('login');
+    loadRoadmap();
+  } else {
+    await loadDashboard();
+    loadRoadmap();
+    loadSettings();
+  }
   checkForInviteInUrl();
 }
 
@@ -23,12 +28,19 @@ let currentTab = 'dashboard';
 let previousTabBeforeDetail = 'roadmap';
 
 function switchTab(tabName) {
+  // If not authenticated and trying to access private personal tabs, divert to login
+  const privateTabs = ['dashboard', 'recovery', 'analytics', 'audit', 'settings', 'learners'];
+  if (!AuthManager.isAuthenticated() && privateTabs.includes(tabName)) {
+    showToast("Please sign in to access your personal dashboard & study data.", "info");
+    tabName = 'login';
+  }
+
   if (currentTab !== tabName && currentTab !== 'daydetail') {
     previousTabBeforeDetail = currentTab;
   }
   currentTab = tabName;
 
-  const tabs = ['dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];
+  const tabs = ['login', 'dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];
   tabs.forEach(t => {
     const el = document.getElementById(`view-${t}`);
     const navEl = document.getElementById(`nav-${t}`);
@@ -40,6 +52,13 @@ function switchTab(tabName) {
     }
   });
 
+  // Handle read-only preview mode banner
+  const previewBanner = document.getElementById('preview-mode-banner');
+  if (previewBanner) {
+    const isPreviewingRoadmap = !AuthManager.isAuthenticated() && ['roadmap', 'roadmap3d', 'curriculum', 'daydetail'].includes(tabName);
+    previewBanner.classList.toggle('hidden', !isPreviewingRoadmap);
+  }
+
   if (tabName === 'dashboard') loadDashboard();
   if (tabName === 'roadmap') loadRoadmap();
   if (tabName === 'roadmap3d') loadRoadmap3D();
@@ -49,6 +68,110 @@ function switchTab(tabName) {
   if (tabName === 'audit') loadAuditHistory();
   if (tabName === 'settings') loadSettings();
   if (tabName === 'learners') loadAdminLearners();
+}
+
+function enterRoadmapPreview() {
+  switchTab('roadmap');
+  showToast("👀 Previewing 100-Day Engineering Roadmap in Read-Only Mode", "info");
+}
+
+function switchLoginViewTab(tab) {
+  const tabSignin = document.getElementById('tab-login-signin');
+  const tabRegister = document.getElementById('tab-login-register');
+  const formSignin = document.getElementById('form-landing-login');
+  const formRegister = document.getElementById('form-landing-register');
+
+  if (tab === 'signin') {
+    if (tabSignin) tabSignin.className = "font-bold text-blue-400 border-b-2 border-blue-400 pb-2 px-1 transition cursor-pointer";
+    if (tabRegister) tabRegister.className = "font-medium text-slate-400 hover:text-slate-200 pb-2 px-1 transition cursor-pointer";
+    if (formSignin) formSignin.classList.remove('hidden');
+    if (formRegister) formRegister.classList.add('hidden');
+  } else {
+    if (tabRegister) tabRegister.className = "font-bold text-emerald-400 border-b-2 border-emerald-400 pb-2 px-1 transition cursor-pointer";
+    if (tabSignin) tabSignin.className = "font-medium text-slate-400 hover:text-slate-200 pb-2 px-1 transition cursor-pointer";
+    if (formRegister) formRegister.classList.remove('hidden');
+    if (formSignin) formSignin.classList.add('hidden');
+    const dateInput = document.getElementById('landing-register-date');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+  }
+}
+
+async function handleLandingLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('landing-login-email').value.trim();
+  const password = document.getElementById('landing-login-password').value;
+  const errEl = document.getElementById('landing-login-error');
+  const btn = document.getElementById('btn-landing-login');
+
+  errEl.classList.add('hidden');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="animate-spin">⏳</span> Signing In...`;
+
+  try {
+    const res = await apiCall('/api/auth/login', 'POST', { email, password });
+    AuthManager.setToken(res.token);
+    AuthManager.setUser(res.user);
+    updateAuthUi();
+    showToast(res.message || "Welcome back!");
+    switchTab('dashboard');
+    await loadDashboard();
+    loadRoadmap();
+  } catch (err) {
+    if (err.status === 'PendingApproval') {
+      openModal('modal-pending-approval');
+    } else {
+      errEl.textContent = err.message || "Invalid credentials.";
+      errEl.classList.remove('hidden');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>🔑</span> Sign In`;
+  }
+}
+
+async function handleLandingRegister(e) {
+  e.preventDefault();
+  const fullName = document.getElementById('landing-register-name').value.trim();
+  const email = document.getElementById('landing-register-email').value.trim();
+  const password = document.getElementById('landing-register-password').value;
+  const startDate = document.getElementById('landing-register-date').value;
+  const inviteCode = document.getElementById('landing-register-invite').value.trim();
+  const errEl = document.getElementById('landing-register-error');
+  const btn = document.getElementById('btn-landing-register');
+
+  errEl.classList.add('hidden');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="animate-spin">⏳</span> Creating Account...`;
+
+  try {
+    const res = await apiCall('/api/auth/register', 'POST', {
+      fullName,
+      email,
+      password,
+      startDate: startDate || null,
+      inviteCode: inviteCode || null
+    });
+
+    if (res.token && res.user && res.user.status === 'Active') {
+      AuthManager.setToken(res.token);
+      AuthManager.setUser(res.user);
+      updateAuthUi();
+      showToast(res.message || "Account created successfully!");
+      switchTab('dashboard');
+      await loadDashboard();
+      loadRoadmap();
+    } else {
+      openModal('modal-pending-approval');
+    }
+  } catch (err) {
+    errEl.textContent = err.message || "Registration failed.";
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>✨</span> Create Account & Start Roadmap`;
+  }
 }
 
 // 1. DASHBOARD
@@ -287,7 +410,7 @@ function renderRoadmapGrid(days) {
             Open Details →
           </button>
           <div class="flex gap-1">
-            ${isMissed ? `
+            ${!AuthManager.isAuthenticated() ? '' : (isMissed ? `
               <button onclick="openRecoverModal(${d.id})" class="px-2 py-1 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px]">
                 Recover
               </button>
@@ -295,7 +418,7 @@ function renderRoadmapGrid(days) {
               <button onclick="openMissedModal(${d.id})" title="Mark Day as Missed" class="px-2 py-1 rounded bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/50 text-[11px]">
                 Missed
               </button>
-            `}
+            `)}
           </div>
         </div>
       </div>
@@ -399,6 +522,7 @@ function renderDayDetail(day) {
   }
 
   // Tasks List
+  const isAuth = AuthManager.isAuthenticated();
   const tasksContainer = document.getElementById('detail-tasks-list');
   if (!day.tasks || day.tasks.length === 0) {
     tasksContainer.innerHTML = `<div class="text-xs text-slate-500 py-4">No tasks assigned to this day.</div>`;
@@ -406,7 +530,7 @@ function renderDayDetail(day) {
     tasksContainer.innerHTML = day.tasks.map(t => `
       <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border border-slate-800 bg-slate-950/70 gap-3">
         <div class="flex items-start gap-3">
-          <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} onchange="toggleTaskStatus(${t.id}, this.checked)" class="mt-1 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 cursor-pointer">
+          <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} ${!isAuth ? 'disabled title="Sign in to update tasks"' : ''} onchange="toggleTaskStatus(${t.id}, this.checked)" class="mt-1 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 ${!isAuth ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}">
           <div>
             <div class="font-semibold text-sm ${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-100'}">
               ${escapeHtml(t.title)}
@@ -422,7 +546,7 @@ function renderDayDetail(day) {
         </div>
 
         <div class="flex items-center gap-2 self-end sm:self-auto">
-          <select onchange="changeTaskStatusManual(${t.id}, this.value)" class="bg-slate-900 border border-slate-700 rounded text-xs px-2 py-1 text-slate-300">
+          <select ${!isAuth ? 'disabled title="Sign in to update tasks"' : ''} onchange="changeTaskStatusManual(${t.id}, this.value)" class="bg-slate-900 border border-slate-700 rounded text-xs px-2 py-1 text-slate-300 ${!isAuth ? 'cursor-not-allowed opacity-60' : ''}">
             <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
             <option value="InProgress" ${t.status === 'InProgress' ? 'selected' : ''}>In Progress</option>
             <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
@@ -441,18 +565,42 @@ function renderDayDetail(day) {
   const draftStatus = document.getElementById('draft-note-status');
   const draft = DraftStore.get(`day_${day.id}_notes`);
 
-  if (draft && draft.value && (!day.notes || draft.value !== day.notes)) {
-    notesEl.value = draft.value;
-    draftStatus.textContent = "Unsaved draft loaded from local browser cache";
-    draftStatus.className = "text-[11px] text-amber-400 font-semibold";
+  if (!isAuth) {
+    if (notesEl) {
+      notesEl.value = day.notes || '';
+      notesEl.readOnly = true;
+      notesEl.placeholder = "Sign in to save personal notes and insights for this day...";
+    }
+    if (draftStatus) {
+      draftStatus.textContent = "Sign in required to edit notes";
+      draftStatus.className = "text-[11px] text-slate-500";
+    }
   } else {
-    notesEl.value = day.notes || '';
-    draftStatus.textContent = "Saved to PostgreSQL database";
-    draftStatus.className = "text-[11px] text-slate-500";
+    if (notesEl) {
+      notesEl.readOnly = false;
+      notesEl.placeholder = "Record architectural insights, code snippets, gotchas, or test notes for this day...";
+      if (draft && draft.value && (!day.notes || draft.value !== day.notes)) {
+        notesEl.value = draft.value;
+        if (draftStatus) {
+          draftStatus.textContent = "Unsaved draft loaded from local browser cache";
+          draftStatus.className = "text-[11px] text-amber-400 font-semibold";
+        }
+      } else {
+        notesEl.value = day.notes || '';
+        if (draftStatus) {
+          draftStatus.textContent = "Saved to PostgreSQL database";
+          draftStatus.className = "text-[11px] text-slate-500";
+        }
+      }
+    }
   }
 }
 
 function handleNotesInput() {
+  if (!AuthManager.isAuthenticated()) {
+    showToast("Please sign in to take notes.", "info");
+    return;
+  }
   if (!currentActiveDay) return;
   const val = document.getElementById('detail-notes-input').value;
   DraftStore.save(`day_${currentActiveDay.id}_notes`, val);
@@ -462,6 +610,11 @@ function handleNotesInput() {
 }
 
 async function saveDayNotes() {
+  if (!AuthManager.isAuthenticated()) {
+    showToast("Sign in required to save day notes.", "info");
+    switchTab('login');
+    return;
+  }
   if (!currentActiveDay) return;
   const val = document.getElementById('detail-notes-input').value;
 
@@ -531,15 +684,30 @@ async function loadRecoveryQueue() {
 
 // 5. TASK STATUS UPDATES
 async function toggleTaskStatus(taskId, isChecked) {
+  if (!AuthManager.isAuthenticated()) {
+    showToast("Sign in required to mark tasks complete and save progress.", "info");
+    switchTab('login');
+    return;
+  }
   const newStatus = isChecked ? 'Completed' : 'Pending';
   await updateTaskStatusApi(taskId, newStatus);
 }
 
 async function changeTaskStatusManual(taskId, newStatus) {
+  if (!AuthManager.isAuthenticated()) {
+    showToast("Sign in required to update task status.", "info");
+    switchTab('login');
+    return;
+  }
   await updateTaskStatusApi(taskId, newStatus);
 }
 
 async function updateTaskStatusApi(taskId, newStatus) {
+  if (!AuthManager.isAuthenticated()) {
+    showToast("Sign in required to update task status.", "info");
+    switchTab('login');
+    return;
+  }
   try {
     await apiCall(`/api/tasks/${taskId}/status`, 'PUT', { status: newStatus });
     showToast(`Task marked as ${newStatus}`);
@@ -1343,8 +1511,26 @@ async function executeRestore() {
 
 // MODALS UTILITY
 function openModal(id) {
+  const protectedModals = [
+    'modal-missed', 'modal-recover', 'modal-rest', 'modal-leave', 
+    'modal-extend', 'modal-review', 'modal-create-invite', 'modal-change-password'
+  ];
+  if (protectedModals.includes(id) && !AuthManager.isAuthenticated()) {
+    showToast("Please sign in to perform this action.", "info");
+    switchTab('login');
+    return;
+  }
   const el = document.getElementById(id);
   if (el) el.classList.remove('hidden');
+}
+
+function openAddTaskModal() {
+  if (!AuthManager.isAuthenticated()) {
+    showToast("Please sign in to add tasks.", "info");
+    switchTab('login');
+    return;
+  }
+  showToast("Task addition will be supported in a future update.", "info");
 }
 
 function closeModal(id) {
@@ -1483,10 +1669,12 @@ function updateAuthUi() {
   const btnOpenLogin = document.getElementById('btn-open-login');
   const navLearners = document.getElementById('nav-learners');
   const settingsRoleBadge = document.getElementById('settings-user-role-badge');
+  const headerStudyActions = document.getElementById('header-study-actions');
 
   if (user && AuthManager.isAuthenticated()) {
     if (userBadgeContainer) userBadgeContainer.classList.remove('hidden');
     if (btnOpenLogin) btnOpenLogin.classList.add('hidden');
+    if (headerStudyActions) headerStudyActions.classList.remove('hidden');
     
     const userNameEl = document.getElementById('header-user-name');
     if (userNameEl) {
@@ -1506,6 +1694,7 @@ function updateAuthUi() {
   } else {
     if (userBadgeContainer) userBadgeContainer.classList.add('hidden');
     if (btnOpenLogin) btnOpenLogin.classList.remove('hidden');
+    if (headerStudyActions) headerStudyActions.classList.add('hidden');
     if (navLearners) navLearners.classList.add('hidden');
     if (settingsRoleBadge) settingsRoleBadge.textContent = 'Not Signed In';
   }
@@ -1582,6 +1771,7 @@ async function handleLoginSubmit(event) {
     closeModal('modal-auth');
     updateAuthUi();
     showToast(`Welcome back, ${res.user.fullName}!`);
+    switchTab('dashboard');
     await loadDashboard();
     loadRoadmap();
   } catch (err) {
@@ -1630,6 +1820,7 @@ async function handleRegisterSubmit(event) {
       AuthManager.setUser(res.user);
       updateAuthUi();
       showToast(res.message || "Account created successfully!");
+      switchTab('dashboard');
       await loadDashboard();
       loadRoadmap();
     } else {
@@ -1648,8 +1839,7 @@ function handleLogout() {
   AuthManager.clear();
   updateAuthUi();
   showToast("Logged out successfully");
-  switchTab('dashboard');
-  loadDashboard();
+  switchTab('login');
 }
 
 function openChangePasswordModal() {
