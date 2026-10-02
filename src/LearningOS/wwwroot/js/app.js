@@ -49,6 +49,11 @@ function switchTab(tabName) {
       navEl.classList.toggle('active-tab', t === tabName);
       navEl.classList.toggle('bg-slate-800', t === tabName);
       navEl.classList.toggle('text-blue-400', t === tabName);
+      if (t === tabName) {
+        try {
+          navEl.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch (_) {}
+      }
     }
   });
 
@@ -992,8 +997,13 @@ function switchTrackerSubTab(subTab) {
     if (view) view.classList.toggle('hidden', t !== subTab);
     if (btn) {
       btn.className = t === subTab
-        ? 'font-bold text-blue-400 border-b-2 border-blue-400 pb-2'
-        : 'font-medium text-slate-400 hover:text-slate-200 pb-2';
+        ? 'font-bold text-blue-400 border-b-2 border-blue-400 pb-2 shrink-0'
+        : 'font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0';
+      if (t === subTab) {
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        } catch (_) {}
+      }
     }
   });
 

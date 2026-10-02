@@ -34,45 +34,47 @@
 
   <!-- App Header -->
   <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20 text-xl">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-16 py-2 sm:py-0 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20 text-lg sm:text-xl shrink-0">
           ⚡
         </div>
         <div>
-          <div class="flex items-center gap-2">
-            <h1 class="font-bold text-lg text-white tracking-tight">LearningOS</h1>
-            <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">100-Day Mastery</span>
+          <div class="flex items-center gap-1.5 sm:gap-2">
+            <h1 class="font-bold text-base sm:text-lg text-white tracking-tight">LearningOS</h1>
+            <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">100-Day Mastery</span>
           </div>
-          <p class="text-xs text-slate-400 hidden sm:block">Real-Life Resilient Learning Operating System</p>
+          <p class="text-[11px] text-slate-400 hidden md:block">Real-Life Resilient Learning Operating System</p>
         </div>
       </div>
 
       <!-- Quick Action Buttons & Status -->
-      <div class="flex items-center gap-2 sm:gap-3">
-        <div id="server-status-pill" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-900/40 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5">
-          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> PostgreSQL Connected
+      <div class="flex items-center gap-1.5 sm:gap-3">
+        <div id="server-status-pill" class="px-2 py-1 sm:px-2.5 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-900/40 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5 shrink-0">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
+          <span class="hidden sm:inline">PostgreSQL Connected</span>
+          <span class="sm:hidden font-mono">Postgres</span>
         </div>
 
-        <div id="header-study-actions" class="hidden flex items-center gap-2 sm:gap-3">
+        <div id="header-study-actions" class="hidden lg:flex items-center gap-2">
           <button onclick="openRestDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-emerald-950/60 text-emerald-300 border border-emerald-800/80 hover:bg-emerald-900/50 transition flex items-center gap-1">
-            <span>🌴</span> <span class="hidden md:inline">Add</span> Rest Day
+            <span>🌴</span> <span class="hidden xl:inline">Add</span> Rest Day
           </button>
 
           <button onclick="openLeaveDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 transition flex items-center gap-1">
-            <span>🏖️</span> <span class="hidden md:inline">Add</span> Leave Day
+            <span>🏖️</span> <span class="hidden xl:inline">Add</span> Leave Day
           </button>
 
           <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 transition flex items-center gap-1">
-            <span>⏩</span> <span class="hidden md:inline">Extend</span> Roadmap
+            <span>⏩</span> <span class="hidden xl:inline">Extend</span> Roadmap
           </button>
         </div>
 
         <!-- User Authentication & Profile Pill -->
-        <div id="auth-user-bar" class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
-          <div id="user-badge-container" class="hidden flex items-center gap-1.5">
-            <span id="header-user-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 flex items-center gap-1 shadow-sm">
-              <span>👤</span> <span id="header-user-name">User</span>
+        <div id="auth-user-bar" class="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-slate-800 shrink-0">
+          <div id="user-badge-container" class="hidden flex items-center gap-1 sm:gap-1.5">
+            <span id="header-user-badge" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 flex items-center gap-1 shadow-sm max-w-[100px] sm:max-w-[160px] truncate">
+              <span>👤</span> <span id="header-user-name" class="truncate">User</span>
             </span>
             <button onclick="openChangePasswordModal()" title="Update Password" class="px-2 py-1 text-xs font-medium rounded-lg bg-slate-800 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 transition cursor-pointer flex items-center gap-1">
               <span>🔑</span> <span class="hidden xl:inline text-[11px]">Password</span>
@@ -82,46 +84,46 @@
             </button>
           </div>
           <button id="btn-open-login" onclick="openAuthModal('login')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1 shadow">
-            <span>🔑</span> Sign In
+            <span>🔑</span> <span>Sign In</span>
           </button>
         </div>
       </div>
     </div>
 
-    <!-- Navigation Tabs (Updated with Analytics) -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-slate-800/60 flex space-x-1 sm:space-x-4 overflow-x-auto py-2 text-sm scrollbar-none">
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400">
-        <span>📊</span> Dashboard
+    <!-- Navigation Tabs (Touch-scrollable on mobile) -->
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 border-t border-slate-800/60 flex space-x-1 sm:space-x-3 overflow-x-auto py-2 text-xs sm:text-sm scrollbar-none touch-scroll">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400 shrink-0">
+        <span>📊</span> <span>Dashboard</span>
       </button>
-      <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>📅</span> 100-Day Roadmap
+      <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>📅</span> <span>100-Day Roadmap</span>
       </button>
-      <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>🌌</span> 3D Roadmap
+      <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>🌌</span> <span>3D Roadmap</span>
       </button>
-      <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>🕸️</span> 3D Knowledge Graph
+      <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>🕸️</span> <span>Knowledge Graph</span>
       </button>
-      <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>🔄</span> Recovery Queue <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">0</span>
+      <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>🔄</span> <span>Recovery Queue</span> <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">0</span>
       </button>
-      <button onclick="switchTab('daydetail')" id="nav-daydetail" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>📝</span> Day Tasks & Review
+      <button onclick="switchTab('daydetail')" id="nav-daydetail" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>📝</span> <span>Day Tasks & Review</span>
       </button>
-      <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>🧠</span> Trackers (DSA, AI, Projects)
+      <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>🧠</span> <span>Trackers</span>
       </button>
-      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>📈</span> Analytics
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>📈</span> <span>Analytics</span>
       </button>
-      <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>📜</span> Audit History
+      <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>📜</span> <span>Audit History</span>
       </button>
-      <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
-        <span>⚙️</span> Schedule & Data
+      <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+        <span>⚙️</span> <span>Schedule & Settings</span>
       </button>
-      <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30">
-        <span>👥</span> Learners & Approvals <span id="nav-pending-badge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-red-500 text-white font-bold">0</span>
+      <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30 shrink-0">
+        <span>👥</span> <span>Learners</span> <span id="nav-pending-badge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-red-500 text-white font-bold">0</span>
       </button>
     </div>
   </header>
@@ -142,12 +144,12 @@
   </div>
 
   <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
 
     <!-- VIEW 0: LOGIN & ONBOARDING (Shown first when not authenticated) -->
-    <section id="view-login" class="space-y-6 max-w-xl mx-auto py-4">
+    <section id="view-login" class="space-y-4 sm:space-y-6 max-w-xl mx-auto py-2 sm:py-4">
       <!-- Welcome Hero Card -->
-      <div class="text-center space-y-3">
+      <div class="text-center space-y-2.5 sm:space-y-3">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-950/80 border border-blue-700/60 text-blue-300 text-xs font-semibold shadow-sm">
           <span>🚀</span> LearningOS • Elite Engineering Platform
         </div>
@@ -160,9 +162,9 @@
       </div>
 
       <!-- Authentication Card with Tabs -->
-      <div class="bg-slate-900/80 p-6 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-md">
+      <div class="bg-slate-900/80 p-4 sm:p-8 rounded-2xl border border-slate-800 shadow-2xl backdrop-blur-md">
         <!-- Auth View Switcher -->
-        <div class="flex border-b border-slate-800 pb-3 mb-6 gap-3 text-sm">
+        <div class="flex border-b border-slate-800 pb-3 mb-5 gap-3 text-sm">
           <button type="button" onclick="switchLoginViewTab('signin')" id="tab-login-signin" class="font-bold text-blue-400 border-b-2 border-blue-400 pb-2 px-1 transition cursor-pointer">
             Sign In
           </button>
@@ -177,12 +179,12 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Email or Username</label>
-            <input type="text" id="landing-login-email" required placeholder="ambhoreshatrughna@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+            <input type="text" id="landing-login-email" required placeholder="ambhoreshatrughna@gmail.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
-            <input type="password" id="landing-login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+            <input type="password" id="landing-login-password" required placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
           </div>
 
           <button type="submit" id="btn-landing-login" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-sm font-bold text-white shadow-lg transition flex items-center justify-center gap-2 cursor-pointer">
@@ -196,17 +198,17 @@
 
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-            <input type="text" id="landing-register-name" required placeholder="e.g. Alex Chen" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+            <input type="text" id="landing-register-name" required placeholder="e.g. Alex Chen" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
-            <input type="email" id="landing-register-email" required placeholder="alex@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+            <input type="email" id="landing-register-email" required placeholder="alex@example.com" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
           </div>
 
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Password (Min. 6 characters)</label>
-            <input type="password" id="landing-register-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+            <input type="password" id="landing-register-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200 focus:outline-none focus:border-blue-500">
           </div>
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
@@ -231,7 +233,7 @@
         <!-- Read-Only Preview Option -->
         <div class="mt-6 pt-5 border-t border-slate-800 text-center space-y-2">
           <p class="text-xs text-slate-400">Want to inspect the curriculum first?</p>
-          <button type="button" onclick="enterRoadmapPreview()" class="w-full py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700 hover:border-blue-500/50 text-xs font-semibold shadow transition flex items-center justify-center gap-2 cursor-pointer group">
+          <button type="button" onclick="enterRoadmapPreview()" class="w-full py-2.5 rounded-xl bg-slate-800/80 hover:bg-slate-700 text-blue-400 hover:text-blue-300 border border-slate-700 hover:border-blue-500/50 text-xs font-semibold shadow transition flex items-center justify-center gap-2 cursor-pointer group">
             <span>👀</span>
             <span>Explore 100-Day Roadmap (Read-Only Preview)</span>
             <span class="group-hover:translate-x-1 transition-transform">→</span>
@@ -240,9 +242,9 @@
       </div>
 
       <!-- Creator Attribution Info Card -->
-      <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 flex items-center justify-between gap-4">
+      <div class="p-3.5 sm:p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
         <div class="flex items-center gap-3">
-          <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/50">
+          <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-10 h-10 rounded-full object-cover ring-2 ring-blue-500/50 shrink-0">
           <div>
             <div class="text-xs font-bold text-white">Shatrughna Ambhore</div>
             <div class="text-[11px] text-slate-400">Lead Creator & Software Engineer</div>
@@ -255,137 +257,139 @@
     </section>
 
     <!-- VIEW 1: DASHBOARD -->
-    <section id="view-dashboard" class="hidden space-y-6">
+    <section id="view-dashboard" class="hidden space-y-4 sm:space-y-6">
       <!-- Recovery Queue Warning Card (Requirement 12) -->
-      <div id="dash-recovery-banner" class="hidden rounded-xl border border-amber-500/30 bg-amber-950/20 p-4 shadow-lg backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div id="dash-recovery-banner" class="hidden rounded-xl border border-amber-500/30 bg-amber-950/20 p-3.5 sm:p-4 shadow-lg backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
         <div class="flex items-start gap-3">
           <div class="text-2xl mt-0.5">⚠️</div>
           <div>
-            <h3 id="dash-recovery-title" class="text-base font-bold text-amber-300">0 tasks need attention</h3>
-            <p id="dash-recovery-desc" class="text-sm text-slate-300">You have missed days or incomplete tasks in your recovery queue.</p>
+            <h3 id="dash-recovery-title" class="text-sm sm:text-base font-bold text-amber-300">0 tasks need attention</h3>
+            <p id="dash-recovery-desc" class="text-xs sm:text-sm text-slate-300">You have missed days or incomplete tasks in your recovery queue.</p>
           </div>
         </div>
-        <button onclick="switchTab('recovery')" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-sm transition shrink-0 shadow">
+        <button onclick="switchTab('recovery')" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm transition shrink-0 shadow text-center">
           Open Recovery Manager →
         </button>
       </div>
 
       <!-- Top Metrics Breakdown (Requirement 9 & 10) -->
-      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <!-- Intelligent Streak Card -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5 relative overflow-hidden">
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 sm:p-5 relative overflow-hidden">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Current Streak</span>
-            <span class="text-2xl">🔥</span>
+            <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Current Streak</span>
+            <span class="text-xl sm:text-2xl">🔥</span>
           </div>
-          <div class="mt-3 flex items-baseline gap-2">
-            <span id="metric-current-streak" class="text-3xl font-extrabold text-white">0</span>
-            <span class="text-xs text-slate-400">days active</span>
+          <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
+            <span id="metric-current-streak" class="text-2xl sm:text-3xl font-extrabold text-white">0</span>
+            <span class="text-[10px] sm:text-xs text-slate-400">days active</span>
           </div>
-          <div class="mt-2 text-xs text-emerald-400 flex items-center gap-1">
-            <span>🌴</span> <span>Rest & Leave days protect streak!</span>
+          <div class="mt-2 text-[11px] sm:text-xs text-emerald-400 flex items-center gap-1">
+            <span>🌴</span> <span class="truncate">Protected by Rest/Leave</span>
           </div>
-          <div class="mt-1 text-[11px] text-slate-500">
-            Best streak: <span id="metric-best-streak" class="font-bold text-slate-300">0</span> days
+          <div class="mt-1 text-[10px] sm:text-[11px] text-slate-500">
+            Best: <span id="metric-best-streak" class="font-bold text-slate-300">0</span> days
           </div>
         </div>
 
         <!-- 100 Learning Days Progress -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5">
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 sm:p-5">
           <div class="flex items-center justify-between">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Roadmap Progress</span>
-            <span class="text-2xl">🎯</span>
+            <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Roadmap Progress</span>
+            <span class="text-xl sm:text-2xl">🎯</span>
           </div>
-          <div class="mt-3 flex items-baseline gap-2">
-            <span id="metric-completion-pct" class="text-3xl font-extrabold text-blue-400">0%</span>
-            <span class="text-xs text-slate-400">completed</span>
+          <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
+            <span id="metric-completion-pct" class="text-2xl sm:text-3xl font-extrabold text-blue-400">0%</span>
+            <span class="text-[10px] sm:text-xs text-slate-400">completed</span>
           </div>
           <div class="mt-2 w-full bg-slate-800 rounded-full h-2 overflow-hidden">
             <div id="metric-progress-bar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
-          <div class="mt-2 text-[11px] text-slate-400">
+          <div class="mt-2 text-[10px] sm:text-[11px] text-slate-400 truncate">
             <span id="metric-completed-tasks">0</span> / <span id="metric-total-tasks">0</span> tasks done
           </div>
         </div>
 
         <!-- Day Status Breakdown (Requirement 9) -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-5 col-span-2">
-          <div class="flex items-center justify-between mb-3">
-            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Day Status Breakdown (100 Learning Days)</span>
-            <span class="text-xs text-slate-500">Separated Counts</span>
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 sm:p-5 col-span-2">
+          <div class="flex items-center justify-between mb-2 sm:mb-3">
+            <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Day Status (100 Learning Days)</span>
+            <span class="text-[10px] sm:text-xs text-slate-500 hidden sm:inline">Separated Counts</span>
           </div>
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 text-center text-xs">
-            <div class="bg-slate-800/50 p-2 rounded-lg border border-slate-700/50">
-              <div class="text-slate-400 font-medium">Planned</div>
-              <div id="stat-planned" class="text-lg font-bold text-slate-200 mt-1">100</div>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 text-center text-xs">
+            <div class="bg-slate-800/50 p-1.5 sm:p-2 rounded-lg border border-slate-700/50">
+              <div class="text-[10px] sm:text-xs text-slate-400 font-medium truncate">Planned</div>
+              <div id="stat-planned" class="text-base sm:text-lg font-bold text-slate-200 mt-0.5">100</div>
             </div>
-            <div class="bg-emerald-950/30 p-2 rounded-lg border border-emerald-700/40">
-              <div class="text-emerald-400 font-medium">Completed</div>
-              <div id="stat-completed" class="text-lg font-bold text-emerald-300 mt-1">0</div>
+            <div class="bg-emerald-950/30 p-1.5 sm:p-2 rounded-lg border border-emerald-700/40">
+              <div class="text-[10px] sm:text-xs text-emerald-400 font-medium truncate">Completed</div>
+              <div id="stat-completed" class="text-base sm:text-lg font-bold text-emerald-300 mt-0.5">0</div>
             </div>
-            <div class="bg-indigo-950/30 p-2 rounded-lg border border-indigo-700/40">
-              <div class="text-indigo-400 font-medium">Partial</div>
-              <div id="stat-partial" class="text-lg font-bold text-indigo-300 mt-1">0</div>
+            <div class="bg-indigo-950/30 p-1.5 sm:p-2 rounded-lg border border-indigo-700/40">
+              <div class="text-[10px] sm:text-xs text-indigo-400 font-medium truncate">Partial</div>
+              <div id="stat-partial" class="text-base sm:text-lg font-bold text-indigo-300 mt-0.5">0</div>
             </div>
-            <div class="bg-slate-800/40 p-2 rounded-lg border border-slate-600/40">
-              <div class="text-slate-400 font-medium">Skipped</div>
-              <div id="stat-skipped" class="text-lg font-bold text-slate-300 mt-1">0</div>
+            <div class="bg-slate-800/40 p-1.5 sm:p-2 rounded-lg border border-slate-600/40">
+              <div class="text-[10px] sm:text-xs text-slate-400 font-medium truncate">Skipped</div>
+              <div id="stat-skipped" class="text-base sm:text-lg font-bold text-slate-300 mt-0.5">0</div>
             </div>
-            <div class="bg-teal-950/30 p-2 rounded-lg border border-teal-700/40">
-              <div class="text-teal-400 font-medium">🌴 Rest</div>
-              <div id="stat-rest" class="text-lg font-bold text-teal-300 mt-1">0</div>
+            <div class="bg-teal-950/30 p-1.5 sm:p-2 rounded-lg border border-teal-700/40">
+              <div class="text-[10px] sm:text-xs text-teal-400 font-medium truncate">🌴 Rest</div>
+              <div id="stat-rest" class="text-base sm:text-lg font-bold text-teal-300 mt-0.5">0</div>
             </div>
-            <div class="bg-red-950/30 p-2 rounded-lg border border-red-700/40">
-              <div class="text-red-400 font-medium">❌ Missed</div>
-              <div id="stat-missed" class="text-lg font-bold text-red-300 mt-1">0</div>
+            <div class="bg-red-950/30 p-1.5 sm:p-2 rounded-lg border border-red-700/40">
+              <div class="text-[10px] sm:text-xs text-red-400 font-medium truncate">❌ Missed</div>
+              <div id="stat-missed" class="text-base sm:text-lg font-bold text-red-300 mt-0.5">0</div>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Today's Focus & Active Plan -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div class="lg:col-span-2 rounded-xl border border-slate-800 bg-slate-900/60 p-6">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-4">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+        <div class="lg:col-span-2 rounded-xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div>
               <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Today's Focus</span>
-              <h2 id="today-title" class="text-xl font-bold text-white mt-1">Loading today's plan...</h2>
-              <p id="today-theme" class="text-sm text-slate-400 mt-0.5">...</p>
-              <div id="today-schedule-window" class="mt-2 text-[11px] text-indigo-400 font-mono flex items-center gap-1.5">
+              <h2 id="today-title" class="text-lg sm:text-xl font-bold text-white mt-1">Loading today's plan...</h2>
+              <p id="today-theme" class="text-xs sm:text-sm text-slate-400 mt-0.5">...</p>
+              <div id="today-schedule-window" class="mt-2 text-[10px] sm:text-[11px] text-indigo-400 font-mono flex flex-wrap items-center gap-1.5">
                 <span>🕒</span> <span>Study Window: 20:00 - 22:30 (Work Hours 09:00-18:00 Protected)</span>
               </div>
             </div>
-            <div id="today-status-badge" class="badge-status status-planned">Planned</div>
+            <div class="self-start sm:self-auto">
+              <div id="today-status-badge" class="badge-status status-planned">Planned</div>
+            </div>
           </div>
 
           <!-- Tasks Checklist -->
-          <div class="mt-4 space-y-3" id="today-tasks-container">
+          <div class="mt-4 space-y-2.5 sm:space-y-3" id="today-tasks-container">
             <div class="text-sm text-slate-500 py-4 text-center">Loading tasks...</div>
           </div>
 
           <!-- Action buttons for today -->
-          <div class="mt-6 pt-4 border-t border-slate-800 flex flex-wrap gap-2 justify-between">
-            <div class="flex gap-2">
-              <button onclick="openReviewModalForCurrent()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition flex items-center gap-1">
+          <div class="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
+            <div class="flex flex-wrap gap-2">
+              <button onclick="openReviewModalForCurrent()" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition flex items-center justify-center gap-1">
                 <span>📋</span> Daily Review
               </button>
-              <button id="today-btn-missed" onclick="openMissedModalForCurrent()" class="px-3 py-1.5 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-300 border border-red-700/50 font-medium text-xs transition flex items-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
+              <button id="today-btn-missed" onclick="openMissedModalForCurrent()" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-300 border border-red-700/50 font-medium text-xs transition flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
                 <span>❌</span> Mark Day as Missed
               </button>
             </div>
-            <button onclick="viewCurrentDayFull()" class="text-xs text-blue-400 hover:text-blue-300 font-semibold">
+            <button onclick="viewCurrentDayFull()" class="text-xs text-blue-400 hover:text-blue-300 font-semibold text-center sm:text-right py-1">
               Open Full Day Plan →
             </button>
           </div>
         </div>
 
         <!-- Recent Activity Feed (Requirement 15) -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-6 flex flex-col">
+        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6 flex flex-col">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Activity History</h3>
             <button onclick="switchTab('audit')" class="text-xs text-blue-400 hover:underline">View all</button>
           </div>
-          <div id="dash-activity-feed" class="mt-4 space-y-3 flex-1 overflow-y-auto max-h-96 pr-1 text-xs">
+          <div id="dash-activity-feed" class="mt-4 space-y-3 flex-1 overflow-y-auto max-h-80 sm:max-h-96 pr-1 text-xs">
             <div class="text-slate-500 py-4 text-center">Loading activity...</div>
           </div>
         </div>
@@ -451,12 +455,12 @@
       </div>
 
       <!-- 3D Viewport Stage -->
-      <div class="relative w-full h-[680px] rounded-2xl overflow-hidden border border-slate-800 bg-gradient-to-b from-slate-950 via-slate-900/90 to-slate-950 shadow-2xl">
+      <div class="relative w-full h-[420px] sm:h-[560px] lg:h-[680px] rounded-2xl overflow-hidden border border-slate-800 bg-gradient-to-b from-slate-950 via-slate-900/90 to-slate-950 shadow-2xl">
         <!-- Canvas Container -->
         <div id="roadmap-3d-canvas-container" class="w-full h-full"></div>
 
-        <!-- HUD: Top Left Phase Legend -->
-        <div class="absolute top-4 left-4 p-3 rounded-xl bg-slate-950/80 backdrop-blur border border-slate-800/80 text-xs space-y-1.5 pointer-events-none sm:pointer-events-auto">
+        <!-- HUD: Top Left Phase Legend (Desktop & Tablet) -->
+        <div class="hidden sm:block absolute top-4 left-4 p-3 rounded-xl bg-slate-950/80 backdrop-blur border border-slate-800/80 text-xs space-y-1.5 pointer-events-none sm:pointer-events-auto">
           <div class="font-bold text-white text-[11px] uppercase tracking-wider mb-1 flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-blue-400 animate-pulse"></span> Phase Architecture
           </div>
@@ -483,24 +487,25 @@
         </div>
 
         <!-- HUD: Top Right Stats -->
-        <div class="absolute top-4 right-4 p-3 rounded-xl bg-slate-950/80 backdrop-blur border border-slate-800/80 text-xs space-y-1 text-right pointer-events-none">
-          <div class="text-[10px] uppercase font-bold text-slate-500">Galaxy Velocity</div>
-          <div class="text-white font-semibold">100 Days Mapped</div>
-          <div class="text-emerald-400 font-bold" id="hud3d-completed">0 Completed</div>
-          <div class="text-amber-400 font-bold" id="hud3d-streak">Active Streak: 0 Days</div>
+        <div class="absolute top-2 right-2 sm:top-4 sm:right-4 p-2 sm:p-3 rounded-xl bg-slate-950/85 backdrop-blur border border-slate-800/80 text-[10px] sm:text-xs space-y-0.5 sm:space-y-1 text-right pointer-events-none">
+          <div class="text-[9px] sm:text-[10px] uppercase font-bold text-slate-500">Galaxy Velocity</div>
+          <div class="text-white font-semibold">100 Days</div>
+          <div class="text-emerald-400 font-bold" id="hud3d-completed">0 Done</div>
+          <div class="text-amber-400 font-bold" id="hud3d-streak">Streak: 0D</div>
         </div>
 
-        <!-- HUD: Bottom Left Navigation Helper -->
-        <div class="absolute bottom-4 left-4 text-[11px] text-slate-400 bg-slate-950/70 backdrop-blur px-3 py-1.5 rounded-lg border border-slate-800/60 pointer-events-none">
-          🖱️ <strong>Left-click + Drag:</strong> Orbit • <strong>Scroll:</strong> Zoom • <strong>Right-click + Drag:</strong> Pan • <strong>Click Node:</strong> Inspect Day
+        <!-- HUD: Bottom Navigation Helper -->
+        <div class="absolute bottom-3 left-3 right-3 sm:right-auto text-[10px] sm:text-[11px] text-slate-300 bg-slate-950/80 backdrop-blur px-2.5 py-1.5 rounded-lg border border-slate-800/60 pointer-events-none text-center sm:text-left">
+          <span class="sm:hidden">👆 <strong>Drag:</strong> Orbit • <strong>Pinch:</strong> Zoom • <strong>Tap:</strong> Inspect</span>
+          <span class="hidden sm:inline">🖱️ <strong>Left-click + Drag:</strong> Orbit • <strong>Scroll:</strong> Zoom • <strong>Click Node:</strong> Inspect Day</span>
         </div>
 
         <!-- Floating 3D Hover Tooltip -->
         <div id="roadmap-3d-tooltip" class="fixed hidden z-50 p-3 rounded-xl bg-slate-950/95 border border-slate-700 shadow-2xl backdrop-blur max-w-xs pointer-events-none transition-opacity duration-150"></div>
 
-        <!-- Floating 3D Inspector Drawer (Glassmorphism Slide-out) -->
-        <div id="roadmap-3d-inspector" class="absolute top-4 right-4 bottom-4 w-96 hidden z-40 bg-slate-950/95 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-md p-5 flex flex-col justify-between overflow-hidden">
-          <div class="overflow-y-auto space-y-4 pr-1">
+        <!-- Floating 3D Inspector Drawer (Glassmorphism Slide-out - Fully mobile-adaptive) -->
+        <div id="roadmap-3d-inspector" class="absolute top-2 right-2 bottom-2 left-2 sm:left-auto sm:top-4 sm:right-4 sm:bottom-4 sm:w-96 max-w-full hidden z-40 bg-slate-950/95 border border-slate-800 rounded-2xl shadow-2xl backdrop-blur-md p-4 sm:p-5 flex flex-col justify-between overflow-hidden">
+          <div class="overflow-y-auto space-y-3 sm:space-y-4 pr-1">
             <div class="flex items-start justify-between border-b border-slate-800 pb-3">
               <div>
                 <span id="insp3d-daynum" class="text-xs font-bold uppercase px-2 py-0.5 rounded bg-blue-950 text-blue-300 border border-blue-800">Day 1</span>
@@ -524,7 +529,7 @@
             </div>
           </div>
 
-          <div class="pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
+          <div class="pt-3 sm:pt-4 border-t border-slate-800 flex items-center justify-between gap-3">
             <button onclick="close3DInspector()" class="px-3 py-2 rounded-lg bg-slate-800 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition">
               Close
             </button>
@@ -537,16 +542,16 @@
     </section>
 
     <!-- VIEW 3: 100-DAY ROADMAP -->
-    <section id="view-roadmap" class="hidden space-y-6">
-      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/60 p-4 rounded-xl border border-slate-800">
+    <section id="view-roadmap" class="hidden space-y-4 sm:space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 bg-slate-900/60 p-3.5 sm:p-4 rounded-xl border border-slate-800">
         <div>
-          <h2 class="text-xl font-bold text-white">The 100-Day Learning Roadmap</h2>
-          <p class="text-xs text-slate-400 mt-1">Exactly 100 learning days. Rest days and leave days are scheduled separately.</p>
+          <h2 class="text-lg sm:text-xl font-bold text-white">The 100-Day Learning Roadmap</h2>
+          <p class="text-xs text-slate-400 mt-0.5 sm:mt-1">Exactly 100 learning days. Rest days and leave days are scheduled separately.</p>
         </div>
 
-        <!-- Filters -->
-        <div class="flex flex-wrap items-center gap-2">
-          <select id="roadmap-phase-filter" onchange="filterRoadmap()" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-xs px-3 py-2">
+        <!-- Filters (Full width on mobile, inline on desktop) -->
+        <div class="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2">
+          <select id="roadmap-phase-filter" onchange="filterRoadmap()" class="w-full sm:w-auto bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-xs px-3 py-2">
             <option value="">All 5 Phases</option>
             <option value="1">Phase 1: Core .NET, SQL, Dapper/EF & DSA (Days 1-25)</option>
             <option value="2">Phase 2: Microservices, RabbitMQ, Redis, K8s (Days 26-50)</option>
@@ -555,7 +560,7 @@
             <option value="5">Phase 5: Interview Mastery & Applications (Days 91-100)</option>
           </select>
 
-          <select id="roadmap-status-filter" onchange="filterRoadmap()" class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-xs px-3 py-2">
+          <select id="roadmap-status-filter" onchange="filterRoadmap()" class="w-full sm:w-auto bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-xs px-3 py-2">
             <option value="">All Statuses</option>
             <option value="Planned">Planned</option>
             <option value="InProgress">In Progress</option>
@@ -567,22 +572,22 @@
             <option value="LeaveDay">🏖️ Leave Day</option>
           </select>
 
-          <input type="text" id="roadmap-search-input" onkeyup="filterRoadmap()" placeholder="Search topics, DSA, tools..." class="bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-xs px-3 py-2 placeholder-slate-500 w-48">
+          <input type="text" id="roadmap-search-input" onkeyup="filterRoadmap()" placeholder="Search topics, DSA, tools..." class="w-full sm:w-60 flex-1 bg-slate-800 text-slate-200 border border-slate-700 rounded-lg text-xs px-3 py-2 placeholder-slate-500">
         </div>
       </div>
 
       <!-- Roadmap Grid -->
-      <div id="roadmap-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div id="roadmap-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
         <!-- Rendered by JS -->
       </div>
     </section>
 
     <!-- VIEW 3: RECOVERY QUEUE & MANAGER (Requirement 4, 5, 12) -->
-    <section id="view-recovery" class="hidden space-y-6">
-      <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+    <section id="view-recovery" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 pb-4 border-b border-slate-800">
           <div>
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
+            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
               <span>🔄</span> Recovery Queue & Smart Workload Manager
             </h2>
             <p class="text-xs text-slate-400 mt-1">
@@ -600,7 +605,7 @@
         </div>
 
         <!-- Recovery Queue Items -->
-        <div id="recovery-items-container" class="mt-6 space-y-4">
+        <div id="recovery-items-container" class="mt-4 sm:mt-6 space-y-3 sm:space-y-4">
           <!-- Rendered by JS -->
         </div>
       </div>
@@ -622,15 +627,15 @@
         </div>
       </div>
 
-      <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800">
-        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-slate-800">
+      <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800">
+        <div class="flex flex-col sm:flex-row sm:items-start md:items-center justify-between gap-3 pb-4 border-b border-slate-800">
           <div>
             <div class="flex items-center gap-2">
               <span id="detail-day-label" class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-900/50 text-blue-300">Day 1</span>
               <span id="detail-date" class="text-xs text-slate-400">2026-09-21</span>
             </div>
-            <h2 id="detail-title" class="text-2xl font-bold text-white mt-1">Day Title</h2>
-            <p id="detail-theme" class="text-sm text-slate-400 mt-0.5">Theme description</p>
+            <h2 id="detail-title" class="text-xl sm:text-2xl font-bold text-white mt-1">Day Title</h2>
+            <p id="detail-theme" class="text-xs sm:text-sm text-slate-400 mt-0.5">Theme description</p>
           </div>
           <div class="flex flex-wrap items-center gap-2">
             <div id="detail-status-badge" class="badge-status status-planned">Planned</div>
@@ -650,7 +655,7 @@
           </div>
           <div class="mt-1" id="detail-missed-reason">Reason: ...</div>
           <div class="mt-2">
-            <button onclick="openRecoverModalForDetail()" class="px-3 py-1 rounded bg-red-600 hover:bg-red-500 text-white font-bold text-xs">
+            <button onclick="openRecoverModalForDetail()" class="px-3 py-1.5 rounded-lg bg-red-600 hover:bg-red-500 text-white font-bold text-xs">
               Recover This Day →
             </button>
           </div>
@@ -659,10 +664,10 @@
         <!-- Task Checklist -->
         <div class="mt-6">
           <div class="flex items-center justify-between mb-3">
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Day Tasks & Objectives</h3>
+            <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Day Tasks & Objectives</h3>
             <button onclick="openAddTaskModal()" class="text-xs text-blue-400 hover:underline">+ Add Custom Task</button>
           </div>
-          <div id="detail-tasks-list" class="space-y-3">
+          <div id="detail-tasks-list" class="space-y-2.5 sm:space-y-3">
             <!-- Rendered by JS -->
           </div>
         </div>
@@ -670,24 +675,24 @@
         <!-- Day Notes with Outage Draft Storage (Requirement 22) -->
         <div class="mt-8 pt-6 border-t border-slate-800">
           <div class="flex items-center justify-between mb-2">
-            <h3 class="text-sm font-bold text-white uppercase tracking-wider">Day Learning Notes & Insights</h3>
+            <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Day Learning Notes & Insights</h3>
             <span id="draft-note-status" class="text-[11px] text-slate-500">Auto-saved to draft</span>
           </div>
           <textarea id="detail-notes-input" rows="4" oninput="handleNotesInput()" placeholder="Record architectural insights, code snippets, gotchas, or test notes for this day..." class="w-full bg-slate-950 border border-slate-800 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-blue-500 transition"></textarea>
           <div class="mt-2 flex justify-end">
-            <button onclick="saveDayNotes()" class="px-4 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow">
+            <button onclick="saveDayNotes()" class="w-full sm:w-auto px-4 py-2 sm:py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-semibold text-xs transition shadow text-center">
               Save Notes to PostgreSQL
             </button>
           </div>
         </div>
 
         <!-- Bottom Return Bar -->
-        <div class="mt-8 pt-4 border-t border-slate-800 flex items-center justify-between">
-          <button onclick="goBackFromDayDetail()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold flex items-center gap-2 transition border border-slate-700 shadow cursor-pointer group">
+        <div class="mt-8 pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
+          <button onclick="goBackFromDayDetail()" class="w-full sm:w-auto px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-white text-xs font-semibold flex items-center justify-center gap-2 transition border border-slate-700 shadow cursor-pointer group">
             <span class="text-blue-400 group-hover:-translate-x-1 transition-transform font-bold">←</span>
             <span class="btn-back-label-bottom">Back to 100-Day Roadmap</span>
           </button>
-          <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 transition">
+          <button onclick="window.scrollTo({ top: 0, behavior: 'smooth' })" class="text-xs text-slate-400 hover:text-slate-200 flex items-center gap-1 transition py-1">
             <span>↑ Back to top</span>
           </button>
         </div>
@@ -695,85 +700,85 @@
     </section>
 
     <!-- VIEW 5: CURRICULUM TRACKERS (DSA, AI, System Design, Projects, Interview, Jobs) -->
-    <section id="view-curriculum" class="hidden space-y-6">
-      <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800">
-        <div class="flex border-b border-slate-800 pb-3 gap-4 overflow-x-auto text-sm">
-          <button onclick="switchTrackerSubTab('dsa')" id="subtab-dsa" class="font-bold text-blue-400 border-b-2 border-blue-400 pb-2">💻 DSA Tracker</button>
-          <button onclick="switchTrackerSubTab('ai')" id="subtab-ai" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🤖 AI Engineering</button>
-          <button onclick="switchTrackerSubTab('systemdesign')" id="subtab-systemdesign" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🏛️ System Design</button>
-          <button onclick="switchTrackerSubTab('projects')" id="subtab-projects" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🚀 Portfolio Projects</button>
-          <button onclick="switchTrackerSubTab('interview')" id="subtab-interview" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🎯 Interview Prep</button>
-          <button onclick="switchTrackerSubTab('jobs')" id="subtab-jobs" class="font-medium text-slate-400 hover:text-slate-200 pb-2">💼 Job Applications</button>
-          <button onclick="switchTrackerSubTab('journal')" id="subtab-journal" class="font-medium text-slate-400 hover:text-slate-200 pb-2">📖 Engineering Journal</button>
-          <button onclick="switchTrackerSubTab('resources')" id="subtab-resources" class="font-medium text-slate-400 hover:text-slate-200 pb-2">🔗 Resources</button>
+    <section id="view-curriculum" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800">
+        <div class="flex border-b border-slate-800 pb-3 gap-3 sm:gap-4 overflow-x-auto text-xs sm:text-sm scrollbar-none touch-scroll whitespace-nowrap">
+          <button onclick="switchTrackerSubTab('dsa')" id="subtab-dsa" class="font-bold text-blue-400 border-b-2 border-blue-400 pb-2 shrink-0">💻 DSA Tracker</button>
+          <button onclick="switchTrackerSubTab('ai')" id="subtab-ai" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">🤖 AI Engineering</button>
+          <button onclick="switchTrackerSubTab('systemdesign')" id="subtab-systemdesign" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">🏛️ System Design</button>
+          <button onclick="switchTrackerSubTab('projects')" id="subtab-projects" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">🚀 Portfolio Projects</button>
+          <button onclick="switchTrackerSubTab('interview')" id="subtab-interview" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">🎯 Interview Prep</button>
+          <button onclick="switchTrackerSubTab('jobs')" id="subtab-jobs" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">💼 Job Applications</button>
+          <button onclick="switchTrackerSubTab('journal')" id="subtab-journal" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">📖 Engineering Journal</button>
+          <button onclick="switchTrackerSubTab('resources')" id="subtab-resources" class="font-medium text-slate-400 hover:text-slate-200 pb-2 shrink-0">🔗 Resources</button>
         </div>
 
         <!-- Sub-View: DSA -->
-        <div id="tracker-subview-dsa" class="mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-dsa" class="mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Curated NeetCode/LeetCode problems for the 100 days</span>
-            <button onclick="openAddDSAModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Problem</button>
+            <button onclick="openAddDSAModal()" class="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shrink-0 shadow">+ Add Problem</button>
           </div>
           <div id="dsa-problems-list" class="space-y-2"></div>
         </div>
 
         <!-- Sub-View: AI Engineering (Requirement 14) -->
-        <div id="tracker-subview-ai" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-ai" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Core AI/LLM Engineering Mastery Modules (Phase 3: Days 51–75)</span>
           </div>
           <div id="ai-modules-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
         <!-- Sub-View: System Design -->
-        <div id="tracker-subview-systemdesign" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-systemdesign" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Core High-Scale System Design Topics</span>
-            <button onclick="openAddSystemDesignModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Topic</button>
+            <button onclick="openAddSystemDesignModal()" class="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shrink-0 shadow">+ Add Topic</button>
           </div>
           <div id="systemdesign-list" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
         </div>
 
         <!-- Sub-View: Portfolio Projects (Requirement 14) -->
-        <div id="tracker-subview-projects" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-projects" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Enterprise AI Portfolio Projects (Phase 4: Days 76–90)</span>
           </div>
           <div id="projects-list" class="space-y-4"></div>
         </div>
 
         <!-- Sub-View: Interview -->
-        <div id="tracker-subview-interview" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-interview" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Deep-Dive Interview Questions (.NET, Distributed, AI, Behavioral)</span>
-            <button onclick="openAddInterviewModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Question</button>
+            <button onclick="openAddInterviewModal()" class="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shrink-0 shadow">+ Add Question</button>
           </div>
           <div id="interview-list" class="space-y-3"></div>
         </div>
 
         <!-- Sub-View: Jobs -->
-        <div id="tracker-subview-jobs" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-jobs" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Job Application Pipeline Tracker</span>
-            <button onclick="openAddJobModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Track Application</button>
+            <button onclick="openAddJobModal()" class="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shrink-0 shadow">+ Track Application</button>
           </div>
           <div id="jobs-list" class="space-y-2"></div>
         </div>
 
         <!-- Sub-View: Journal -->
-        <div id="tracker-subview-journal" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
-            <span class="text-xs text-slate-400">Engineering Journal & Discoveries</span>
-            <button onclick="openAddJournalModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ New Journal Entry</button>
+        <div id="tracker-subview-journal" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <span class="text-xs text-slate-400">Engineering Journal &amp; Discoveries</span>
+            <button onclick="openAddJournalModal()" class="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shrink-0 shadow">+ New Journal Entry</button>
           </div>
           <div id="journal-list" class="space-y-4"></div>
         </div>
 
         <!-- Sub-View: Resources -->
-        <div id="tracker-subview-resources" class="hidden mt-6 space-y-4">
-          <div class="flex items-center justify-between">
+        <div id="tracker-subview-resources" class="hidden mt-4 sm:mt-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <span class="text-xs text-slate-400">Curated Books, Repositories, and Docs</span>
-            <button onclick="openAddResourceModal()" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white">+ Add Resource</button>
+            <button onclick="openAddResourceModal()" class="self-start sm:self-auto px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-semibold text-white shrink-0 shadow">+ Add Resource</button>
           </div>
           <div id="resources-list" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
         </div>
@@ -781,75 +786,75 @@
     </section>
 
     <!-- VIEW 6: ANALYTICS (Requirement 14) -->
-    <section id="view-analytics" class="hidden space-y-6">
-      <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-6">
-        <div class="border-b border-slate-800 pb-3 flex items-center justify-between">
+    <section id="view-analytics" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4 sm:space-y-6">
+        <div class="border-b border-slate-800 pb-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
-            <h2 class="text-xl font-bold text-white flex items-center gap-2">
-              <span>📈</span> Learning Analytics & Velocity
+            <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+              <span>📈</span> Learning Analytics &amp; Velocity
             </h2>
             <p class="text-xs text-slate-400 mt-1">Real-time breakdown of your 100-day journey by phase, category, and study velocity.</p>
           </div>
-          <button onclick="loadAnalytics()" class="text-xs text-blue-400 hover:underline">Refresh</button>
+          <button onclick="loadAnalytics()" class="self-start sm:self-auto text-xs text-blue-400 hover:underline">Refresh</button>
         </div>
 
         <!-- Velocity Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60">
-            <div class="text-xs uppercase text-slate-400 font-semibold">Active Consistency Rate</div>
-            <div id="analytics-consistency-rate" class="text-2xl font-extrabold text-emerald-400 mt-2">100%</div>
-            <div class="text-[11px] text-slate-500 mt-1">Completed + Rest days vs total elapsed</div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+          <div class="p-3.5 sm:p-4 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-[11px] sm:text-xs uppercase text-slate-400 font-semibold">Active Consistency Rate</div>
+            <div id="analytics-consistency-rate" class="text-xl sm:text-2xl font-extrabold text-emerald-400 mt-1.5 sm:mt-2">100%</div>
+            <div class="text-[10px] sm:text-[11px] text-slate-500 mt-1">Completed + Rest days vs total elapsed</div>
           </div>
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60">
-            <div class="text-xs uppercase text-slate-400 font-semibold">Estimated Total Study Hours</div>
-            <div id="analytics-total-hours" class="text-2xl font-extrabold text-blue-400 mt-2">0 hrs</div>
-            <div class="text-[11px] text-slate-500 mt-1">Based on completed tasks</div>
+          <div class="p-3.5 sm:p-4 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-[11px] sm:text-xs uppercase text-slate-400 font-semibold">Estimated Total Study Hours</div>
+            <div id="analytics-total-hours" class="text-xl sm:text-2xl font-extrabold text-blue-400 mt-1.5 sm:mt-2">0 hrs</div>
+            <div class="text-[10px] sm:text-[11px] text-slate-500 mt-1">Based on completed tasks</div>
           </div>
-          <div class="p-4 rounded-xl border border-slate-800 bg-slate-950/60">
-            <div class="text-xs uppercase text-slate-400 font-semibold">Recovery Efficiency</div>
-            <div id="analytics-recovery-rate" class="text-2xl font-extrabold text-purple-400 mt-2">100%</div>
-            <div class="text-[11px] text-slate-500 mt-1">Missed workload resolved</div>
+          <div class="p-3.5 sm:p-4 rounded-xl border border-slate-800 bg-slate-950/60">
+            <div class="text-[11px] sm:text-xs uppercase text-slate-400 font-semibold">Recovery Efficiency</div>
+            <div id="analytics-recovery-rate" class="text-xl sm:text-2xl font-extrabold text-purple-400 mt-1.5 sm:mt-2">100%</div>
+            <div class="text-[10px] sm:text-[11px] text-slate-500 mt-1">Missed workload resolved</div>
           </div>
         </div>
 
         <!-- 5-Phase Breakdown -->
         <div class="space-y-4">
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Phase Progress Breakdown</h3>
+          <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Phase Progress Breakdown</h3>
           <div id="analytics-phases-container" class="space-y-3"></div>
         </div>
 
         <!-- Category Workload Distribution -->
         <div class="space-y-4 pt-4 border-t border-slate-800">
-          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Workload By Technology Domain</h3>
+          <h3 class="text-xs sm:text-sm font-bold text-white uppercase tracking-wider">Workload By Technology Domain</h3>
           <div id="analytics-categories-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3"></div>
         </div>
       </div>
     </section>
 
     <!-- VIEW 7: AUDIT HISTORY (Requirement 14 & 15) -->
-    <section id="view-audit" class="hidden space-y-6">
-      <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800">
+    <section id="view-audit" class="hidden space-y-4 sm:space-y-6">
+      <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800">
         <div class="border-b border-slate-800 pb-3">
-          <h2 class="text-xl font-bold text-white flex items-center gap-2">
-            <span>📜</span> Full Activity & Audit Trail
+          <h2 class="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
+            <span>📜</span> Full Activity &amp; Audit Trail
           </h2>
           <p class="text-xs text-slate-400 mt-1">
             Permanent, immutable record of every completed task, missed day, reschedule, note, and roadmap change.
           </p>
         </div>
-        <div id="full-audit-timeline" class="mt-6 space-y-3"></div>
+        <div id="full-audit-timeline" class="mt-4 sm:mt-6 space-y-3"></div>
       </div>
     </section>
 
     <!-- VIEW 8: SCHEDULE, SETTINGS & BACKUP (Requirement 15, 16, 21, 23) -->
-    <section id="view-settings" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <section id="view-settings" class="hidden space-y-4 sm:space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
 
         <!-- Account Security & Password Card -->
-        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4">
+        <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-            <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <span>🔐</span> Account Security & Password
+            <h3 class="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>🔐</span> Account Security &amp; Password
             </h3>
             <span id="settings-user-role-badge" class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">Active</span>
           </div>
@@ -878,7 +883,7 @@
             </div>
 
             <div class="pt-2 flex justify-end">
-              <button type="submit" id="btn-settings-update-password" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition flex items-center gap-1.5 cursor-pointer">
+              <button type="submit" id="btn-settings-update-password" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow transition flex items-center justify-center gap-1.5 cursor-pointer">
                 <span>💾</span> Update Password
               </button>
             </div>
@@ -886,10 +891,10 @@
         </div>
 
         <!-- Working-Hours-Aware Schedule (Requirement 15) -->
-        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4">
-          <div class="flex items-center justify-between">
-            <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-              <span>🕒</span> Working-Hours-Aware Schedule
+        <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <h3 class="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>🕒</span> Working-Hours Schedule
             </h3>
             <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-indigo-900/50 text-indigo-300 border border-indigo-700/50">Editable</span>
           </div>
@@ -897,7 +902,7 @@
             Configure your professional working hours so recovery sessions and study plans never conflict with your workday.
           </p>
 
-          <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
               <label class="block font-semibold text-slate-300 mb-1">Workday Start Hour</label>
               <input type="number" id="sched-workday-start" min="0" max="23" value="9" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
@@ -910,7 +915,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
               <label class="block font-semibold text-slate-300 mb-1">Study Start Time</label>
               <input type="time" id="sched-study-start" value="20:00" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
@@ -921,7 +926,7 @@
             </div>
           </div>
 
-          <div class="grid grid-cols-2 gap-3 text-xs">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
             <div>
               <label class="block font-semibold text-slate-300 mb-1">Weekday Daily Minutes</label>
               <input type="number" id="sched-weekday-mins" min="30" max="360" step="15" value="120" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-slate-200">
@@ -932,23 +937,25 @@
             </div>
           </div>
 
-          <label class="flex items-center gap-2 cursor-pointer text-xs pt-1">
-            <input type="checkbox" id="sched-protect-workhours" checked class="text-blue-600 rounded">
+          <label class="flex items-start sm:items-center gap-2 cursor-pointer text-xs pt-1">
+            <input type="checkbox" id="sched-protect-workhours" checked class="mt-0.5 sm:mt-0 text-blue-600 rounded shrink-0">
             <span class="text-slate-300 font-medium">Protect Working Hours (Never allocate recovery tasks during work hours)</span>
           </label>
 
           <div class="pt-2 flex justify-end">
-            <button onclick="saveWorkingHoursSchedule()" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow transition">
+            <button onclick="saveWorkingHoursSchedule()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-xs shadow transition text-center">
               Save Working Hours Schedule
             </button>
           </div>
         </div>
 
         <!-- Workload & Smart Recovery Settings -->
-        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4">
-          <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span>⚙️</span> Recovery Workload Protection Settings
-          </h3>
+        <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4">
+          <div class="border-b border-slate-800 pb-3">
+            <h3 class="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>⚙️</span> Recovery Workload Protection
+            </h3>
+          </div>
           <p class="text-xs text-slate-400">
             Configure the maximum additional recovery time allocated to tomorrow when catching up on missed days.
           </p>
@@ -962,28 +969,30 @@
             <input type="number" id="settings-daily-target" min="30" max="480" step="30" value="120" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
           </div>
           <div class="pt-2 flex justify-end">
-            <button onclick="saveUserSettings()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow">
+            <button onclick="saveUserSettings()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition shadow text-center">
               Save Workload Cap
             </button>
           </div>
         </div>
 
         <!-- Database Persistence & Architecture Info -->
-        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4 col-span-1 lg:col-span-2">
-          <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span>🛡️</span> Authoritative Persistence Architecture & Health Diagnostic
-          </h3>
+        <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4 col-span-1 lg:col-span-2">
+          <div class="border-b border-slate-800 pb-3">
+            <h3 class="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>🛡️</span> Authoritative Persistence Architecture &amp; Health Diagnostic
+            </h3>
+          </div>
           <p class="text-xs text-slate-300 leading-relaxed">
             All user learning state, tasks, history, notes, and records are stored exclusively in <strong class="text-emerald-400">PostgreSQL</strong>.
             The ASP.NET Core web service is completely stateless on Render. If PostgreSQL is unavailable in production, the service fails fast with an explicit error.
           </p>
-          <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs font-mono text-slate-400 space-y-1">
-            <div>Browser → ASP.NET Core 8.0 → EF Core → PostgreSQL (Authoritative)</div>
-            <div class="text-emerald-400">✔ Zero-Downtime Survives Restarts & Redeploys</div>
-            <div class="text-blue-400">✔ Full Historical Audit Logging Enforced</div>
+          <div class="p-3 bg-slate-950 rounded-lg border border-slate-800 text-xs font-mono text-slate-400 space-y-1 overflow-x-auto touch-scroll">
+            <div class="whitespace-nowrap">Browser → ASP.NET Core 8.0 → EF Core → PostgreSQL (Authoritative)</div>
+            <div class="text-emerald-400 whitespace-nowrap">✔ Zero-Downtime Survives Restarts &amp; Redeploys</div>
+            <div class="text-blue-400 whitespace-nowrap">✔ Full Historical Audit Logging Enforced</div>
           </div>
-          <div class="pt-2 flex items-center gap-3">
-            <button onclick="checkSystemHealth()" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700">
+          <div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-3">
+            <button onclick="checkSystemHealth()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-medium text-slate-300 border border-slate-700 text-center">
               Run Live Health Diagnostic (/health)
             </button>
             <span id="health-check-result" class="text-xs text-slate-400"></span>
@@ -991,29 +1000,31 @@
         </div>
 
         <!-- Export & Backup (Requirement 16 & 23) -->
-        <div class="bg-slate-900/60 p-6 rounded-xl border border-slate-800 space-y-4 col-span-1 lg:col-span-2">
-          <h3 class="text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
-            <span>💾</span> Data Backup & Restore Center
-          </h3>
+        <div class="bg-slate-900/60 p-4 sm:p-6 rounded-xl border border-slate-800 space-y-4 col-span-1 lg:col-span-2">
+          <div class="border-b border-slate-800 pb-3">
+            <h3 class="text-sm sm:text-base font-bold text-white uppercase tracking-wider flex items-center gap-2">
+              <span>💾</span> Data Backup &amp; Restore Center
+            </h3>
+          </div>
           <p class="text-xs text-slate-400">
             Download your complete learning history at any time. You can also validate and restore a backup file safely.
           </p>
 
-          <div class="flex flex-wrap gap-4 pt-2">
-            <a href="/api/data/export/json" download class="px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center gap-2 shadow">
+          <div class="flex flex-col sm:flex-row flex-wrap gap-2.5 sm:gap-4 pt-2">
+            <a href="/api/data/export/json" download class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs transition flex items-center justify-center gap-2 shadow text-center">
               <span>📥</span> Export Everything (JSON Backup)
             </a>
-            <a href="/api/data/export/csv" download class="px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs transition flex items-center gap-2">
+            <a href="/api/data/export/csv" download class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 font-bold text-xs transition flex items-center justify-center gap-2 text-center">
               <span>📊</span> Export Tasks (CSV)
             </a>
           </div>
 
           <!-- Restore Backup Box -->
-          <div class="mt-6 pt-6 border-t border-slate-800">
+          <div class="mt-4 sm:mt-6 pt-4 sm:pt-6 border-t border-slate-800">
             <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider mb-2">Restore Backup File</h4>
-            <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-              <input type="file" id="backup-file-input" accept=".json" class="text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-blue-400 hover:file:bg-slate-700">
-              <button onclick="validateBackupFile()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+              <input type="file" id="backup-file-input" accept=".json" class="w-full sm:w-auto text-xs text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-blue-400 hover:file:bg-slate-700">
+              <button onclick="validateBackupFile()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs transition text-center shrink-0">
                 Validate Backup Schema
               </button>
             </div>
@@ -1022,45 +1033,45 @@
         </div>
 
         <!-- Creator & Contact Card -->
-        <div class="bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-blue-950/40 p-6 rounded-xl border border-blue-900/50 space-y-4 col-span-1 lg:col-span-2 shadow-lg">
+        <div class="bg-gradient-to-br from-slate-900/90 via-slate-900/60 to-blue-950/40 p-4 sm:p-6 rounded-xl border border-blue-900/50 space-y-4 col-span-1 lg:col-span-2 shadow-lg">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
             <div class="flex items-center gap-3.5">
               <button type="button" onclick="openProfileModal()" class="focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-2xl group cursor-pointer transition transform hover:scale-105 active:scale-95 shrink-0" title="Click to view full profile photo">
                 <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="w-14 h-14 rounded-2xl object-cover ring-2 ring-blue-500/60 group-hover:ring-blue-400 shadow-lg shadow-blue-500/10 transition">
               </button>
               <div>
-                <h3 class="text-base font-bold text-white tracking-tight">Creator &amp; Architect Information</h3>
+                <h3 class="text-sm sm:text-base font-bold text-white tracking-tight">Creator &amp; Architect Information</h3>
                 <p class="text-xs text-slate-400">Designed and built for disciplined, career-grade engineering mastery</p>
               </div>
             </div>
-            <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/30 w-fit">
+            <span class="self-start sm:self-auto inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/30">
               Lead Creator
             </span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-            <div class="p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4 pt-1">
+            <div class="p-3.5 sm:p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-slate-700 transition">
               <div class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Created By</div>
-              <div class="text-base font-bold text-white flex items-center gap-2">
+              <div class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
                 <button type="button" onclick="openProfileModal()" class="hover:text-blue-400 transition underline decoration-slate-600 hover:decoration-blue-400 cursor-pointer text-left">Shatrughna Ambhore</button>
               </div>
-              <div class="text-[11px] text-slate-500 mt-1">Software Engineer & Architect</div>
+              <div class="text-[11px] text-slate-500 mt-1">Software Engineer &amp; Architect</div>
             </div>
 
-            <div class="p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-blue-800/60 transition group">
+            <div class="p-3.5 sm:p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-blue-800/60 transition group">
               <div class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Email Address</div>
-              <a href="mailto:ambhoreshatrughna@gmail.com" class="text-sm font-semibold text-blue-400 hover:text-blue-300 transition flex items-center gap-1.5 break-all">
+              <a href="mailto:ambhoreshatrughna@gmail.com" class="text-xs sm:text-sm font-semibold text-blue-400 hover:text-blue-300 transition flex items-center gap-1.5 break-all">
                 <span>✉️</span> ambhoreshatrughna@gmail.com
               </a>
-              <div class="text-[11px] text-slate-500 mt-1">Direct inquiries & feedback</div>
+              <div class="text-[11px] text-slate-500 mt-1">Direct inquiries &amp; feedback</div>
             </div>
 
-            <div class="p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-emerald-800/60 transition group">
+            <div class="p-3.5 sm:p-4 bg-slate-950/70 rounded-xl border border-slate-800/80 hover:border-emerald-800/60 transition group">
               <div class="text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Direct Contact</div>
-              <a href="tel:+919604466334" class="text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1.5">
+              <a href="tel:+919604466334" class="text-xs sm:text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition flex items-center gap-1.5">
                 <span>📞</span> +91 9604466334
               </a>
-              <div class="text-[11px] text-slate-500 mt-1">Phone & WhatsApp</div>
+              <div class="text-[11px] text-slate-500 mt-1">Phone &amp; WhatsApp</div>
             </div>
           </div>
         </div>
@@ -1069,43 +1080,43 @@
     </section>
 
     <!-- VIEW 10: LEARNERS & APPROVALS (ADMIN ONLY) -->
-    <section id="view-learners" class="hidden space-y-6">
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+    <section id="view-learners" class="hidden space-y-4 sm:space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 border-b border-slate-800 pb-4">
         <div>
-          <h2 class="text-xl font-extrabold text-white flex items-center gap-2">
-            <span>👥</span> Learners & Cohort Approvals
+          <h2 class="text-lg sm:text-xl font-extrabold text-white flex items-center gap-2">
+            <span>👥</span> Learners &amp; Cohort Approvals
           </h2>
           <p class="text-xs text-slate-400 mt-1">
             Administer registered learners, approve new applications, manage invite codes, and monitor cohort progress.
           </p>
         </div>
-        <div class="flex items-center gap-2">
-          <button onclick="openCreateInviteModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow">
+        <div class="flex flex-wrap items-center gap-2">
+          <button onclick="openCreateInviteModal()" class="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 shadow">
             <span>🎟️</span> Generate Invite Code
           </button>
-          <button onclick="loadAdminLearners()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition flex items-center gap-1.5">
+          <button onclick="loadAdminLearners()" class="w-full sm:w-auto px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition flex items-center justify-center gap-1.5">
             <span>🔄</span> Refresh
           </button>
         </div>
       </div>
 
       <!-- Cohort Summary Metric Cards -->
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="card p-4 rounded-xl border border-slate-800 bg-slate-900/60">
-          <div class="text-xs text-slate-400 font-medium">Total Registered</div>
-          <div id="admin-stat-total-users" class="text-2xl font-black text-white mt-1">0</div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
+        <div class="card p-3.5 sm:p-4 rounded-xl border border-slate-800 bg-slate-900/60">
+          <div class="text-[11px] sm:text-xs text-slate-400 font-medium">Total Registered</div>
+          <div id="admin-stat-total-users" class="text-xl sm:text-2xl font-black text-white mt-1">0</div>
         </div>
-        <div class="card p-4 rounded-xl border border-amber-600/30 bg-amber-950/20">
-          <div class="text-xs text-amber-300 font-medium">Pending Approvals</div>
-          <div id="admin-stat-pending" class="text-2xl font-black text-amber-400 mt-1">0</div>
+        <div class="card p-3.5 sm:p-4 rounded-xl border border-amber-600/30 bg-amber-950/20">
+          <div class="text-[11px] sm:text-xs text-amber-300 font-medium">Pending Approvals</div>
+          <div id="admin-stat-pending" class="text-xl sm:text-2xl font-black text-amber-400 mt-1">0</div>
         </div>
-        <div class="card p-4 rounded-xl border border-emerald-600/30 bg-emerald-950/20">
-          <div class="text-xs text-emerald-300 font-medium">Active Learners</div>
-          <div id="admin-stat-active" class="text-2xl font-black text-emerald-400 mt-1">0</div>
+        <div class="card p-3.5 sm:p-4 rounded-xl border border-emerald-600/30 bg-emerald-950/20">
+          <div class="text-[11px] sm:text-xs text-emerald-300 font-medium">Active Learners</div>
+          <div id="admin-stat-active" class="text-xl sm:text-2xl font-black text-emerald-400 mt-1">0</div>
         </div>
-        <div class="card p-4 rounded-xl border border-blue-600/30 bg-blue-950/20">
-          <div class="text-xs text-blue-300 font-medium">Avg Completion</div>
-          <div id="admin-stat-avg-completion" class="text-2xl font-black text-blue-400 mt-1">0%</div>
+        <div class="card p-3.5 sm:p-4 rounded-xl border border-blue-600/30 bg-blue-950/20">
+          <div class="text-[11px] sm:text-xs text-blue-300 font-medium">Avg Completion</div>
+          <div id="admin-stat-avg-completion" class="text-xl sm:text-2xl font-black text-blue-400 mt-1">0%</div>
         </div>
       </div>
 
@@ -1140,12 +1151,12 @@
       <div class="space-y-3">
         <div class="flex items-center justify-between">
           <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
-            <span>📊</span> Learners Progress & Roadmap Inspection
+            <span>📊</span> Learners Progress &amp; Roadmap Inspection
           </h3>
         </div>
         <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-900/50 shadow">
-          <div class="overflow-x-auto">
-            <table class="w-full text-left text-xs">
+          <div class="overflow-x-auto touch-scroll">
+            <table class="w-full text-left text-xs min-w-[660px]">
               <thead class="bg-slate-800/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-700/60">
                 <tr>
                   <th class="px-4 py-3">Learner</th>
@@ -1170,7 +1181,7 @@
 
   <!-- App Footer -->
   <footer class="mt-auto border-t border-slate-800/80 bg-slate-900/80 backdrop-blur py-6">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-400 text-center sm:text-left">
       <div class="flex items-center gap-3.5">
         <!-- Clickable Profile Picture that opens full profile photo -->
         <button type="button" onclick="openProfileModal()" class="focus:outline-none focus:ring-2 focus:ring-blue-400 rounded-full group cursor-pointer transition transform hover:scale-110 active:scale-95 shrink-0" title="Click to view full profile photo">
@@ -1182,7 +1193,7 @@
         </div>
       </div>
 
-      <div class="flex flex-wrap items-center gap-4 sm:gap-6 text-slate-300">
+      <div class="flex flex-wrap items-center justify-center md:justify-start gap-3 sm:gap-6 text-slate-300">
         <a href="mailto:ambhoreshatrughna@gmail.com" class="hover:text-blue-400 transition flex items-center gap-1.5">
           <span>✉️</span> ambhoreshatrughna@gmail.com
         </a>
@@ -1204,12 +1215,12 @@
 
   <!-- 1. Mark Day as Missed Modal (Requirement 3) -->
   <div id="modal-missed" class="modal-backdrop hidden">
-    <div class="modal-content p-6">
+    <div class="modal-content p-4 sm:p-6">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>❌</span> Mark Day as Missed
         </h3>
-        <button onclick="closeModal('modal-missed')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-missed')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <div class="mt-4 space-y-4">
         <p class="text-xs text-slate-300">
@@ -1217,7 +1228,7 @@
         </p>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Why was this day missed?</label>
-          <select id="missed-reason-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+          <select id="missed-reason-select" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200">
             <option value="Work">Work (e.g. Production issue, long workday)</option>
             <option value="Health">Health / Sick</option>
             <option value="Family">Family / Personal commitments</option>
@@ -1230,24 +1241,24 @@
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Optional Note</label>
-          <textarea id="missed-note-input" rows="3" placeholder="e.g. Production issue kept me busy until late night." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200"></textarea>
+          <textarea id="missed-note-input" rows="3" placeholder="e.g. Production issue kept me busy until late night." class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200"></textarea>
         </div>
       </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="closeModal('modal-missed')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-        <button onclick="submitMarkMissed()" class="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-bold text-white shadow">Confirm Missed Day</button>
+      <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
+        <button onclick="closeModal('modal-missed')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+        <button onclick="submitMarkMissed()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-bold text-white shadow text-center">Confirm Missed Day</button>
       </div>
     </div>
   </div>
 
   <!-- 2. Recover Day Modal (Requirement 4 & 5) -->
   <div id="modal-recover" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-xl">
+    <div class="modal-content p-4 sm:p-6 max-w-xl">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
-          <span>🔄</span> Recover Day & Incomplete Tasks
+        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+          <span>🔄</span> Recover Day &amp; Incomplete Tasks
         </h3>
-        <button onclick="closeModal('modal-recover')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-recover')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <div class="mt-4 space-y-4">
         <p class="text-xs text-slate-300">
@@ -1270,7 +1281,7 @@
             <div class="flex-1">
               <div class="font-bold text-white">Option B — Reschedule to Specific Date</div>
               <div class="text-slate-400 mt-0.5 mb-2">Move incomplete tasks to another date.</div>
-              <input type="date" id="recover-reschedule-date" class="bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-slate-200">
+              <input type="date" id="recover-reschedule-date" class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-slate-200">
             </div>
           </label>
 
@@ -1280,7 +1291,7 @@
             <div>
               <div class="font-bold text-white">Option C — Compress Across Next 3–7 Days</div>
               <div class="text-slate-400 mt-0.5 mb-2">Evenly distribute incomplete tasks across the upcoming days without overloading.</div>
-              <select id="recover-compress-days" class="bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-slate-200">
+              <select id="recover-compress-days" class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-slate-200">
                 <option value="3">Distribute across next 3 days</option>
                 <option value="5">Distribute across next 5 days</option>
                 <option value="7">Distribute across next 7 days</option>
@@ -1298,21 +1309,21 @@
           </label>
         </div>
       </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="closeModal('modal-recover')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-        <button onclick="submitRecoverDay()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow">Apply Recovery</button>
+      <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
+        <button onclick="closeModal('modal-recover')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+        <button onclick="submitRecoverDay()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow text-center">Apply Recovery</button>
       </div>
     </div>
   </div>
 
   <!-- 3. Add Rest Day Modal (Requirement 6) -->
   <div id="modal-rest" class="modal-backdrop hidden">
-    <div class="modal-content p-6">
+    <div class="modal-content p-4 sm:p-6">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-emerald-400 flex items-center gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2">
           <span>🌴</span> Schedule Planned Rest Day
         </h3>
-        <button onclick="closeModal('modal-rest')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-rest')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <div class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-emerald-300">
@@ -1331,27 +1342,27 @@
           <span class="text-slate-300">Scheduled in advance (preserves streak)</span>
         </label>
       </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="closeModal('modal-rest')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-        <button onclick="submitAddRestDay()" class="px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow">Schedule Rest Day</button>
+      <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
+        <button onclick="closeModal('modal-rest')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+        <button onclick="submitAddRestDay()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow text-center">Schedule Rest Day</button>
       </div>
     </div>
   </div>
 
   <!-- 4. Add Leave Day Modal (Requirement 7) -->
   <div id="modal-leave" class="modal-backdrop hidden">
-    <div class="modal-content p-6">
+    <div class="modal-content p-4 sm:p-6">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-sky-400 flex items-center gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-sky-400 flex items-center gap-2">
           <span>🏖️</span> Schedule Leave Days
         </h3>
-        <button onclick="closeModal('modal-leave')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-leave')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <p class="text-slate-300">
           Record sick leave, vacations, family events, or travel. The roadmap shifts forward so all 100 learning days are fully preserved!
         </p>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block font-semibold text-slate-300 mb-1">Start Date</label>
             <input type="date" id="leave-start-input" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200">
@@ -1376,21 +1387,21 @@
           <input type="text" id="leave-notes-input" placeholder="e.g. Attending sister's wedding out of town" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200">
         </div>
       </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="closeModal('modal-leave')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-        <button onclick="submitAddLeaveDay()" class="px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white shadow">Record Leave</button>
+      <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
+        <button onclick="closeModal('modal-leave')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+        <button onclick="submitAddLeaveDay()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white shadow text-center">Record Leave</button>
       </div>
     </div>
   </div>
 
   <!-- 5. Extend Roadmap Modal (Requirement 8) -->
   <div id="modal-extend" class="modal-backdrop hidden">
-    <div class="modal-content p-6">
+    <div class="modal-content p-4 sm:p-6">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-purple-400 flex items-center gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-purple-400 flex items-center gap-2">
           <span>⏩</span> Extend My Roadmap
         </h3>
-        <button onclick="closeModal('modal-extend')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-extend')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <div class="p-3 rounded-lg bg-purple-950/40 border border-purple-800/50 text-purple-300">
@@ -1411,21 +1422,21 @@
           ⚠️ Explicit confirmation: This will shift upcoming learning days and extend your target completion date.
         </div>
       </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="closeModal('modal-extend')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-        <button onclick="submitExtendRoadmap()" class="px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow">Confirm Extension</button>
+      <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
+        <button onclick="closeModal('modal-extend')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+        <button onclick="submitExtendRoadmap()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow text-center">Confirm Extension</button>
       </div>
     </div>
   </div>
 
   <!-- 6. Daily Review Modal (Requirement 11) -->
   <div id="modal-review" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-lg">
+    <div class="modal-content p-4 sm:p-6 max-w-lg">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>📋</span> End-of-Day Daily Review
         </h3>
-        <button onclick="closeModal('modal-review')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-review')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <div>
@@ -1439,7 +1450,7 @@
           </select>
         </div>
         <div>
-          <label class="block font-semibold text-slate-300 mb-1">What happened today? (Notes & reflections)</label>
+          <label class="block font-semibold text-slate-300 mb-1">What happened today? (Notes &amp; reflections)</label>
           <textarea id="review-notes-input" rows="3" placeholder="What went well? What blockers did you face?" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200"></textarea>
         </div>
         <div>
@@ -1451,59 +1462,59 @@
           <input type="text" id="review-priority-input" placeholder="e.g. Master AsyncStateMachine decompilation" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-slate-200">
         </div>
       </div>
-      <div class="mt-6 flex justify-end gap-2">
-        <button onclick="closeModal('modal-review')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-        <button onclick="submitDailyReview()" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow">Save Daily Review</button>
+      <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
+        <button onclick="closeModal('modal-review')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+        <button onclick="submitDailyReview()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow text-center">Save Daily Review</button>
       </div>
     </div>
   </div>
 
   <!-- 7. Task History Modal (Requirement 14) -->
   <div id="modal-taskhistory" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-lg">
+    <div class="modal-content p-4 sm:p-6 max-w-lg">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
-          <h3 id="history-task-title" class="text-base font-bold text-white">Task History</h3>
+          <h3 id="history-task-title" class="text-sm sm:text-base font-bold text-white">Task History</h3>
           <span class="text-xs text-slate-400">Complete immutable audit trail</span>
         </div>
-        <button onclick="closeModal('modal-taskhistory')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-taskhistory')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
-      <div id="task-history-timeline" class="mt-4 space-y-3 max-h-96 overflow-y-auto text-xs"></div>
+      <div id="task-history-timeline" class="mt-4 space-y-3 max-h-96 overflow-y-auto text-xs touch-scroll"></div>
       <div class="mt-6 flex justify-end">
-        <button onclick="closeModal('modal-taskhistory')" class="px-4 py-1.5 rounded-lg bg-slate-800 text-xs text-slate-300">Close</button>
+        <button onclick="closeModal('modal-taskhistory')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-semibold text-center">Close</button>
       </div>
     </div>
   </div>
 
   <!-- 8. Creator Profile Photo & Details Modal -->
   <div id="modal-profile" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-profile')">
-    <div class="modal-content p-6 max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl relative overflow-hidden" onclick="event.stopPropagation()">
+    <div class="modal-content p-4 sm:p-6 max-w-md bg-slate-900 border border-slate-800 rounded-2xl shadow-2xl relative overflow-hidden" onclick="event.stopPropagation()">
       <button onclick="closeModal('modal-profile')" class="absolute top-4 right-4 text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition text-base leading-none z-10" title="Close">
         ✕
       </button>
 
       <div class="flex flex-col items-center text-center pt-2">
-        <div class="relative group mb-4">
+        <div class="relative group mb-3 sm:mb-4">
           <div class="absolute -inset-1.5 rounded-full bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-600 opacity-70 blur-md group-hover:opacity-100 transition duration-300"></div>
           <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" title="Click to view full original photo in new tab">
-            <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="relative w-48 h-48 rounded-full object-cover ring-4 ring-slate-900 shadow-2xl cursor-zoom-in transition transform group-hover:scale-105">
+            <img src="/images/shatrughna.jpg" alt="Shatrughna Ambhore" class="relative w-36 h-36 sm:w-44 sm:h-44 rounded-full object-cover ring-4 ring-slate-900 shadow-2xl cursor-zoom-in transition transform group-hover:scale-105">
           </a>
-          <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" class="absolute bottom-2 right-2 bg-slate-900/95 text-blue-300 border border-blue-500/40 text-[11px] font-semibold px-2.5 py-1 rounded-full shadow hover:bg-blue-600 hover:text-white transition flex items-center gap-1">
+          <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" class="absolute bottom-2 right-2 bg-slate-900/95 text-blue-300 border border-blue-500/40 text-[10px] sm:text-[11px] font-semibold px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full shadow hover:bg-blue-600 hover:text-white transition flex items-center gap-1">
             <span>🔍</span> Full View
           </a>
         </div>
 
-        <h3 class="text-xl font-extrabold text-white tracking-tight">Shatrughna Ambhore</h3>
-        <span class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/30 mt-1">
+        <h3 class="text-lg sm:text-xl font-extrabold text-white tracking-tight">Shatrughna Ambhore</h3>
+        <span class="inline-flex items-center px-3 py-0.5 rounded-full text-[11px] sm:text-xs font-semibold bg-blue-500/10 text-blue-300 border border-blue-500/30 mt-1">
           Lead Creator &amp; Software Engineer
         </span>
 
-        <p class="text-xs text-slate-300 mt-3 leading-relaxed max-w-sm">
+        <p class="text-xs text-slate-300 mt-2.5 sm:mt-3 leading-relaxed max-w-sm">
           Architected LearningOS to deliver a resilient, career-grade 100-day engineering and AI learning system.
         </p>
 
-        <div class="w-full space-y-2 mt-5 text-xs">
-          <a href="mailto:ambhoreshatrughna@gmail.com" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 text-blue-300 border border-slate-700/80 hover:border-blue-500/50 transition font-medium">
+        <div class="w-full space-y-2 mt-4 sm:mt-5 text-xs">
+          <a href="mailto:ambhoreshatrughna@gmail.com" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/80 hover:bg-blue-600/20 text-blue-300 border border-slate-700/80 hover:border-blue-500/50 transition font-medium break-all">
             <span>✉️</span> ambhoreshatrughna@gmail.com
           </a>
           <a href="tel:+919604466334" class="flex items-center justify-center gap-2 p-2.5 rounded-xl bg-slate-800/80 hover:bg-emerald-600/20 text-emerald-300 border border-slate-700/80 hover:border-emerald-500/50 transition font-medium">
@@ -1514,7 +1525,7 @@
           </a>
         </div>
 
-        <div class="mt-6 pt-4 border-t border-slate-800/80 flex items-center justify-between w-full text-xs">
+        <div class="mt-5 sm:mt-6 pt-3 sm:pt-4 border-t border-slate-800/80 flex items-center justify-between w-full text-xs">
           <a href="/images/shatrughna.jpg" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-white transition flex items-center gap-1">
             <span>🖼️</span> Open full photo ↗
           </a>
@@ -1526,35 +1537,35 @@
     </div>
   </div>
 
-  <!-- 8. Authentication Modal (Login & Register) -->
+  <!-- 9. Authentication Modal (Login & Register) -->
   <div id="modal-auth" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-md">
+    <div class="modal-content p-4 sm:p-6 max-w-md">
       <!-- Tabs for Login / Register -->
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
-          <button id="auth-tab-login" onclick="switchAuthTab('login')" class="px-3 py-1 text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition">
+          <button id="auth-tab-login" onclick="switchAuthTab('login')" class="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition">
             Sign In
           </button>
-          <button id="auth-tab-register" onclick="switchAuthTab('register')" class="px-3 py-1 text-sm font-medium text-slate-400 hover:text-slate-200 transition">
+          <button id="auth-tab-register" onclick="switchAuthTab('register')" class="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-medium text-slate-400 hover:text-slate-200 transition">
             Create Account
           </button>
         </div>
-        <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
 
       <!-- Login Form -->
       <form id="form-login" onsubmit="handleLoginSubmit(event)" class="mt-4 space-y-4">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Email or Username</label>
-          <input type="text" id="login-email" required placeholder="ambhoreshatrughna@gmail.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <input type="text" id="login-email" required placeholder="ambhoreshatrughna@gmail.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
-          <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
         </div>
         <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 p-2.5 rounded-lg border border-red-800/50"></div>
         <div class="pt-2">
-          <button type="submit" id="btn-submit-login" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow transition flex items-center justify-center gap-2">
+          <button type="submit" id="btn-submit-login" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow transition flex items-center justify-center gap-2">
             <span>🚀</span> Sign In
           </button>
         </div>
@@ -1567,29 +1578,29 @@
       <form id="form-register" onsubmit="handleRegisterSubmit(event)" class="hidden mt-4 space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
-          <input type="text" id="register-fullname" required placeholder="Alex Kumar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <input type="text" id="register-fullname" required placeholder="Alex Kumar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
-          <input type="email" id="register-email" required placeholder="alex@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <input type="email" id="register-email" required placeholder="alex@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Password (min 6 characters)</label>
-          <input type="password" id="register-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <input type="password" id="register-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Your 100-Day Roadmap Start Date</label>
-          <input type="date" id="register-start-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <input type="date" id="register-start-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
           <p class="text-[11px] text-slate-400 mt-0.5">Your 100 days will be dynamically scheduled from this date.</p>
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Invite Code <span class="text-slate-500 font-normal">(optional)</span></label>
-          <input type="text" id="register-invite-code" placeholder="e.g. MASTERY-2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none uppercase">
+          <input type="text" id="register-invite-code" placeholder="e.g. MASTERY-2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:border-blue-500 focus:outline-none uppercase">
           <p class="text-[11px] text-slate-400 mt-0.5">Valid invite code grants instant activation; otherwise registration is submitted for Admin review.</p>
         </div>
         <div id="register-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 p-2.5 rounded-lg border border-red-800/50"></div>
         <div class="pt-2">
-          <button type="submit" id="btn-submit-register" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow transition flex items-center justify-center gap-2">
+          <button type="submit" id="btn-submit-register" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow transition flex items-center justify-center gap-2">
             <span>✨</span> Create Account
           </button>
         </div>
@@ -1600,96 +1611,96 @@
     </div>
   </div>
 
-  <!-- 9. Pending Approval Notification Modal -->
+  <!-- 10. Pending Approval Notification Modal -->
   <div id="modal-pending-approval" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-md text-center">
-      <div class="w-14 h-14 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center text-3xl mx-auto mb-3">
+    <div class="modal-content p-4 sm:p-6 max-w-md text-center">
+      <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-3">
         ⏳
       </div>
-      <h3 class="text-lg font-bold text-white">Registration Awaiting Approval</h3>
+      <h3 class="text-base sm:text-lg font-bold text-white">Registration Awaiting Approval</h3>
       <p class="text-xs text-slate-300 mt-2 leading-relaxed">
         Thank you for signing up for LearningOS! Your registration was received and is currently in the review queue.
       </p>
-      <div class="mt-4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1">
+      <div class="mt-4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1 text-left sm:text-center">
         <div><strong>Administrator:</strong> Shatrughna Ambhore</div>
-        <div><strong>Contact:</strong> ambhoreshatrughna@gmail.com</div>
-        <div class="text-slate-400 text-[11px]">You will gain full access to your personalized 100-day roadmap as soon as your account is approved.</div>
+        <div class="break-all"><strong>Contact:</strong> ambhoreshatrughna@gmail.com</div>
+        <div class="text-slate-400 text-[11px] pt-1">You will gain full access to your personalized 100-day roadmap as soon as your account is approved.</div>
       </div>
       <div class="mt-6 flex justify-center">
-        <button onclick="closeModal('modal-pending-approval')" class="px-6 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition">
+        <button onclick="closeModal('modal-pending-approval')" class="w-full sm:w-auto px-6 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition text-center">
           Understood
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 10. Generate Invite Code Modal -->
+  <!-- 11. Generate Invite Code Modal -->
   <div id="modal-create-invite" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-md">
+    <div class="modal-content p-4 sm:p-6 max-w-md">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+        <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>🎟️</span> Generate Cohort Invite Code
         </h3>
-        <button onclick="closeModal('modal-create-invite')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-create-invite')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <form onsubmit="handleCreateInviteSubmit(event)" class="mt-4 space-y-3">
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Invite Code</label>
-          <input type="text" id="invite-code-input" required placeholder="e.g. BATCH-OCT2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 uppercase font-mono">
+          <input type="text" id="invite-code-input" required placeholder="e.g. BATCH-OCT2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 uppercase font-mono">
         </div>
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Description</label>
-          <input type="text" id="invite-desc-input" placeholder="e.g. Full-stack cohort invitation" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+          <input type="text" id="invite-desc-input" placeholder="e.g. Full-stack cohort invitation" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200">
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Max Uses</label>
-            <input type="number" id="invite-max-input" value="10" min="1" max="1000" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+            <input type="number" id="invite-max-input" value="10" min="1" max="1000" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200">
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">Expiration (Optional)</label>
-            <input type="date" id="invite-expiry-input" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+            <input type="date" id="invite-expiry-input" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200">
           </div>
         </div>
-        <div class="mt-6 flex justify-end gap-2 pt-2">
-          <button type="button" onclick="closeModal('modal-create-invite')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow">Create Code</button>
+        <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-create-invite')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+          <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow text-center">Create Code</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- 11. Mentor Inspection: Learner Roadmap Modal -->
+  <!-- 12. Mentor Inspection: Learner Roadmap Modal -->
   <div id="modal-inspect-roadmap" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-4xl max-h-[90vh] flex flex-col">
+    <div class="modal-content p-4 sm:p-6 max-w-4xl max-h-[90dvh] flex flex-col">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
-          <h3 id="inspect-learner-name" class="text-lg font-bold text-white flex items-center gap-2">
+          <h3 id="inspect-learner-name" class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
             <span>👁️</span> Learner Progress Inspection
           </h3>
           <p id="inspect-learner-meta" class="text-xs text-slate-400 mt-0.5">Mentor Mode: Read-only inspection</p>
         </div>
-        <button onclick="closeModal('modal-inspect-roadmap')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-inspect-roadmap')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
-      <div id="inspect-days-container" class="mt-4 overflow-y-auto space-y-3 flex-1 pr-1">
+      <div id="inspect-days-container" class="mt-4 overflow-y-auto space-y-3 flex-1 pr-1 touch-scroll">
         <!-- Populated by JS -->
       </div>
       <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end">
-        <button onclick="closeModal('modal-inspect-roadmap')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200">
+        <button onclick="closeModal('modal-inspect-roadmap')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 text-center">
           Close Inspection
         </button>
       </div>
     </div>
   </div>
 
-  <!-- 12. Change Password Modal -->
+  <!-- 13. Change Password Modal -->
   <div id="modal-change-password" class="modal-backdrop hidden">
-    <div class="modal-content p-6 max-w-md">
+    <div class="modal-content p-4 sm:p-6 max-w-md">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-        <h3 class="text-base font-bold text-white flex items-center gap-2">
+        <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
           <span>🔐</span> Update Account Password
         </h3>
-        <button onclick="closeModal('modal-change-password')" class="text-slate-400 hover:text-white">✕</button>
+        <button onclick="closeModal('modal-change-password')" class="text-slate-400 hover:text-white p-1">✕</button>
       </div>
       <form id="form-change-password" onsubmit="submitChangePassword(event)" class="mt-4 space-y-4">
         <div id="change-password-error" class="hidden p-3 rounded-lg bg-red-950/80 border border-red-800/80 text-xs text-red-300"></div>
@@ -1697,22 +1708,22 @@
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Current Password</label>
-          <input type="password" id="cp-current-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <input type="password" id="cp-current-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">New Password</label>
-          <input type="password" id="cp-new-password" required minlength="6" placeholder="Min. 6 characters" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <input type="password" id="cp-new-password" required minlength="6" placeholder="Min. 6 characters" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500">
         </div>
 
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">Confirm New Password</label>
-          <input type="password" id="cp-confirm-password" required minlength="6" placeholder="Re-type new password" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:outline-none focus:border-blue-500">
+          <input type="password" id="cp-confirm-password" required minlength="6" placeholder="Re-type new password" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs sm:text-sm text-slate-200 focus:outline-none focus:border-blue-500">
         </div>
 
-        <div class="mt-6 flex justify-end gap-2 pt-2 border-t border-slate-800">
-          <button type="button" onclick="closeModal('modal-change-password')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
-          <button type="submit" id="btn-submit-change-password" class="px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow flex items-center gap-1.5 cursor-pointer">
+        <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2 border-t border-slate-800">
+          <button type="button" onclick="closeModal('modal-change-password')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
+          <button type="submit" id="btn-submit-change-password" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow flex items-center justify-center gap-1.5 cursor-pointer">
             <span>💾</span> Update Password
           </button>
         </div>
