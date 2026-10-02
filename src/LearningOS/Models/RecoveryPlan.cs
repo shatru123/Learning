@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class RecoveryPlan
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public int DayPlanId { get; set; }
     public string Strategy { get; set; } = string.Empty; // MoveToTomorrow, Reschedule, Compress, Skip, ExtendRoadmap
     public int ExtraMinutesPerDay { get; set; } = 60;

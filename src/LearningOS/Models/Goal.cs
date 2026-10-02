@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class Goal
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public string Title { get; set; } = string.Empty;
     public string Category { get; set; } = "Career";
     public DateOnly? TargetDate { get; set; }

@@ -1,14 +1,24 @@
 using Microsoft.EntityFrameworkCore;
 using LearningOS.Models;
+using LearningOS.Services;
 
 namespace LearningOS.Data;
 
 public class LearningDbContext : DbContext
 {
-    public LearningDbContext(DbContextOptions<LearningDbContext> options) : base(options)
+    private readonly ICurrentUserService? _currentUserService;
+
+    public LearningDbContext(
+        DbContextOptions<LearningDbContext> options, 
+        ICurrentUserService? currentUserService = null) : base(options)
     {
+        _currentUserService = currentUserService;
     }
 
+    public int? CurrentUserId => _currentUserService?.UserId;
+
+    public DbSet<AppUser> Users => Set<AppUser>();
+    public DbSet<InviteCode> InviteCodes => Set<InviteCode>();
     public DbSet<LearningPlan> LearningPlans => Set<LearningPlan>();
     public DbSet<Phase> Phases => Set<Phase>();
     public DbSet<DayPlan> DayPlans => Set<DayPlan>();
@@ -35,10 +45,26 @@ public class LearningDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
+        // Configure AppUser
+        modelBuilder.Entity<AppUser>(entity =>
+        {
+            entity.HasKey(u => u.Id);
+            entity.HasIndex(u => u.Email).IsUnique();
+            entity.HasIndex(u => u.Username).IsUnique();
+        });
+
+        // Configure InviteCode
+        modelBuilder.Entity<InviteCode>(entity =>
+        {
+            entity.HasKey(i => i.Id);
+            entity.HasIndex(i => i.Code).IsUnique();
+        });
+
         // Configure DayPlan
         modelBuilder.Entity<DayPlan>(entity =>
         {
             entity.HasKey(d => d.Id);
+            entity.HasIndex(d => d.UserId);
             entity.HasIndex(d => d.DayNumber);
             entity.HasIndex(d => d.CalendarDate);
             entity.HasIndex(d => d.Status);
@@ -72,7 +98,23 @@ public class LearningDbContext : DbContext
                   .WithOne()
                   .HasForeignKey<DailyReview>(r => r.DayPlanId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            // Multi-tenant Query Filter
+            entity.HasQueryFilter(d => CurrentUserId == null || d.UserId == CurrentUserId);
         });
+
+        // Multi-tenant Query Filters for User-scoped entities
+        modelBuilder.Entity<UserSettings>().HasQueryFilter(s => CurrentUserId == null || s.UserId == CurrentUserId);
+        modelBuilder.Entity<RecoveryPlan>().HasQueryFilter(r => CurrentUserId == null || r.UserId == CurrentUserId);
+        modelBuilder.Entity<DSAProblem>().HasQueryFilter(p => CurrentUserId == null || p.UserId == CurrentUserId);
+        modelBuilder.Entity<SystemDesignTopic>().HasQueryFilter(s => CurrentUserId == null || s.UserId == CurrentUserId);
+        modelBuilder.Entity<InterviewQuestion>().HasQueryFilter(q => CurrentUserId == null || q.UserId == CurrentUserId);
+        modelBuilder.Entity<JobApplication>().HasQueryFilter(j => CurrentUserId == null || j.UserId == CurrentUserId);
+        modelBuilder.Entity<JournalEntry>().HasQueryFilter(j => CurrentUserId == null || j.UserId == CurrentUserId);
+        modelBuilder.Entity<LearningResource>().HasQueryFilter(r => CurrentUserId == null || r.UserId == CurrentUserId);
+        modelBuilder.Entity<StudySession>().HasQueryFilter(s => CurrentUserId == null || s.UserId == CurrentUserId);
+        modelBuilder.Entity<Goal>().HasQueryFilter(g => CurrentUserId == null || g.UserId == CurrentUserId);
+        modelBuilder.Entity<ActivityAuditLog>().HasQueryFilter(a => CurrentUserId == null || a.UserId == CurrentUserId);
 
         // Configure LearningTask
         modelBuilder.Entity<LearningTask>(entity =>
@@ -94,6 +136,7 @@ public class LearningDbContext : DbContext
             entity.HasKey(a => a.Id);
             entity.HasIndex(a => a.Timestamp);
             entity.HasIndex(a => a.ActionType);
+            entity.HasIndex(a => a.UserId);
         });
 
         // Configure JournalEntry
@@ -101,6 +144,7 @@ public class LearningDbContext : DbContext
         {
             entity.HasKey(j => j.Id);
             entity.HasIndex(j => j.EntryDate);
+            entity.HasIndex(j => j.UserId);
         });
     }
 }

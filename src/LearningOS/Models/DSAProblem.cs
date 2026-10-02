@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class DSAProblem
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public string Title { get; set; } = string.Empty;
     public string Difficulty { get; set; } = "Medium"; // Easy, Medium, Hard
     public string Platform { get; set; } = "LeetCode"; // LeetCode, NeetCode, HackerRank, Other

@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class InterviewQuestion
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public string Question { get; set; } = string.Empty;
     public string Category { get; set; } = ".NET/C#"; // .NET/C#, Architecture, Distributed Systems, SQL/DB, AI/LLM, Behavioral
     public string? AnswerNotes { get; set; }

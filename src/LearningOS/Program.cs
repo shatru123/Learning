@@ -1,8 +1,11 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using LearningOS.Common;
 using LearningOS.Data;
 using LearningOS.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,11 +49,45 @@ builder.Services.AddDbContext<LearningDbContext>(options =>
     }
 });
 
-// Register Domain Services
+// Register Domain & Infrastructure Services
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+builder.Services.AddScoped<IPasswordHasher, PasswordHasher>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ICurriculumProvisioningService, CurriculumProvisioningService>();
+
 builder.Services.AddScoped<IAuditService, AuditService>();
 builder.Services.AddScoped<IStreakService, StreakService>();
 builder.Services.AddScoped<IRecoveryService, RecoveryService>();
 builder.Services.AddScoped<IBackupService, BackupService>();
+
+// Configure JWT Authentication
+var jwtSecret = builder.Configuration["Jwt:SecretKey"] 
+             ?? Environment.GetEnvironmentVariable("JWT_SECRET_KEY") 
+             ?? TokenService.DefaultSecretKey;
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.RequireHttpsMetadata = false;
+    options.SaveToken = true;
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret)),
+        ValidateIssuer = true,
+        ValidIssuer = "LearningOS",
+        ValidateAudience = true,
+        ValidAudience = "LearningOS_Client",
+        ClockSkew = TimeSpan.Zero
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -58,6 +95,10 @@ app.UseDefaultFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapControllers();
 app.MapFallbackToFile("index.html");
 

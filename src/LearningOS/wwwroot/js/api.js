@@ -35,6 +35,49 @@ const OutageManager = {
   }
 };
 
+// Authentication State Manager
+const AuthManager = {
+  tokenKey: 'learningos_token',
+  userKey: 'learningos_user',
+
+  getToken() {
+    return localStorage.getItem(this.tokenKey);
+  },
+
+  setToken(token) {
+    if (token) localStorage.setItem(this.tokenKey, token);
+    else localStorage.removeItem(this.tokenKey);
+  },
+
+  getUser() {
+    try {
+      const u = localStorage.getItem(this.userKey);
+      return u ? JSON.parse(u) : null;
+    } catch {
+      return null;
+    }
+  },
+
+  setUser(user) {
+    if (user) localStorage.setItem(this.userKey, JSON.stringify(user));
+    else localStorage.removeItem(this.userKey);
+  },
+
+  clear() {
+    localStorage.removeItem(this.tokenKey);
+    localStorage.removeItem(this.userKey);
+  },
+
+  isAuthenticated() {
+    return !!this.getToken();
+  },
+
+  isAdmin() {
+    const u = this.getUser();
+    return u && (u.role || '').toLowerCase() === 'admin';
+  }
+};
+
 // Form Draft Storage (Requirement 22: Browser draft != database)
 const DraftStore = {
   save(key, value) {
@@ -64,7 +107,7 @@ const DraftStore = {
   }
 };
 
-// Robust HTTP API caller with Outage Protection
+// Robust HTTP API caller with Outage Protection & JWT Auth
 async function apiCall(endpoint, method = 'GET', body = null) {
   const options = {
     method,
@@ -72,6 +115,11 @@ async function apiCall(endpoint, method = 'GET', body = null) {
       'Accept': 'application/json'
     }
   };
+
+  const token = AuthManager.getToken();
+  if (token) {
+    options.headers['Authorization'] = `Bearer ${token}`;
+  }
 
   if (body) {
     options.headers['Content-Type'] = 'application/json';
@@ -82,6 +130,12 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     const response = await fetch(endpoint, options);
 
     if (!response.ok) {
+      if (response.status === 401 && !endpoint.includes('/api/auth/login') && !endpoint.includes('/api/auth/register')) {
+        AuthManager.clear();
+        if (typeof updateAuthUi === 'function') updateAuthUi();
+        if (typeof openAuthModal === 'function') openAuthModal('login');
+      }
+
       if (response.status >= 500) {
         OutageManager.setUnavailable("LearningOS is temporarily unavailable. Your local changes have not been confirmed as saved.");
       }
@@ -106,9 +160,9 @@ function showToast(message, type = 'success') {
   if (!container) return;
 
   const toast = document.createElement('div');
-  toast.className = `toast ${type === 'error' ? 'border-red-500 text-red-300' : 'border-emerald-500 text-emerald-300'}`;
+  toast.className = `toast ${type === 'error' ? 'border-red-500 text-red-300' : (type === 'warning' ? 'border-amber-500 text-amber-300' : 'border-emerald-500 text-emerald-300')}`;
   
-  const icon = type === 'error' ? '⚠️' : '✅';
+  const icon = type === 'error' ? '⚠️' : (type === 'warning' ? '🔔' : '✅');
   toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
   container.appendChild(toast);
 

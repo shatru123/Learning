@@ -65,6 +65,21 @@
         <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 transition flex items-center gap-1">
           <span>⏩</span> <span class="hidden md:inline">Extend</span> Roadmap
         </button>
+
+        <!-- User Authentication & Profile Pill -->
+        <div id="auth-user-bar" class="flex items-center gap-1.5 pl-2 border-l border-slate-800">
+          <div id="user-badge-container" class="hidden flex items-center gap-1.5">
+            <span id="header-user-badge" class="px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 flex items-center gap-1 shadow-sm">
+              <span>👤</span> <span id="header-user-name">User</span>
+            </span>
+            <button onclick="handleLogout()" title="Log out" class="px-2 py-1 text-xs font-medium rounded-lg bg-slate-800 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 transition">
+              <span>🚪</span>
+            </button>
+          </div>
+          <button id="btn-open-login" onclick="openAuthModal('login')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1 shadow">
+            <span>🔑</span> Sign In
+          </button>
+        </div>
       </div>
     </div>
 
@@ -99,6 +114,9 @@
       </button>
       <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap">
         <span>⚙️</span> Schedule & Data
+      </button>
+      <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30">
+        <span>👥</span> Learners & Approvals <span id="nav-pending-badge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-red-500 text-white font-bold">0</span>
       </button>
     </div>
   </header>
@@ -880,6 +898,104 @@
       </div>
     </section>
 
+    <!-- VIEW 10: LEARNERS & APPROVALS (ADMIN ONLY) -->
+    <section id="view-learners" class="hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-xl font-extrabold text-white flex items-center gap-2">
+            <span>👥</span> Learners & Cohort Approvals
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            Administer registered learners, approve new applications, manage invite codes, and monitor cohort progress.
+          </p>
+        </div>
+        <div class="flex items-center gap-2">
+          <button onclick="openCreateInviteModal()" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-xs transition flex items-center gap-1.5 shadow">
+            <span>🎟️</span> Generate Invite Code
+          </button>
+          <button onclick="loadAdminLearners()" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs transition flex items-center gap-1.5">
+            <span>🔄</span> Refresh
+          </button>
+        </div>
+      </div>
+
+      <!-- Cohort Summary Metric Cards -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div class="card p-4 rounded-xl border border-slate-800 bg-slate-900/60">
+          <div class="text-xs text-slate-400 font-medium">Total Registered</div>
+          <div id="admin-stat-total-users" class="text-2xl font-black text-white mt-1">0</div>
+        </div>
+        <div class="card p-4 rounded-xl border border-amber-600/30 bg-amber-950/20">
+          <div class="text-xs text-amber-300 font-medium">Pending Approvals</div>
+          <div id="admin-stat-pending" class="text-2xl font-black text-amber-400 mt-1">0</div>
+        </div>
+        <div class="card p-4 rounded-xl border border-emerald-600/30 bg-emerald-950/20">
+          <div class="text-xs text-emerald-300 font-medium">Active Learners</div>
+          <div id="admin-stat-active" class="text-2xl font-black text-emerald-400 mt-1">0</div>
+        </div>
+        <div class="card p-4 rounded-xl border border-blue-600/30 bg-blue-950/20">
+          <div class="text-xs text-blue-300 font-medium">Avg Completion</div>
+          <div id="admin-stat-avg-completion" class="text-2xl font-black text-blue-400 mt-1">0%</div>
+        </div>
+      </div>
+
+      <!-- Section: Pending Approvals Queue -->
+      <div id="admin-pending-container" class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <span>⏳</span> Pending Registration Approvals
+          </h3>
+          <span id="admin-pending-count-badge" class="px-2 py-0.5 rounded-full text-xs font-semibold bg-amber-500/20 text-amber-300 border border-amber-500/40">0 waiting</span>
+        </div>
+        <div id="admin-pending-list" class="space-y-2">
+          <div class="text-xs text-slate-500 py-4 text-center border border-slate-800/80 rounded-xl bg-slate-900/40">
+            No registrations currently waiting for approval.
+          </div>
+        </div>
+      </div>
+
+      <!-- Section: Active Invite Codes -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <span>🎟️</span> Active Invite Codes
+          </h3>
+        </div>
+        <div id="admin-invites-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+
+      <!-- Section: Learners Roster & Progress -->
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-bold text-slate-200 flex items-center gap-2">
+            <span>📊</span> Learners Progress & Roadmap Inspection
+          </h3>
+        </div>
+        <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-900/50 shadow">
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-800/80 text-slate-400 uppercase tracking-wider text-[10px] border-b border-slate-700/60">
+                <tr>
+                  <th class="px-4 py-3">Learner</th>
+                  <th class="px-4 py-3">Start Date</th>
+                  <th class="px-4 py-3">Progress (100 Days)</th>
+                  <th class="px-4 py-3">Streak</th>
+                  <th class="px-4 py-3">Status</th>
+                  <th class="px-4 py-3">Last Active</th>
+                  <th class="px-4 py-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="admin-learners-tbody" class="divide-y divide-slate-800/60 text-slate-300">
+                <!-- Populated dynamically by JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- App Footer -->
@@ -1236,6 +1352,162 @@
             Close
           </button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Authentication Modal (Login & Register) -->
+  <div id="modal-auth" class="modal-backdrop hidden">
+    <div class="modal-content p-6 max-w-md">
+      <!-- Tabs for Login / Register -->
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <button id="auth-tab-login" onclick="switchAuthTab('login')" class="px-3 py-1 text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition">
+            Sign In
+          </button>
+          <button id="auth-tab-register" onclick="switchAuthTab('register')" class="px-3 py-1 text-sm font-medium text-slate-400 hover:text-slate-200 transition">
+            Create Account
+          </button>
+        </div>
+        <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+
+      <!-- Login Form -->
+      <form id="form-login" onsubmit="handleLoginSubmit(event)" class="mt-4 space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Email or Username</label>
+          <input type="text" id="login-email" required placeholder="ambhoreshatrughna@gmail.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
+          <input type="password" id="login-password" required placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 p-2.5 rounded-lg border border-red-800/50"></div>
+        <div class="pt-2">
+          <button type="submit" id="btn-submit-login" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm shadow transition flex items-center justify-center gap-2">
+            <span>🚀</span> Sign In
+          </button>
+        </div>
+        <div class="text-center text-xs text-slate-400 pt-1">
+          Don't have an account? <button type="button" onclick="switchAuthTab('register')" class="text-blue-400 hover:underline font-semibold">Register here</button>
+        </div>
+      </form>
+
+      <!-- Register Form -->
+      <form id="form-register" onsubmit="handleRegisterSubmit(event)" class="hidden mt-4 space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Full Name</label>
+          <input type="text" id="register-fullname" required placeholder="Alex Kumar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Email Address</label>
+          <input type="email" id="register-email" required placeholder="alex@example.com" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Password (min 6 characters)</label>
+          <input type="password" id="register-password" required minlength="6" placeholder="••••••••" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Your 100-Day Roadmap Start Date</label>
+          <input type="date" id="register-start-date" required class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none">
+          <p class="text-[11px] text-slate-400 mt-0.5">Your 100 days will be dynamically scheduled from this date.</p>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Invite Code <span class="text-slate-500 font-normal">(optional)</span></label>
+          <input type="text" id="register-invite-code" placeholder="e.g. MASTERY-2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 focus:border-blue-500 focus:outline-none uppercase">
+          <p class="text-[11px] text-slate-400 mt-0.5">Valid invite code grants instant activation; otherwise registration is submitted for Admin review.</p>
+        </div>
+        <div id="register-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 p-2.5 rounded-lg border border-red-800/50"></div>
+        <div class="pt-2">
+          <button type="submit" id="btn-submit-register" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm shadow transition flex items-center justify-center gap-2">
+            <span>✨</span> Create Account
+          </button>
+        </div>
+        <div class="text-center text-xs text-slate-400 pt-1">
+          Already registered? <button type="button" onclick="switchAuthTab('login')" class="text-blue-400 hover:underline font-semibold">Sign in here</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 9. Pending Approval Notification Modal -->
+  <div id="modal-pending-approval" class="modal-backdrop hidden">
+    <div class="modal-content p-6 max-w-md text-center">
+      <div class="w-14 h-14 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center text-3xl mx-auto mb-3">
+        ⏳
+      </div>
+      <h3 class="text-lg font-bold text-white">Registration Awaiting Approval</h3>
+      <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+        Thank you for signing up for LearningOS! Your registration was received and is currently in the review queue.
+      </p>
+      <div class="mt-4 p-3 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-300 space-y-1">
+        <div><strong>Administrator:</strong> Shatrughna Ambhore</div>
+        <div><strong>Contact:</strong> ambhoreshatrughna@gmail.com</div>
+        <div class="text-slate-400 text-[11px]">You will gain full access to your personalized 100-day roadmap as soon as your account is approved.</div>
+      </div>
+      <div class="mt-6 flex justify-center">
+        <button onclick="closeModal('modal-pending-approval')" class="px-6 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition">
+          Understood
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Generate Invite Code Modal -->
+  <div id="modal-create-invite" class="modal-backdrop hidden">
+    <div class="modal-content p-6 max-w-md">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <span>🎟️</span> Generate Cohort Invite Code
+        </h3>
+        <button onclick="closeModal('modal-create-invite')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <form onsubmit="handleCreateInviteSubmit(event)" class="mt-4 space-y-3">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Invite Code</label>
+          <input type="text" id="invite-code-input" required placeholder="e.g. BATCH-OCT2026" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200 uppercase font-mono">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Description</label>
+          <input type="text" id="invite-desc-input" placeholder="e.g. Full-stack cohort invitation" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Max Uses</label>
+            <input type="number" id="invite-max-input" value="10" min="1" max="1000" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">Expiration (Optional)</label>
+            <input type="date" id="invite-expiry-input" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-sm text-slate-200">
+          </div>
+        </div>
+        <div class="mt-6 flex justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modal-create-invite')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow">Create Code</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 11. Mentor Inspection: Learner Roadmap Modal -->
+  <div id="modal-inspect-roadmap" class="modal-backdrop hidden">
+    <div class="modal-content p-6 max-w-4xl max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div>
+          <h3 id="inspect-learner-name" class="text-lg font-bold text-white flex items-center gap-2">
+            <span>👁️</span> Learner Progress Inspection
+          </h3>
+          <p id="inspect-learner-meta" class="text-xs text-slate-400 mt-0.5">Mentor Mode: Read-only inspection</p>
+        </div>
+        <button onclick="closeModal('modal-inspect-roadmap')" class="text-slate-400 hover:text-white">✕</button>
+      </div>
+      <div id="inspect-days-container" class="mt-4 overflow-y-auto space-y-3 flex-1 pr-1">
+        <!-- Populated by JS -->
+      </div>
+      <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end">
+        <button onclick="closeModal('modal-inspect-roadmap')" class="px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200">
+          Close Inspection
+        </button>
       </div>
     </div>
   </div>

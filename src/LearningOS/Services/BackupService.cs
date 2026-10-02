@@ -26,7 +26,7 @@ public class BackupService : IBackupService
             Version = "1.0",
             ExportDate = DateTime.UtcNow,
             Plans = await _db.LearningPlans.Include(p => p.Phases).AsNoTracking().ToListAsync(),
-            DayPlans = await _db.DayPlans
+            DayPlans = await _db.DayPlans.IgnoreQueryFilters()
                 .Include(d => d.Tasks).ThenInclude(t => t.History)
                 .Include(d => d.StatusHistory)
                 .Include(d => d.MissedRecord)
@@ -34,17 +34,17 @@ public class BackupService : IBackupService
                 .Include(d => d.LeaveRecord)
                 .Include(d => d.DailyReview)
                 .AsNoTracking().ToListAsync(),
-            RecoveryPlans = await _db.RecoveryPlans.AsNoTracking().ToListAsync(),
-            DSAProblems = await _db.DSAProblems.AsNoTracking().ToListAsync(),
-            SystemDesignTopics = await _db.SystemDesignTopics.AsNoTracking().ToListAsync(),
-            InterviewQuestions = await _db.InterviewQuestions.AsNoTracking().ToListAsync(),
-            JobApplications = await _db.JobApplications.AsNoTracking().ToListAsync(),
-            JournalEntries = await _db.JournalEntries.AsNoTracking().ToListAsync(),
-            LearningResources = await _db.LearningResources.AsNoTracking().ToListAsync(),
-            StudySessions = await _db.StudySessions.AsNoTracking().ToListAsync(),
-            Goals = await _db.Goals.AsNoTracking().ToListAsync(),
-            UserSettings = await _db.UserSettings.AsNoTracking().FirstOrDefaultAsync(),
-            ActivityLogs = await _db.ActivityAuditLogs.OrderByDescending(a => a.Timestamp).Take(200).AsNoTracking().ToListAsync()
+            RecoveryPlans = await _db.RecoveryPlans.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            DSAProblems = await _db.DSAProblems.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            SystemDesignTopics = await _db.SystemDesignTopics.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            InterviewQuestions = await _db.InterviewQuestions.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            JobApplications = await _db.JobApplications.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            JournalEntries = await _db.JournalEntries.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            LearningResources = await _db.LearningResources.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            StudySessions = await _db.StudySessions.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            Goals = await _db.Goals.IgnoreQueryFilters().AsNoTracking().ToListAsync(),
+            UserSettings = await _db.UserSettings.IgnoreQueryFilters().AsNoTracking().FirstOrDefaultAsync(),
+            ActivityLogs = await _db.ActivityAuditLogs.IgnoreQueryFilters().OrderByDescending(a => a.Timestamp).Take(200).AsNoTracking().ToListAsync()
         };
 
         var options = new JsonSerializerOptions { WriteIndented = true };

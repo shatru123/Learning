@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class DayPlan
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public int? DayNumber { get; set; } // 1..100 for core learning days; null for dedicated rest/leave calendar entries
     public bool IsLearningDay { get; set; } = true;
     public DateOnly CalendarDate { get; set; }

@@ -171,3 +171,65 @@ public class TaskStatusUpdateDto
     public string Status { get; set; } = "Completed"; // Pending, InProgress, Completed, Skipped, Rescheduled
     public string? Note { get; set; }
 }
+
+public class RegisterRequestDto
+{
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public DateOnly? StartDate { get; set; }
+    public string? InviteCode { get; set; }
+}
+
+public class LoginRequestDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+}
+
+public class AuthResponseDto
+{
+    public string Token { get; set; } = string.Empty;
+    public UserProfileDto User { get; set; } = new();
+    public string Message { get; set; } = string.Empty;
+}
+
+public class UserProfileDto
+{
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string Username { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public DateOnly RequestedStartDate { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public class LearnerSummaryDto
+{
+    public int UserId { get; set; }
+    public string FullName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public string Role { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+    public DateOnly StartDate { get; set; }
+    public int? CurrentDayNumber { get; set; }
+    public int CompletedDaysCount { get; set; }
+    public int TotalDaysCount { get; set; } = 100;
+    public double CompletionPercent { get; set; }
+    public int CurrentStreak { get; set; }
+    public int MissedDaysCount { get; set; }
+    public int IncompleteTasksCount { get; set; }
+    public DateTime? LastActiveAt { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
+
+public class CreateInviteCodeDto
+{
+    public string Code { get; set; } = string.Empty;
+    public string? Description { get; set; }
+    public int MaxUses { get; set; } = 10;
+    public DateTime? ExpiresAt { get; set; }
+}
+

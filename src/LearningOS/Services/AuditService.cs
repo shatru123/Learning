@@ -7,12 +7,19 @@ namespace LearningOS.Services;
 public class AuditService : IAuditService
 {
     private readonly LearningDbContext _db;
+    private readonly ICurrentUserService _currentUserService;
     private readonly ILogger<AuditService> _logger;
 
-    public AuditService(LearningDbContext db, ILogger<AuditService> logger)
+    public AuditService(LearningDbContext db, ICurrentUserService currentUserService, ILogger<AuditService> logger)
     {
         _db = db;
+        _currentUserService = currentUserService;
         _logger = logger;
+    }
+
+    public AuditService(LearningDbContext db, ILogger<AuditService> logger)
+        : this(db, new CurrentUserService(new Microsoft.AspNetCore.Http.HttpContextAccessor()), logger)
+    {
     }
 
     public async Task LogActivityAsync(string actionType, string entityName, string? entityId, string description, string? detailsJson = null)
@@ -21,6 +28,7 @@ public class AuditService : IAuditService
         {
             var log = new ActivityAuditLog
             {
+                UserId = _currentUserService.UserId ?? 1,
                 ActionType = actionType,
                 EntityName = entityName,
                 EntityId = entityId,

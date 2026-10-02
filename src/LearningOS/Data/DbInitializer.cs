@@ -29,18 +29,82 @@ public static class DbInitializer
             await db.Database.EnsureCreatedAsync();
         }
 
+        // 1. Ensure Admin User exists
+        var passwordHasher = new LearningOS.Services.PasswordHasher();
+        var adminUser = await db.Users.IgnoreQueryFilters().FirstOrDefaultAsync(u => u.Role == "Admin");
+        if (adminUser == null)
+        {
+            adminUser = new AppUser
+            {
+                FullName = "Shatrughna Ambhore",
+                Email = "ambhoreshatrughna@gmail.com",
+                Username = "shatrughna",
+                PasswordHash = passwordHasher.HashPassword("Admin@2026"),
+                Role = "Admin",
+                Status = "Active",
+                RequestedStartDate = new DateOnly(2026, 9, 21),
+                CreatedAt = DateTime.UtcNow,
+                ApprovedAt = DateTime.UtcNow
+            };
+            db.Users.Add(adminUser);
+            await db.SaveChangesAsync();
+            logger.LogInformation("Admin user created with ID: {AdminId}", adminUser.Id);
+        }
+
+        // 2. Ensure default invite code exists
+        if (!await db.InviteCodes.IgnoreQueryFilters().AnyAsync())
+        {
+            db.InviteCodes.Add(new InviteCode
+            {
+                Code = "MASTERY-2026",
+                Description = "General invite code for 100-day engineering cohort",
+                MaxUses = 100,
+                UsedCount = 0,
+                CreatedByUserId = adminUser.Id,
+                CreatedAt = DateTime.UtcNow,
+                IsActive = true
+            });
+            await db.SaveChangesAsync();
+        }
+
+        // 3. Ensure all existing unassigned data is backfilled to Admin user
+        try
+        {
+            if (isPostgres)
+            {
+                await db.Database.ExecuteSqlAsync($"UPDATE \"DayPlans\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"UserSettings\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"RecoveryPlans\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"DSAProblems\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"ActivityAuditLogs\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+            }
+            else
+            {
+                await db.Database.ExecuteSqlAsync($"UPDATE DayPlans SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE UserSettings SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE RecoveryPlans SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE DSAProblems SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE ActivityAuditLogs SET UserId = {adminUser.Id} WHERE UserId = 0;");
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogDebug("Backfill raw SQL note: {Msg}", ex.Message);
+        }
+
         // Check if curriculum already exists
-        if (await db.DayPlans.AnyAsync())
+        if (await db.DayPlans.IgnoreQueryFilters().AnyAsync())
         {
             logger.LogInformation("Database already seeded with learning plan.");
             return;
         }
 
-        logger.LogInformation("Seeding authoritative 100-Day Curriculum into PostgreSQL...");
+        logger.LogInformation("Seeding authoritative 100-Day Curriculum into database...");
 
         // 1. User Settings
         var settings = new UserSettings
         {
+            UserId = adminUser.Id,
             MaxExtraRecoveryMinutesPerDay = 60,
             DailyTargetStudyMinutes = 120,
             RoadmapStartDate = new DateOnly(2026, 9, 21),
@@ -73,15 +137,16 @@ public static class DbInitializer
         await db.SaveChangesAsync();
 
         // 3. Seed 100 Exactly Numbered Learning Days
-        var dayPlans = Generate100DayPlans(phases, settings.RoadmapStartDate);
+        var dayPlans = Generate100DayPlans(phases, settings.RoadmapStartDate, adminUser.Id);
         db.DayPlans.AddRange(dayPlans);
 
         // 4. Seed Trackers: DSA, System Design, Interview Questions, Resources, Goals
-        SeedTrackers(db);
+        SeedTrackers(db, adminUser.Id);
 
         // 5. Initial Audit Log
         db.ActivityAuditLogs.Add(new ActivityAuditLog
         {
+            UserId = adminUser.Id,
             ActionType = "PlanInitialized",
             EntityName = "LearningPlan",
             EntityId = plan.Id.ToString(),
@@ -93,7 +158,7 @@ public static class DbInitializer
         logger.LogInformation("Successfully initialized LearningOS database with 100 learning days!");
     }
 
-    private static List<DayPlan> Generate100DayPlans(List<Phase> phases, DateOnly startDate)
+    private static List<DayPlan> Generate100DayPlans(List<Phase> phases, DateOnly startDate, int userId = 1)
     {
         var days = new List<DayPlan>();
         var curDate = startDate;
@@ -107,6 +172,7 @@ public static class DbInitializer
 
             var dayPlan = new DayPlan
             {
+                UserId = userId,
                 DayNumber = dayNum,
                 IsLearningDay = true,
                 CalendarDate = curDate,
@@ -137,7 +203,7 @@ public static class DbInitializer
         return days;
     }
 
-    private static (string Title, string Theme, List<(string Title, string Description, string Category, int EstimatedMinutes, string Priority)> Tasks) GetCurriculumForDay(int day)
+    public static (string Title, string Theme, List<(string Title, string Description, string Category, int EstimatedMinutes, string Priority)> Tasks) GetCurriculumForDay(int day)
     {
         return day switch
         {
@@ -559,61 +625,61 @@ public static class DbInitializer
         };
     }
 
-    private static void SeedTrackers(LearningDbContext db)
+    private static void SeedTrackers(LearningDbContext db, int userId = 1)
     {
         // DSA Problems
         db.DSAProblems.AddRange(new List<DSAProblem>
         {
-            new() { Title = "Two Sum", Difficulty = "Easy", Platform = "LeetCode", Pattern = "Arrays & Hashing", Status = "Planned" },
-            new() { Title = "Group Anagrams", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Arrays & Hashing", Status = "Planned" },
-            new() { Title = "Top K Frequent Elements", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Heap / Bucket Sort", Status = "Planned" },
-            new() { Title = "Longest Substring Without Repeating Characters", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Sliding Window", Status = "Planned" },
-            new() { Title = "Valid Parentheses", Difficulty = "Easy", Platform = "LeetCode", Pattern = "Stack", Status = "Planned" },
-            new() { Title = "Daily Temperatures", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Monotonic Stack", Status = "Planned" },
-            new() { Title = "Search in Rotated Sorted Array", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Binary Search", Status = "Planned" },
-            new() { Title = "LRU Cache", Difficulty = "Hard", Platform = "LeetCode", Pattern = "Doubly Linked List + Hash Map", Status = "Planned" },
-            new() { Title = "Number of Islands", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Graph BFS/DFS", Status = "Planned" },
-            new() { Title = "Course Schedule", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Topological Sort", Status = "Planned" },
-            new() { Title = "Coin Change", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Dynamic Programming", Status = "Planned" },
-            new() { Title = "Trapping Rain Water", Difficulty = "Hard", Platform = "LeetCode", Pattern = "Two Pointers", Status = "Planned" }
+            new() { UserId = userId, Title = "Two Sum", Difficulty = "Easy", Platform = "LeetCode", Pattern = "Arrays & Hashing", Status = "Planned" },
+            new() { UserId = userId, Title = "Group Anagrams", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Arrays & Hashing", Status = "Planned" },
+            new() { UserId = userId, Title = "Top K Frequent Elements", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Heap / Bucket Sort", Status = "Planned" },
+            new() { UserId = userId, Title = "Longest Substring Without Repeating Characters", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Sliding Window", Status = "Planned" },
+            new() { UserId = userId, Title = "Valid Parentheses", Difficulty = "Easy", Platform = "LeetCode", Pattern = "Stack", Status = "Planned" },
+            new() { UserId = userId, Title = "Daily Temperatures", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Monotonic Stack", Status = "Planned" },
+            new() { UserId = userId, Title = "Search in Rotated Sorted Array", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Binary Search", Status = "Planned" },
+            new() { UserId = userId, Title = "LRU Cache", Difficulty = "Hard", Platform = "LeetCode", Pattern = "Doubly Linked List + Hash Map", Status = "Planned" },
+            new() { UserId = userId, Title = "Number of Islands", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Graph BFS/DFS", Status = "Planned" },
+            new() { UserId = userId, Title = "Course Schedule", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Topological Sort", Status = "Planned" },
+            new() { UserId = userId, Title = "Coin Change", Difficulty = "Medium", Platform = "LeetCode", Pattern = "Dynamic Programming", Status = "Planned" },
+            new() { UserId = userId, Title = "Trapping Rain Water", Difficulty = "Hard", Platform = "LeetCode", Pattern = "Two Pointers", Status = "Planned" }
         });
 
         // System Design Topics
         db.SystemDesignTopics.AddRange(new List<SystemDesignTopic>
         {
-            new() { TopicName = "Distributed Caching & Rate Limiting", ArchitectureSummary = "Consistent hashing, multi-tier cache, sliding window Redis rate limiter", Status = "Planned" },
-            new() { TopicName = "URL Shortener (TinyURL)", ArchitectureSummary = "Base62 encoding, Snowflake ID generation, distributed sharding, high read scalability", Status = "Planned" },
-            new() { TopicName = "Real-Time Chat Application", ArchitectureSummary = "WebSockets, Redis Pub/Sub, Cassandra/PostgreSQL persistence, presence tracking", Status = "Planned" },
-            new() { TopicName = "Adaptive Video Streaming (Netflix/YouTube)", ArchitectureSummary = "Chunking, HLS/DASH protocols, CDN edge distribution, distributed transcoding", Status = "Planned" },
-            new() { TopicName = "Enterprise AI RAG Architecture", ArchitectureSummary = "Ingestion pipeline, hybrid search (BM25 + pgvector), reranking, semantic cache, LLM gateway", Status = "Planned" },
-            new() { TopicName = "High-Throughput Payment Gateway", ArchitectureSummary = "Double-entry ledger, 2PC / Saga pattern, idempotency keys, distributed reconciliation", Status = "Planned" }
+            new() { UserId = userId, TopicName = "Distributed Caching & Rate Limiting", ArchitectureSummary = "Consistent hashing, multi-tier cache, sliding window Redis rate limiter", Status = "Planned" },
+            new() { UserId = userId, TopicName = "URL Shortener (TinyURL)", ArchitectureSummary = "Base62 encoding, Snowflake ID generation, distributed sharding, high read scalability", Status = "Planned" },
+            new() { UserId = userId, TopicName = "Real-Time Chat Application", ArchitectureSummary = "WebSockets, Redis Pub/Sub, Cassandra/PostgreSQL persistence, presence tracking", Status = "Planned" },
+            new() { UserId = userId, TopicName = "Adaptive Video Streaming (Netflix/YouTube)", ArchitectureSummary = "Chunking, HLS/DASH protocols, CDN edge distribution, distributed transcoding", Status = "Planned" },
+            new() { UserId = userId, TopicName = "Enterprise AI RAG Architecture", ArchitectureSummary = "Ingestion pipeline, hybrid search (BM25 + pgvector), reranking, semantic cache, LLM gateway", Status = "Planned" },
+            new() { UserId = userId, TopicName = "High-Throughput Payment Gateway", ArchitectureSummary = "Double-entry ledger, 2PC / Saga pattern, idempotency keys, distributed reconciliation", Status = "Planned" }
         });
 
         // Interview Questions
         db.InterviewQuestions.AddRange(new List<InterviewQuestion>
         {
-            new() { Question = "Explain how the Garbage Collector works in .NET, including generations and LOH/POH.", Category = ".NET/C#", ConfidenceLevel = "Medium" },
-            new() { Question = "What is the difference between Task and ValueTask, and when should you use ValueTask?", Category = ".NET/C#", ConfidenceLevel = "Medium" },
-            new() { Question = "Explain the Transactional Outbox Pattern and why it is critical in distributed systems.", Category = "Distributed Systems", ConfidenceLevel = "Medium" },
-            new() { Question = "How do you defend against prompt injection in production RAG systems?", Category = "AI/LLM", ConfidenceLevel = "Medium" },
-            new() { Question = "Explain the difference between B-Tree indexes and HNSW vector indexes.", Category = "SQL/DB", ConfidenceLevel = "Medium" }
+            new() { UserId = userId, Question = "Explain how the Garbage Collector works in .NET, including generations and LOH/POH.", Category = ".NET/C#", ConfidenceLevel = "Medium" },
+            new() { UserId = userId, Question = "What is the difference between Task and ValueTask, and when should you use ValueTask?", Category = ".NET/C#", ConfidenceLevel = "Medium" },
+            new() { UserId = userId, Question = "Explain the Transactional Outbox Pattern and why it is critical in distributed systems.", Category = "Distributed Systems", ConfidenceLevel = "Medium" },
+            new() { UserId = userId, Question = "How do you defend against prompt injection in production RAG systems?", Category = "AI/LLM", ConfidenceLevel = "Medium" },
+            new() { UserId = userId, Question = "Explain the difference between B-Tree indexes and HNSW vector indexes.", Category = "SQL/DB", ConfidenceLevel = "Medium" }
         });
 
         // Resources
         db.LearningResources.AddRange(new List<LearningResource>
         {
-            new() { Title = "Microsoft .NET Documentation & Performance Best Practices", Url = "https://learn.microsoft.com/en-us/dotnet/", Category = "Documentation", IsCompleted = false },
-            new() { Title = "Designing Data-Intensive Applications (Martin Kleppmann)", Url = "https://dataintensive.net/", Category = "Book", IsCompleted = false },
-            new() { Title = "OpenTelemetry .NET Specification & Architecture", Url = "https://opentelemetry.io/docs/languages/net/", Category = "Documentation", IsCompleted = false },
-            new() { Title = "PostgreSQL pgvector Official Repository & Indexing Guide", Url = "https://github.com/pgvector/pgvector", Category = "Repository", IsCompleted = false }
+            new() { UserId = userId, Title = "Microsoft .NET Documentation & Performance Best Practices", Url = "https://learn.microsoft.com/en-us/dotnet/", Category = "Documentation", IsCompleted = false },
+            new() { UserId = userId, Title = "Designing Data-Intensive Applications (Martin Kleppmann)", Url = "https://dataintensive.net/", Category = "Book", IsCompleted = false },
+            new() { UserId = userId, Title = "OpenTelemetry .NET Specification & Architecture", Url = "https://opentelemetry.io/docs/languages/net/", Category = "Documentation", IsCompleted = false },
+            new() { UserId = userId, Title = "PostgreSQL pgvector Official Repository & Indexing Guide", Url = "https://github.com/pgvector/pgvector", Category = "Repository", IsCompleted = false }
         });
 
         // Career Goals
         db.Goals.AddRange(new List<Goal>
         {
-            new() { Title = "Complete All 100 Learning Days & DSA Problems", Category = "Learning", ProgressPercent = 0, Status = "Active" },
-            new() { Title = "Deploy Production AI-Powered Portfolio Project to Render with PostgreSQL", Category = "Portfolio", ProgressPercent = 0, Status = "Active" },
-            new() { Title = "Secure Senior / Lead Software Engineer Offer in Distributed Systems or AI", Category = "Career", ProgressPercent = 0, Status = "Active" }
+            new() { UserId = userId, Title = "Complete All 100 Learning Days & DSA Problems", Category = "Learning", ProgressPercent = 0, Status = "Active" },
+            new() { UserId = userId, Title = "Deploy Production AI-Powered Portfolio Project to Render with PostgreSQL", Category = "Portfolio", ProgressPercent = 0, Status = "Active" },
+            new() { UserId = userId, Title = "Secure Senior / Lead Software Engineer Offer in Distributed Systems or AI", Category = "Career", ProgressPercent = 0, Status = "Active" }
         });
     }
 }

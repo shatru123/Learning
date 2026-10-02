@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class StudySession
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public int? DayPlanId { get; set; }
     public string Subject { get; set; } = string.Empty;
     public int DurationMinutes { get; set; }

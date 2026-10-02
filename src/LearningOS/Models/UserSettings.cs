@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class UserSettings
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public int MaxExtraRecoveryMinutesPerDay { get; set; } = 60; // Configurable workload cap
     public int DailyTargetStudyMinutes { get; set; } = 120;
     public int WorkdayStartHour { get; set; } = 9; // 09:00

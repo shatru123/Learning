@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class JobApplication
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public string Company { get; set; } = string.Empty;
     public string Role { get; set; } = string.Empty;
     public string Status { get; set; } = "Wishlist"; // Wishlist, Applied, Screening, Technical, Final, Offer, Rejected

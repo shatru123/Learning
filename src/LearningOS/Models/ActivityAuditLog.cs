@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class ActivityAuditLog
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public string ActionType { get; set; } = string.Empty; // TaskCompleted, TaskUpdated, DayMissed, DayRecovered, RestDayAdded, LeaveDayAdded, ReviewCompleted, RoadmapExtended, ResourceAdded, NoteCreated
     public string EntityName { get; set; } = string.Empty;
     public string? EntityId { get; set; }

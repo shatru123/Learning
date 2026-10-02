@@ -3,6 +3,7 @@ namespace LearningOS.Models;
 public class LearningResource
 {
     public int Id { get; set; }
+    public int UserId { get; set; } = 1;
     public string Title { get; set; } = string.Empty;
     public string Url { get; set; } = string.Empty;
     public string Category { get; set; } = "Documentation"; // Documentation, Article, Video, Book, Repository

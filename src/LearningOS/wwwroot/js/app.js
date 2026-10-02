@@ -11,9 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
+  await checkAuthOnBoot();
   await loadDashboard();
   loadRoadmap();
   loadSettings();
+  checkForInviteInUrl();
 }
 
 // TAB NAVIGATION
@@ -26,7 +28,7 @@ function switchTab(tabName) {
   }
   currentTab = tabName;
 
-  const tabs = ['dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings'];
+  const tabs = ['dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];
   tabs.forEach(t => {
     const el = document.getElementById(`view-${t}`);
     const navEl = document.getElementById(`nav-${t}`);
@@ -46,6 +48,7 @@ function switchTab(tabName) {
   if (tabName === 'analytics') loadAnalytics();
   if (tabName === 'audit') loadAuditHistory();
   if (tabName === 'settings') loadSettings();
+  if (tabName === 'learners') loadAdminLearners();
 }
 
 // 1. DASHBOARD
@@ -1442,3 +1445,503 @@ function escapeHtml(text) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 }
+
+// ==========================================
+// AUTHENTICATION & MULTI-USER MANAGEMENT
+// ==========================================
+
+async function checkAuthOnBoot() {
+  const regDate = document.getElementById('register-start-date');
+  if (regDate && !regDate.value) {
+    regDate.value = new Date().toISOString().split('T')[0];
+  }
+
+  if (AuthManager.isAuthenticated()) {
+    try {
+      const me = await apiCall('/api/auth/me');
+      AuthManager.setUser(me);
+    } catch (e) {
+      AuthManager.clear();
+    }
+  }
+  updateAuthUi();
+}
+
+function checkForInviteInUrl() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const invite = urlParams.get('invite');
+  if (invite) {
+    openAuthModal('register');
+    const inviteInput = document.getElementById('register-invite-code');
+    if (inviteInput) inviteInput.value = invite.toUpperCase();
+  }
+}
+
+function updateAuthUi() {
+  const user = AuthManager.getUser();
+  const userBadgeContainer = document.getElementById('user-badge-container');
+  const btnOpenLogin = document.getElementById('btn-open-login');
+  const navLearners = document.getElementById('nav-learners');
+
+  if (user && AuthManager.isAuthenticated()) {
+    if (userBadgeContainer) userBadgeContainer.classList.remove('hidden');
+    if (btnOpenLogin) btnOpenLogin.classList.add('hidden');
+    
+    const userNameEl = document.getElementById('header-user-name');
+    if (userNameEl) {
+      userNameEl.textContent = user.role === 'Admin' ? `${user.fullName} (Admin)` : user.fullName;
+    }
+
+    if (user.role === 'Admin') {
+      if (navLearners) navLearners.classList.remove('hidden');
+      checkPendingApprovalsBadge();
+    } else {
+      if (navLearners) navLearners.classList.add('hidden');
+    }
+  } else {
+    if (userBadgeContainer) userBadgeContainer.classList.add('hidden');
+    if (btnOpenLogin) btnOpenLogin.classList.remove('hidden');
+    if (navLearners) navLearners.classList.add('hidden');
+  }
+}
+
+async function checkPendingApprovalsBadge() {
+  if (!AuthManager.isAdmin()) return;
+  try {
+    const pending = await apiCall('/api/admin/pending');
+    const badge = document.getElementById('nav-pending-badge');
+    if (badge) {
+      if (pending && pending.length > 0) {
+        badge.textContent = pending.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+  } catch {}
+}
+
+function openAuthModal(tab = 'login') {
+  switchAuthTab(tab);
+  openModal('modal-auth');
+}
+
+function switchAuthTab(tab) {
+  const formLogin = document.getElementById('form-login');
+  const formRegister = document.getElementById('form-register');
+  const tabLogin = document.getElementById('auth-tab-login');
+  const tabRegister = document.getElementById('auth-tab-register');
+
+  const loginErr = document.getElementById('login-error-msg');
+  const regErr = document.getElementById('register-error-msg');
+  if (loginErr) loginErr.classList.add('hidden');
+  if (regErr) regErr.classList.add('hidden');
+
+  if (tab === 'login') {
+    if (formLogin) formLogin.classList.remove('hidden');
+    if (formRegister) formRegister.classList.add('hidden');
+    if (tabLogin) {
+      tabLogin.className = "px-3 py-1 text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition";
+    }
+    if (tabRegister) {
+      tabRegister.className = "px-3 py-1 text-sm font-medium text-slate-400 hover:text-slate-200 transition";
+    }
+  } else {
+    if (formLogin) formLogin.classList.add('hidden');
+    if (formRegister) formRegister.classList.remove('hidden');
+    if (tabRegister) {
+      tabRegister.className = "px-3 py-1 text-sm font-bold border-b-2 border-emerald-500 text-emerald-400 transition";
+    }
+    if (tabLogin) {
+      tabLogin.className = "px-3 py-1 text-sm font-medium text-slate-400 hover:text-slate-200 transition";
+    }
+  }
+}
+
+async function handleLoginSubmit(event) {
+  event.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error-msg');
+  const btn = document.getElementById('btn-submit-login');
+
+  errEl.classList.add('hidden');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="animate-spin">⏳</span> Signing in...`;
+
+  try {
+    const res = await apiCall('/api/auth/login', 'POST', { email, password });
+    AuthManager.setToken(res.token);
+    AuthManager.setUser(res.user);
+    closeModal('modal-auth');
+    updateAuthUi();
+    showToast(`Welcome back, ${res.user.fullName}!`);
+    await loadDashboard();
+    loadRoadmap();
+  } catch (err) {
+    if (err.message && err.message.includes('awaiting Admin approval')) {
+      closeModal('modal-auth');
+      openModal('modal-pending-approval');
+    } else {
+      errEl.textContent = err.message || "Failed to log in.";
+      errEl.classList.remove('hidden');
+    }
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>🚀</span> Sign In`;
+  }
+}
+
+async function handleRegisterSubmit(event) {
+  event.preventDefault();
+  const fullName = document.getElementById('register-fullname').value.trim();
+  const email = document.getElementById('register-email').value.trim();
+  const password = document.getElementById('register-password').value;
+  const startDate = document.getElementById('register-start-date').value;
+  const inviteCode = document.getElementById('register-invite-code').value.trim();
+  const errEl = document.getElementById('register-error-msg');
+  const btn = document.getElementById('btn-submit-register');
+
+  errEl.classList.add('hidden');
+  btn.disabled = true;
+  btn.innerHTML = `<span class="animate-spin">⏳</span> Registering...`;
+
+  try {
+    const payload = {
+      fullName,
+      email,
+      password,
+      startDate: startDate || null,
+      inviteCode: inviteCode || null
+    };
+
+    const res = await apiCall('/api/auth/register', 'POST', payload);
+
+    closeModal('modal-auth');
+
+    if (res.token && res.user && res.user.status === 'Active') {
+      AuthManager.setToken(res.token);
+      AuthManager.setUser(res.user);
+      updateAuthUi();
+      showToast(res.message || "Account created successfully!");
+      await loadDashboard();
+      loadRoadmap();
+    } else {
+      openModal('modal-pending-approval');
+    }
+  } catch (err) {
+    errEl.textContent = err.message || "Registration failed.";
+    errEl.classList.remove('hidden');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `<span>✨</span> Create Account`;
+  }
+}
+
+function handleLogout() {
+  AuthManager.clear();
+  updateAuthUi();
+  showToast("Logged out successfully");
+  switchTab('dashboard');
+  loadDashboard();
+}
+
+// ==========================================
+// ADMIN PORTAL & PROGRESS INSPECTION
+// ==========================================
+
+async function loadAdminLearners() {
+  if (!AuthManager.isAdmin()) {
+    showToast("Admin access required", "error");
+    switchTab('dashboard');
+    return;
+  }
+
+  try {
+    const [learners, pending, invites] = await Promise.all([
+      apiCall('/api/admin/learners'),
+      apiCall('/api/admin/pending'),
+      apiCall('/api/admin/invites')
+    ]);
+
+    const totalUsersEl = document.getElementById('admin-stat-total-users');
+    const pendingEl = document.getElementById('admin-stat-pending');
+    const activeEl = document.getElementById('admin-stat-active');
+    const avgCompEl = document.getElementById('admin-stat-avg-completion');
+
+    if (totalUsersEl) totalUsersEl.textContent = learners.length;
+    if (pendingEl) pendingEl.textContent = pending.length;
+    
+    const activeCount = learners.filter(l => l.status === 'Active').length;
+    if (activeEl) activeEl.textContent = activeCount;
+
+    const avgComp = learners.length > 0
+      ? (learners.reduce((s, l) => s + (l.completionPercent || 0), 0) / learners.length).toFixed(1)
+      : 0;
+    if (avgCompEl) avgCompEl.textContent = `${avgComp}%`;
+
+    renderAdminPendingList(pending);
+    renderAdminInvitesList(invites);
+    renderAdminLearnersTable(learners);
+
+    const badge = document.getElementById('nav-pending-badge');
+    if (badge) {
+      if (pending.length > 0) {
+        badge.textContent = pending.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+  } catch (err) {
+    console.error("Failed to load admin data", err);
+    showToast("Failed to load cohort data", "error");
+  }
+}
+
+function renderAdminPendingList(pending) {
+  const container = document.getElementById('admin-pending-list');
+  const countBadge = document.getElementById('admin-pending-count-badge');
+  if (!container) return;
+
+  if (countBadge) countBadge.textContent = `${pending.length} waiting`;
+
+  if (!pending || pending.length === 0) {
+    container.innerHTML = `
+      <div class="text-xs text-slate-500 py-4 text-center border border-slate-800/80 rounded-xl bg-slate-900/40">
+        No registrations currently waiting for approval.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = pending.map(u => `
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-xl border border-amber-500/30 bg-amber-950/20 gap-3">
+      <div>
+        <div class="font-bold text-sm text-white flex items-center gap-2">
+          <span>👤</span> ${escapeHtml(u.fullName)}
+          <span class="text-xs font-normal text-amber-300">(${escapeHtml(u.email)})</span>
+        </div>
+        <div class="text-xs text-slate-400 mt-0.5">
+          Requested Start Date: <strong class="text-slate-200">${u.requestedStartDate}</strong> • Registered: ${formatTimeAgo(u.createdAt)}
+        </div>
+      </div>
+      <div class="flex items-center gap-2 shrink-0">
+        <button onclick="approveUser(${u.id})" class="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition flex items-center gap-1">
+          <span>✓</span> Approve & Activate
+        </button>
+        <button onclick="rejectUser(${u.id})" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-red-900/60 text-slate-300 hover:text-red-300 border border-slate-700 text-xs font-semibold transition">
+          ✕ Reject
+        </button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAdminInvitesList(invites) {
+  const container = document.getElementById('admin-invites-list');
+  if (!container) return;
+
+  if (!invites || invites.length === 0) {
+    container.innerHTML = `
+      <div class="col-span-full text-xs text-slate-500 py-3 text-center border border-slate-800 rounded-xl bg-slate-900/30">
+        No invite codes generated yet. Click "Generate Invite Code" to create one.
+      </div>`;
+    return;
+  }
+
+  container.innerHTML = invites.map(i => `
+    <div class="p-3 rounded-xl border border-slate-800 bg-slate-900/60 flex flex-col justify-between gap-2">
+      <div class="flex items-center justify-between">
+        <span class="font-mono font-bold text-sm text-indigo-400 bg-indigo-950/60 px-2 py-0.5 rounded border border-indigo-700/50">${escapeHtml(i.code)}</span>
+        <span class="text-[10px] px-2 py-0.5 rounded-full font-semibold ${i.isActive ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : 'bg-slate-800 text-slate-400'}">
+          ${i.isActive ? 'Active' : 'Inactive'}
+        </span>
+      </div>
+      <div class="text-xs text-slate-300">${escapeHtml(i.description || 'Cohort invitation')}</div>
+      <div class="text-[11px] text-slate-400">
+        Used: <strong class="text-slate-200">${i.usedCount} / ${i.maxUses}</strong>
+        ${i.expiresAt ? ` • Expires: ${new Date(i.expiresAt).toLocaleDateString()}` : ''}
+      </div>
+      <div class="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+        <button onclick="copyInviteLink('${escapeHtml(i.code)}')" class="flex-1 py-1 rounded bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-200 font-semibold transition flex items-center justify-center gap-1">
+          <span>📋</span> Copy Link
+        </button>
+        ${i.isActive ? `
+          <button onclick="deactivateInvite(${i.id})" class="px-2 py-1 rounded bg-slate-800 hover:bg-red-950 text-[11px] text-slate-400 hover:text-red-300 border border-slate-700 transition" title="Deactivate code">
+            ✕
+          </button>
+        ` : ''}
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAdminLearnersTable(learners) {
+  const tbody = document.getElementById('admin-learners-tbody');
+  if (!tbody) return;
+
+  if (!learners || learners.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-slate-500">No registered learners found.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = learners.map(l => `
+    <tr class="hover:bg-slate-800/30 transition">
+      <td class="px-4 py-3">
+        <div class="font-semibold text-slate-100 flex items-center gap-2">
+          <span>${l.role === 'Admin' ? '👑' : '👤'}</span>
+          <span>${escapeHtml(l.fullName)}</span>
+          ${l.role === 'Admin' ? '<span class="text-[10px] px-1.5 py-0.2 rounded bg-blue-900/60 text-blue-300 border border-blue-700/60 font-bold">Admin</span>' : ''}
+        </div>
+        <div class="text-slate-400 text-[11px]">${escapeHtml(l.email)}</div>
+      </td>
+      <td class="px-4 py-3 text-slate-300 font-mono">
+        ${l.startDate || '—'}
+      </td>
+      <td class="px-4 py-3">
+        <div class="flex items-center gap-2">
+          <div class="w-24 bg-slate-800 rounded-full h-2 overflow-hidden">
+            <div class="bg-blue-500 h-2 rounded-full" style="width: ${Math.min(100, l.completionPercent || 0)}%"></div>
+          </div>
+          <span class="font-bold text-xs text-slate-200">${l.completedDaysCount}/100 (${l.completionPercent}%)</span>
+        </div>
+        <div class="text-[10px] text-slate-400 mt-0.5">Active: Day ${l.currentDayNumber || 'Graduated'}</div>
+      </td>
+      <td class="px-4 py-3 font-semibold ${l.currentStreak > 0 ? 'text-amber-400' : 'text-slate-500'}">
+        🔥 ${l.currentStreak || 0}d
+      </td>
+      <td class="px-4 py-3">
+        <span class="px-2 py-0.5 rounded-full text-[10px] font-semibold ${l.status === 'Active' ? 'bg-emerald-950 text-emerald-400 border border-emerald-800' : (l.status === 'PendingApproval' ? 'bg-amber-950 text-amber-400 border border-amber-800' : 'bg-red-950 text-red-400 border border-red-800')}">
+          ${l.status}
+        </span>
+      </td>
+      <td class="px-4 py-3 text-slate-400 text-[11px]">
+        ${formatTimeAgo(l.lastActiveAt)}
+      </td>
+      <td class="px-4 py-3 text-right">
+        ${l.status === 'Active' ? `
+          <button onclick="inspectLearnerRoadmap(${l.userId}, '${escapeHtml(l.fullName)}', '${escapeHtml(l.email)}')" class="px-2.5 py-1.5 rounded-lg bg-blue-600/30 hover:bg-blue-600/60 text-blue-300 border border-blue-500/40 text-xs font-semibold transition flex items-center gap-1 ml-auto">
+            <span>👁️</span> Inspect Roadmap
+          </button>
+        ` : (l.status === 'PendingApproval' ? `
+          <button onclick="approveUser(${l.userId})" class="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow transition">
+            Approve
+          </button>
+        ` : '—')}
+      </td>
+    </tr>
+  `).join('');
+}
+
+async function approveUser(userId) {
+  try {
+    const res = await apiCall(`/api/admin/approve/${userId}`, 'POST');
+    showToast(res.message || "User approved successfully!");
+    await loadAdminLearners();
+  } catch (err) {
+    showToast(err.message || "Failed to approve user", "error");
+  }
+}
+
+async function rejectUser(userId) {
+  if (!confirm("Are you sure you want to decline this registration?")) return;
+  try {
+    const res = await apiCall(`/api/admin/reject/${userId}`, 'POST');
+    showToast(res.message || "User rejected");
+    await loadAdminLearners();
+  } catch (err) {
+    showToast(err.message || "Failed to reject user", "error");
+  }
+}
+
+function openCreateInviteModal() {
+  openModal('modal-create-invite');
+}
+
+async function handleCreateInviteSubmit(event) {
+  event.preventDefault();
+  const code = document.getElementById('invite-code-input').value.trim();
+  const description = document.getElementById('invite-desc-input').value.trim();
+  const maxUses = parseInt(document.getElementById('invite-max-input').value) || 10;
+  const expiresAt = document.getElementById('invite-expiry-input').value || null;
+
+  try {
+    await apiCall('/api/admin/invites', 'POST', { code, description, maxUses, expiresAt });
+    closeModal('modal-create-invite');
+    showToast(`Invite code ${code.toUpperCase()} created!`);
+    await loadAdminLearners();
+  } catch (err) {
+    showToast(err.message || "Failed to create invite code", "error");
+  }
+}
+
+async function deactivateInvite(id) {
+  if (!confirm("Deactivate this invite code?")) return;
+  try {
+    await apiCall(`/api/admin/invites/${id}`, 'DELETE');
+    showToast("Invite code deactivated");
+    await loadAdminLearners();
+  } catch (err) {
+    showToast(err.message || "Failed to deactivate invite code", "error");
+  }
+}
+
+function copyInviteLink(code) {
+  const origin = window.location.origin;
+  const link = `${origin}/?invite=${encodeURIComponent(code)}`;
+  navigator.clipboard.writeText(link).then(() => {
+    showToast("Invite link copied to clipboard!");
+  }).catch(() => {
+    prompt("Copy this invite link:", link);
+  });
+}
+
+async function inspectLearnerRoadmap(userId, name, email) {
+  try {
+    const titleEl = document.getElementById('inspect-learner-name');
+    const metaEl = document.getElementById('inspect-learner-meta');
+    if (titleEl) titleEl.innerHTML = `<span>👁️</span> Roadmap for ${name}`;
+    if (metaEl) metaEl.textContent = `${email} • Mentor Mode (Read-only)`;
+
+    const days = await apiCall(`/api/admin/learners/${userId}/roadmap`);
+    const container = document.getElementById('inspect-days-container');
+    if (!container) return;
+
+    if (!days || days.length === 0) {
+      container.innerHTML = `<div class="text-xs text-slate-500 py-6 text-center">No days found for this learner.</div>`;
+    } else {
+      container.innerHTML = days.map(d => `
+        <div class="p-3.5 rounded-xl border border-slate-800 bg-slate-900/60 space-y-2">
+          <div class="flex items-center justify-between">
+            <div class="font-bold text-sm text-slate-200">
+              Day ${d.dayNumber || '—'}: ${escapeHtml(d.title)}
+            </div>
+            <span class="badge-status ${getStatusBadgeClass(d.status)} text-[10px]">
+              ${getStatusIcon(d.status)} ${formatStatusName(d.status)}
+            </span>
+          </div>
+          <div class="text-xs text-slate-400">${escapeHtml(d.theme)} • Date: ${d.calendarDate}</div>
+          ${d.reviewSummary ? `<div class="text-xs text-blue-300 bg-blue-950/30 p-2 rounded border border-blue-900/40"><strong>Review Note:</strong> ${escapeHtml(d.reviewSummary)}</div>` : ''}
+          ${d.tasks && d.tasks.length > 0 ? `
+            <div class="space-y-1.5 pt-1">
+              ${d.tasks.map(t => `
+                <div class="flex items-center justify-between text-xs px-2.5 py-1 rounded bg-slate-950/60 border border-slate-800/80">
+                  <div class="flex items-center gap-2">
+                    <span>${t.status === 'Completed' ? '✅' : '⚪'}</span>
+                    <span class="${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-300'}">${escapeHtml(t.title)}</span>
+                  </div>
+                  <span class="text-[10px] text-slate-500">${t.estimatedMinutes}m</span>
+                </div>
+              `).join('')}
+            </div>
+          ` : '<div class="text-[11px] text-slate-500">No tasks.</div>'}
+        </div>
+      `).join('');
+    }
+
+    openModal('modal-inspect-roadmap');
+  } catch (err) {
+    showToast(err.message || "Failed to load learner roadmap", "error");
+  }
+}
+
