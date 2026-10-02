@@ -23,6 +23,31 @@ public static class DbInitializer
             {
                 logger.LogInformation("PostgreSQL schema is up to date. No pending migrations.");
             }
+
+            // Compatibility shim: Ensure both "AppUsers" and "Users" can be queried seamlessly
+            try
+            {
+                await db.Database.ExecuteSqlRawAsync(@"
+                    DO $$
+                    BEGIN
+                        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND LOWER(table_name) = 'appusers')
+                           AND NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND LOWER(table_name) = 'users')
+                           AND NOT EXISTS (SELECT 1 FROM information_schema.views WHERE table_schema = 'public' AND LOWER(table_name) = 'users') THEN
+                            CREATE OR REPLACE VIEW ""Users"" AS SELECT * FROM ""AppUsers"";
+                        END IF;
+
+                        IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND LOWER(table_name) = 'users')
+                           AND NOT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND LOWER(table_name) = 'appusers')
+                           AND NOT EXISTS (SELECT 1 FROM information_schema.views WHERE table_schema = 'public' AND LOWER(table_name) = 'appusers') THEN
+                            CREATE OR REPLACE VIEW ""AppUsers"" AS SELECT * FROM ""Users"";
+                        END IF;
+                    END $$;
+                ");
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Failed to apply Users/AppUsers compatibility shim (non-fatal)");
+            }
         }
         else
         {
@@ -76,6 +101,13 @@ public static class DbInitializer
                 await db.Database.ExecuteSqlAsync($"UPDATE \"UserSettings\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
                 await db.Database.ExecuteSqlAsync($"UPDATE \"RecoveryPlans\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
                 await db.Database.ExecuteSqlAsync($"UPDATE \"DSAProblems\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"SystemDesignTopics\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"InterviewQuestions\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"JobApplications\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"JournalEntries\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"LearningResources\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"StudySessions\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE \"Goals\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
                 await db.Database.ExecuteSqlAsync($"UPDATE \"ActivityAuditLogs\" SET \"UserId\" = {adminUser.Id} WHERE \"UserId\" = 0;");
             }
             else
@@ -84,6 +116,13 @@ public static class DbInitializer
                 await db.Database.ExecuteSqlAsync($"UPDATE UserSettings SET UserId = {adminUser.Id} WHERE UserId = 0;");
                 await db.Database.ExecuteSqlAsync($"UPDATE RecoveryPlans SET UserId = {adminUser.Id} WHERE UserId = 0;");
                 await db.Database.ExecuteSqlAsync($"UPDATE DSAProblems SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE SystemDesignTopics SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE InterviewQuestions SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE JobApplications SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE JournalEntries SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE LearningResources SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE StudySessions SET UserId = {adminUser.Id} WHERE UserId = 0;");
+                await db.Database.ExecuteSqlAsync($"UPDATE Goals SET UserId = {adminUser.Id} WHERE UserId = 0;");
                 await db.Database.ExecuteSqlAsync($"UPDATE ActivityAuditLogs SET UserId = {adminUser.Id} WHERE UserId = 0;");
             }
         }

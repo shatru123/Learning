@@ -1,5 +1,8 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace LearningOS.Models;
 
+[Table("AppUsers")]
 public class AppUser
 {
     public int Id { get; set; }

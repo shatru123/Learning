@@ -48,6 +48,7 @@ public class LearningDbContext : DbContext
         // Configure AppUser
         modelBuilder.Entity<AppUser>(entity =>
         {
+            entity.ToTable("AppUsers");
             entity.HasKey(u => u.Id);
             entity.HasIndex(u => u.Email).IsUnique();
             entity.HasIndex(u => u.Username).IsUnique();
@@ -56,6 +57,7 @@ public class LearningDbContext : DbContext
         // Configure InviteCode
         modelBuilder.Entity<InviteCode>(entity =>
         {
+            entity.ToTable("InviteCodes");
             entity.HasKey(i => i.Id);
             entity.HasIndex(i => i.Code).IsUnique();
         });
