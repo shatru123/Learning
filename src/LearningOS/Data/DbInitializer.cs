@@ -52,6 +52,7 @@ public static class DbInitializer
         else
         {
             await db.Database.EnsureCreatedAsync();
+            await EnsureSqliteMultiUserSchemaAsync(db, logger);
         }
 
         // 1. Ensure Admin User exists
@@ -720,5 +721,68 @@ public static class DbInitializer
             new() { UserId = userId, Title = "Deploy Production AI-Powered Portfolio Project to Render with PostgreSQL", Category = "Portfolio", ProgressPercent = 0, Status = "Active" },
             new() { UserId = userId, Title = "Secure Senior / Lead Software Engineer Offer in Distributed Systems or AI", Category = "Career", ProgressPercent = 0, Status = "Active" }
         });
+    }
+
+    private static async Task EnsureSqliteMultiUserSchemaAsync(LearningDbContext db, ILogger logger)
+    {
+        try
+        {
+            await db.Database.ExecuteSqlRawAsync(@"
+                CREATE TABLE IF NOT EXISTS ""AppUsers"" (
+                    ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    ""Email"" TEXT NOT NULL,
+                    ""Username"" TEXT NOT NULL,
+                    ""FullName"" TEXT NOT NULL,
+                    ""PasswordHash"" TEXT NOT NULL,
+                    ""Role"" TEXT NOT NULL,
+                    ""Status"" TEXT NOT NULL,
+                    ""RequestedStartDate"" TEXT NOT NULL,
+                    ""InviteCodeUsed"" TEXT NULL,
+                    ""CreatedAt"" TEXT NOT NULL,
+                    ""LastLoginAt"" TEXT NULL,
+                    ""ApprovedAt"" TEXT NULL,
+                    ""ApprovedByUserId"" INTEGER NULL
+                );
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_AppUsers_Email"" ON ""AppUsers"" (""Email"");
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_AppUsers_Username"" ON ""AppUsers"" (""Username"");
+
+                CREATE TABLE IF NOT EXISTS ""InviteCodes"" (
+                    ""Id"" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+                    ""Code"" TEXT NOT NULL,
+                    ""Description"" TEXT NULL,
+                    ""MaxUses"" INTEGER NOT NULL,
+                    ""UsedCount"" INTEGER NOT NULL,
+                    ""ExpiresAt"" TEXT NULL,
+                    ""CreatedByUserId"" INTEGER NOT NULL,
+                    ""CreatedAt"" TEXT NOT NULL,
+                    ""IsActive"" INTEGER NOT NULL
+                );
+                CREATE UNIQUE INDEX IF NOT EXISTS ""IX_InviteCodes_Code"" ON ""InviteCodes"" (""Code"");
+            ");
+
+            string[] tables = new[]
+            {
+                "DayPlans", "UserSettings", "RecoveryPlans", "DSAProblems",
+                "SystemDesignTopics", "InterviewQuestions", "JobApplications",
+                "JournalEntries", "LearningResources", "StudySessions", "Goals", "ActivityAuditLogs"
+            };
+
+            foreach (var table in tables)
+            {
+                try
+                {
+                    var sql = string.Format("ALTER TABLE \"{0}\" ADD COLUMN \"UserId\" INTEGER NOT NULL DEFAULT 1;", table);
+                    await db.Database.ExecuteSqlRawAsync(sql);
+                }
+                catch
+                {
+                    // Column already exists, safe to ignore
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            logger.LogWarning(ex, "SQLite schema update note: {Msg}", ex.Message);
+        }
     }
 }
