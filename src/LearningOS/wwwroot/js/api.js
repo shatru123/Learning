@@ -132,8 +132,9 @@ async function apiCall(endpoint, method = 'GET', body = null) {
     if (!response.ok) {
       if (response.status === 401 && !endpoint.includes('/api/auth/login') && !endpoint.includes('/api/auth/register')) {
         AuthManager.clear();
+        try { sessionStorage.removeItem('learningos_active_tab'); } catch (_) {}
         if (typeof updateAuthUi === 'function') updateAuthUi();
-        if (typeof openAuthModal === 'function') openAuthModal('login');
+        if (typeof switchTab === 'function') switchTab('login');
       }
 
       if (response.status >= 500) {

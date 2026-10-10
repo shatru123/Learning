@@ -11,12 +11,29 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
+  const isAuth = AuthManager.isAuthenticated();
+  const savedTab = sessionStorage.getItem('learningos_active_tab');
+  const validTabs = ['login', 'dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];
+
+  if (isAuth) {
+    let targetTab = (savedTab && validTabs.includes(savedTab) && savedTab !== 'login') ? savedTab : 'dashboard';
+    if (targetTab === 'learners' && !AuthManager.isAdmin()) targetTab = 'dashboard';
+    switchTab(targetTab);
+  } else {
+    const publicTabs = ['roadmap', 'roadmap3d', 'curriculum', 'daydetail'];
+    const targetTab = (savedTab && publicTabs.includes(savedTab)) ? savedTab : 'login';
+    switchTab(targetTab);
+  }
+
   await checkAuthOnBoot();
+
   if (!AuthManager.isAuthenticated()) {
-    switchTab('login');
+    const publicTabs = ['roadmap', 'roadmap3d', 'curriculum', 'daydetail'];
+    if (!publicTabs.includes(currentTab)) {
+      switchTab('login');
+    }
     loadRoadmap();
   } else {
-    await loadDashboard();
     loadRoadmap();
     loadSettings();
   }
@@ -39,6 +56,10 @@ function switchTab(tabName) {
     previousTabBeforeDetail = currentTab;
   }
   currentTab = tabName;
+
+  try {
+    sessionStorage.setItem('learningos_active_tab', tabName);
+  } catch (_) {}
 
   const tabs = ['login', 'dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];
   tabs.forEach(t => {
@@ -1847,6 +1868,7 @@ async function handleRegisterSubmit(event) {
 
 function handleLogout() {
   AuthManager.clear();
+  try { sessionStorage.removeItem('learningos_active_tab'); } catch (_) {}
   updateAuthUi();
   showToast("Logged out successfully");
   switchTab('login');
