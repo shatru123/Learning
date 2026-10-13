@@ -11,6 +11,11 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
+  const fastBootStyle = document.getElementById('fast-boot-style');
+  if (fastBootStyle) {
+    try { fastBootStyle.remove(); } catch (_) {}
+  }
+
   const isAuth = AuthManager.isAuthenticated();
   const savedTab = sessionStorage.getItem('learningos_active_tab');
   const validTabs = ['login', 'dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];
@@ -45,6 +50,11 @@ let currentTab = 'dashboard';
 let previousTabBeforeDetail = 'roadmap';
 
 function switchTab(tabName) {
+  const fastBootStyle = document.getElementById('fast-boot-style');
+  if (fastBootStyle) {
+    try { fastBootStyle.remove(); } catch (_) {}
+  }
+
   // If not authenticated and trying to access private personal tabs, divert to login
   const privateTabs = ['dashboard', 'recovery', 'analytics', 'audit', 'settings', 'learners'];
   if (!AuthManager.isAuthenticated() && privateTabs.includes(tabName)) {
@@ -202,61 +212,91 @@ async function handleLandingRegister(e) {
 
 // 1. DASHBOARD
 async function loadDashboard() {
+  // First render from cache if available to prevent any blank or loading delay
+  try {
+    const cached = localStorage.getItem('learningos_dashboard_cache');
+    if (cached) {
+      renderDashboardData(JSON.parse(cached));
+    }
+  } catch (_) {}
+
   try {
     const data = await apiCall('/api/dashboard');
-
-    // Streak & Completion
-    document.getElementById('metric-current-streak').textContent = data.currentStreak || 0;
-    document.getElementById('metric-best-streak').textContent = data.bestStreak || 0;
-    document.getElementById('metric-completion-pct').textContent = `${data.taskCompletionPercent || 0}%`;
-    document.getElementById('metric-progress-bar').style.width = `${Math.min(100, data.taskCompletionPercent || 0)}%`;
-    document.getElementById('metric-completed-tasks').textContent = data.completedTasksCount || 0;
-    document.getElementById('metric-total-tasks').textContent = data.totalTasksCount || 0;
-
-    // Day Status Separated Counts (Requirement 9)
-    document.getElementById('stat-planned').textContent = data.plannedDaysRemainingCount || 0;
-    document.getElementById('stat-completed').textContent = data.completedDaysCount || 0;
-    document.getElementById('stat-partial').textContent = data.partiallyCompletedDaysCount || 0;
-    document.getElementById('stat-skipped').textContent = data.skippedDaysCount || 0;
-    document.getElementById('stat-rest').textContent = data.restDaysCount || 0;
-    document.getElementById('stat-missed').textContent = data.missedDaysCount || 0;
-
-    // Recovery Queue Banner (Requirement 12)
-    const recoveryBanner = document.getElementById('dash-recovery-banner');
-    const navRecoveryCount = document.getElementById('nav-recovery-count');
-    if (data.recoveryQueueCount > 0) {
-      recoveryBanner.classList.remove('hidden');
-      const totalIncTasks = data.recoveryQueue.reduce((sum, item) => sum + item.incompleteTaskCount, 0);
-      document.getElementById('dash-recovery-title').textContent = `⚠️ ${totalIncTasks} task(s) across ${data.recoveryQueueCount} day(s) need attention`;
-      document.getElementById('dash-recovery-desc').textContent = data.recoveryQueue.map(q => `Day ${q.dayNumber || '?'}: ${q.incompleteTaskCount} incomplete`).join(' • ');
-      navRecoveryCount.textContent = data.recoveryQueueCount;
-      navRecoveryCount.classList.remove('hidden');
-    } else {
-      recoveryBanner.classList.add('hidden');
-      navRecoveryCount.classList.add('hidden');
-    }
-
-    // Today's Focus Plan
-    if (data.todayPlan) {
-      currentActiveDay = data.todayPlan;
-      renderTodayPlan(data.todayPlan);
-    } else {
-      document.getElementById('today-title').textContent = "All 100 Learning Days Scheduled!";
-      document.getElementById('today-theme').textContent = "Ready to start your next session.";
-      document.getElementById('today-tasks-container').innerHTML = `<div class="text-xs text-slate-500 py-4">No active day selected. Check roadmap to pick a day.</div>`;
-      const missedBtn = document.getElementById('today-btn-missed');
-      if (missedBtn) {
-        missedBtn.disabled = true;
-        missedBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
-      }
-    }
-
-    // Recent Activity Feed
-    renderActivityFeed(data.recentActivity || []);
-
+    try {
+      localStorage.setItem('learningos_dashboard_cache', JSON.stringify(data));
+    } catch (_) {}
+    renderDashboardData(data);
   } catch (err) {
     console.error("Dashboard load failed", err);
   }
+}
+
+function renderDashboardData(data) {
+  if (!data) return;
+
+  const setElText = (id, val) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = val;
+  };
+
+  // Streak & Completion
+  setElText('metric-current-streak', data.currentStreak || 0);
+  setElText('metric-best-streak', data.bestStreak || 0);
+  setElText('metric-completion-pct', `${data.taskCompletionPercent || 0}%`);
+  
+  const progressBar = document.getElementById('metric-progress-bar');
+  if (progressBar) {
+    progressBar.style.width = `${Math.min(100, data.taskCompletionPercent || 0)}%`;
+  }
+  
+  setElText('metric-completed-tasks', data.completedTasksCount || 0);
+  setElText('metric-total-tasks', data.totalTasksCount || 0);
+
+  // Day Status Separated Counts (Requirement 9)
+  setElText('stat-planned', data.plannedDaysRemainingCount || 0);
+  setElText('stat-completed', data.completedDaysCount || 0);
+  setElText('stat-partial', data.partiallyCompletedDaysCount || 0);
+  setElText('stat-skipped', data.skippedDaysCount || 0);
+  setElText('stat-rest', data.restDaysCount || 0);
+  setElText('stat-missed', data.missedDaysCount || 0);
+
+  // Recovery Queue Banner (Requirement 12)
+  const recoveryBanner = document.getElementById('dash-recovery-banner');
+  const navRecoveryCount = document.getElementById('nav-recovery-count');
+  if (data.recoveryQueueCount > 0) {
+    if (recoveryBanner) recoveryBanner.classList.remove('hidden');
+    const totalIncTasks = (data.recoveryQueue || []).reduce((sum, item) => sum + item.incompleteTaskCount, 0);
+    setElText('dash-recovery-title', `⚠️ ${totalIncTasks} task(s) across ${data.recoveryQueueCount} day(s) need attention`);
+    setElText('dash-recovery-desc', (data.recoveryQueue || []).map(q => `Day ${q.dayNumber || '?'}: ${q.incompleteTaskCount} incomplete`).join(' • '));
+    if (navRecoveryCount) {
+      navRecoveryCount.textContent = data.recoveryQueueCount;
+      navRecoveryCount.classList.remove('hidden');
+    }
+  } else {
+    if (recoveryBanner) recoveryBanner.classList.add('hidden');
+    if (navRecoveryCount) navRecoveryCount.classList.add('hidden');
+  }
+
+  // Today's Focus Plan
+  if (data.todayPlan) {
+    currentActiveDay = data.todayPlan;
+    renderTodayPlan(data.todayPlan);
+  } else {
+    setElText('today-title', "All 100 Learning Days Scheduled!");
+    setElText('today-theme', "Ready to start your next session.");
+    const container = document.getElementById('today-tasks-container');
+    if (container) {
+      container.innerHTML = `<div class="text-xs text-slate-500 py-4">No active day selected. Check roadmap to pick a day.</div>`;
+    }
+    const missedBtn = document.getElementById('today-btn-missed');
+    if (missedBtn) {
+      missedBtn.disabled = true;
+      missedBtn.classList.add('opacity-40', 'cursor-not-allowed', 'pointer-events-none');
+    }
+  }
+
+  // Recent Activity Feed
+  renderActivityFeed(data.recentActivity || []);
 }
 
 function checkDashboardMissedButtonState() {
@@ -279,12 +319,18 @@ function checkDashboardMissedButtonState() {
 }
 
 function renderTodayPlan(day) {
-  document.getElementById('today-title').textContent = `Day ${day.dayNumber || '—'}: ${day.title}`;
-  document.getElementById('today-theme').textContent = `${day.theme} • Date: ${day.calendarDate}`;
+  if (!day) return;
+  const titleEl = document.getElementById('today-title');
+  if (titleEl) titleEl.textContent = `Day ${day.dayNumber || '—'}: ${day.title || ''}`;
+  
+  const themeEl = document.getElementById('today-theme');
+  if (themeEl) themeEl.textContent = `${day.theme || ''} • Date: ${day.calendarDate || ''}`;
 
   const badge = document.getElementById('today-status-badge');
-  badge.className = `badge-status ${getStatusBadgeClass(day.status)}`;
-  badge.innerHTML = getStatusIcon(day.status) + ' ' + formatStatusName(day.status);
+  if (badge) {
+    badge.className = `badge-status ${getStatusBadgeClass(day.status)}`;
+    badge.innerHTML = getStatusIcon(day.status) + ' ' + formatStatusName(day.status);
+  }
 
   // Disable Missed button if the day on dashboard is completed
   const missedBtn = document.getElementById('today-btn-missed');
@@ -302,6 +348,7 @@ function renderTodayPlan(day) {
   }
 
   const container = document.getElementById('today-tasks-container');
+  if (!container) return;
   if (!day.tasks || day.tasks.length === 0) {
     container.innerHTML = `<div class="text-xs text-slate-500 py-3">No tasks assigned to this day.</div>`;
     return;
@@ -317,8 +364,8 @@ function renderTodayPlan(day) {
           </div>
           ${t.description ? `<p class="text-xs text-slate-400 mt-0.5">${escapeHtml(t.description)}</p>` : ''}
           <div class="flex items-center gap-2 mt-2">
-            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${t.category}</span>
-            <span class="text-[10px] px-2 py-0.5 rounded ${getPriorityClass(t.priority)}">${t.priority}</span>
+            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${escapeHtml(t.category)}</span>
+            <span class="text-[10px] px-2 py-0.5 rounded ${getPriorityClass(t.priority)}">${escapeHtml(t.priority)}</span>
             <span class="text-xs text-slate-500">⏱️ ${t.estimatedMinutes}m</span>
           </div>
         </div>
@@ -332,6 +379,7 @@ function renderTodayPlan(day) {
 
 function renderActivityFeed(logs) {
   const feed = document.getElementById('dash-activity-feed');
+  if (!feed) return;
   if (!logs || logs.length === 0) {
     feed.innerHTML = `<div class="text-slate-500 py-4 text-center">No recent activity logged.</div>`;
     return;
@@ -1868,7 +1916,10 @@ async function handleRegisterSubmit(event) {
 
 function handleLogout() {
   AuthManager.clear();
-  try { sessionStorage.removeItem('learningos_active_tab'); } catch (_) {}
+  try {
+    sessionStorage.removeItem('learningos_active_tab');
+    localStorage.removeItem('learningos_dashboard_cache');
+  } catch (_) {}
   updateAuthUi();
   showToast("Logged out successfully");
   switchTab('login');

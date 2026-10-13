@@ -24,6 +24,28 @@
     }
   </script>
   <link rel="stylesheet" href="/css/app.css">
+  <!-- Fast Boot Instant View & Auth Resolver (Zero blank screen, zero login flicker) -->
+  <script>
+    (function() {
+      try {
+        var token = localStorage.getItem('learningos_token');
+        var isAuth = !!token;
+        var savedTab = sessionStorage.getItem('learningos_active_tab');
+        var targetTab = isAuth ? ((savedTab && savedTab !== 'login') ? savedTab : 'dashboard') : 'login';
+        window.__initialTargetTab = targetTab;
+        window.__initialIsAuth = isAuth;
+
+        var style = document.createElement('style');
+        style.id = 'fast-boot-style';
+        if (isAuth) {
+          style.textContent = '#view-' + targetTab + ' { display: block !important; } #view-login { display: none !important; } #user-badge-container { display: flex !important; } #btn-open-login { display: none !important; } #header-study-actions { display: flex !important; }';
+        } else {
+          style.textContent = '#view-login { display: block !important; } #view-dashboard { display: none !important; } #user-badge-container { display: none !important; } #btn-open-login { display: flex !important; } #header-study-actions { display: none !important; }';
+        }
+        document.head.appendChild(style);
+      } catch (_) {}
+    })();
+  </script>
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
@@ -87,6 +109,15 @@
             <span>🔑</span> <span>Sign In</span>
           </button>
         </div>
+        <script>
+          try {
+            var cachedUser = JSON.parse(localStorage.getItem('learningos_user'));
+            if (cachedUser && cachedUser.fullName) {
+              var uNameEl = document.getElementById('header-user-name');
+              if (uNameEl) uNameEl.textContent = cachedUser.role === 'Admin' ? (cachedUser.fullName + ' (Admin)') : cachedUser.fullName;
+            }
+          } catch (_) {}
+        </script>
       </div>
     </div>
 
@@ -394,6 +425,34 @@
           </div>
         </div>
       </div>
+      <!-- Immediate Dashboard Cache Hydration (Render 0ms metrics on reload) -->
+      <script>
+        (function() {
+          try {
+            var cachedDash = JSON.parse(localStorage.getItem('learningos_dashboard_cache'));
+            if (cachedDash && localStorage.getItem('learningos_token')) {
+              var setText = function(id, val) { var e = document.getElementById(id); if (e) e.textContent = val; };
+              setText('metric-current-streak', cachedDash.currentStreak || 0);
+              setText('metric-best-streak', cachedDash.bestStreak || 0);
+              setText('metric-completion-pct', (cachedDash.taskCompletionPercent || 0) + '%');
+              var pBar = document.getElementById('metric-progress-bar');
+              if (pBar) pBar.style.width = Math.min(100, cachedDash.taskCompletionPercent || 0) + '%';
+              setText('metric-completed-tasks', cachedDash.completedTasksCount || 0);
+              setText('metric-total-tasks', cachedDash.totalTasksCount || 0);
+              setText('stat-planned', cachedDash.plannedDaysRemainingCount || 0);
+              setText('stat-completed', cachedDash.completedDaysCount || 0);
+              setText('stat-partial', cachedDash.partiallyCompletedDaysCount || 0);
+              setText('stat-skipped', cachedDash.skippedDaysCount || 0);
+              setText('stat-rest', cachedDash.restDaysCount || 0);
+              setText('stat-missed', cachedDash.missedDaysCount || 0);
+              if (cachedDash.todayPlan) {
+                setText('today-title', 'Day ' + (cachedDash.todayPlan.dayNumber || '—') + ': ' + (cachedDash.todayPlan.title || ''));
+                setText('today-theme', (cachedDash.todayPlan.theme || '') + ' • Date: ' + (cachedDash.todayPlan.calendarDate || ''));
+              }
+            }
+          } catch (_) {}
+        })();
+      </script>
     </section>
 
     <!-- VIEW 2: 3D ROADMAP CONSTELLATION -->
