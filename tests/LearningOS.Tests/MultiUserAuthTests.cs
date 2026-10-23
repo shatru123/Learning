@@ -418,4 +418,17 @@ public class MultiUserAuthTests : IDisposable
 
         Assert.IsType<BadRequestObjectResult>(result);
     }
+
+    [Fact]
+    public void ConvertPostgresUrlToNpgsql_HandlesPasswordsWithSpecialCharacters()
+    {
+        string raw = "postgresql://postgres:Shatru102016@#@db.epyxzcrroeanpgrhecqj.supabase.co:5432/postgres";
+        string converted = LearningOS.Common.ConnectionStringHelper.ConvertPostgresUrlToNpgsql(raw);
+
+        Assert.Contains("Host=db.epyxzcrroeanpgrhecqj.supabase.co;", converted);
+        Assert.Contains("Port=5432;", converted);
+        Assert.Contains("Database=postgres;", converted);
+        Assert.Contains("Username=postgres;", converted);
+        Assert.Contains("Password=Shatru102016@#;", converted);
+    }
 }

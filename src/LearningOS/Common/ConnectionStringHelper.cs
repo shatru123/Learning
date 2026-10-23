@@ -57,13 +57,75 @@ public static class ConnectionStringHelper
         // or postgresql://user:password@host:port/database
         try
         {
-            var uri = new Uri(databaseUrl);
-            var userInfo = uri.UserInfo.Split(':');
-            var username = userInfo.Length > 0 ? Uri.UnescapeDataString(userInfo[0]) : "";
-            var password = userInfo.Length > 1 ? Uri.UnescapeDataString(userInfo[1]) : "";
-            var database = uri.AbsolutePath.TrimStart('/');
-            var host = uri.Host;
-            var port = uri.Port > 0 ? uri.Port : 5432;
+            int schemeEnd = databaseUrl.IndexOf("://", StringComparison.Ordinal);
+            if (schemeEnd < 0)
+            {
+                return databaseUrl;
+            }
+
+            string remainder = databaseUrl.Substring(schemeEnd + 3);
+
+            string username = "";
+            string password = "";
+            string hostDbPart = remainder;
+
+            int lastAt = remainder.LastIndexOf('@');
+            if (lastAt >= 0)
+            {
+                string userInfoPart = remainder.Substring(0, lastAt);
+                hostDbPart = remainder.Substring(lastAt + 1);
+
+                int firstColon = userInfoPart.IndexOf(':');
+                if (firstColon >= 0)
+                {
+                    username = Uri.UnescapeDataString(userInfoPart.Substring(0, firstColon));
+                    password = Uri.UnescapeDataString(userInfoPart.Substring(firstColon + 1));
+                }
+                else
+                {
+                    username = Uri.UnescapeDataString(userInfoPart);
+                }
+            }
+
+            string hostPortPart = hostDbPart;
+            string database = "postgres";
+
+            int slash = hostDbPart.IndexOf('/');
+            if (slash >= 0)
+            {
+                hostPortPart = hostDbPart.Substring(0, slash);
+                database = hostDbPart.Substring(slash + 1);
+            }
+
+            // Strip query parameters or URL fragment from database name
+            int qm = database.IndexOf('?');
+            if (qm >= 0) database = database.Substring(0, qm);
+            int hash = database.IndexOf('#');
+            if (hash >= 0) database = database.Substring(0, hash);
+            if (string.IsNullOrWhiteSpace(database)) database = "postgres";
+
+            string host = hostPortPart;
+            int port = 5432;
+
+            if (hostPortPart.StartsWith("[") && hostPortPart.Contains(']'))
+            {
+                int closeBracket = hostPortPart.IndexOf(']');
+                host = hostPortPart.Substring(1, closeBracket - 1);
+                int colonAfter = hostPortPart.IndexOf(':', closeBracket);
+                if (colonAfter >= 0 && int.TryParse(hostPortPart.Substring(colonAfter + 1), out int p6))
+                {
+                    port = p6;
+                }
+            }
+            else
+            {
+                int colon = hostPortPart.LastIndexOf(':');
+                if (colon >= 0 && int.TryParse(hostPortPart.Substring(colon + 1), out int p))
+                {
+                    host = hostPortPart.Substring(0, colon);
+                    port = p;
+                }
+            }
 
             return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Prefer;Trust Server Certificate=true;";
         }
