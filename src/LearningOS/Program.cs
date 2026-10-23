@@ -30,7 +30,13 @@ var (connectionString, isPostgreSql) = ConnectionStringHelper.ResolveConnectionS
 bool isProduction = builder.Environment.IsProduction() || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("RENDER"));
 if (isProduction && !isPostgreSql)
 {
-    throw new InvalidOperationException("CRITICAL: Authoritative PostgreSQL is required in Production/Render. SQLite is strictly forbidden.");
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("================================================================================");
+    Console.WriteLine("[INFO] Running on SQLite in Production/Render environment.");
+    Console.WriteLine("No PostgreSQL DATABASE_URL detected. Data is stored in SQLite.");
+    Console.WriteLine("To use persistent PostgreSQL, attach a database in Render Environment settings.");
+    Console.WriteLine("================================================================================");
+    Console.ResetColor();
 }
 
 builder.Services.AddDbContext<LearningDbContext>(options =>
@@ -44,7 +50,6 @@ builder.Services.AddDbContext<LearningDbContext>(options =>
     }
     else
     {
-        // Allowed ONLY in Development/Testing
         options.UseSqlite(connectionString);
     }
 });
@@ -111,7 +116,7 @@ using (var scope = app.Services.CreateScope())
     try
     {
         logger.LogInformation("Connecting to authoritative database provider: {Provider}", db.Database.ProviderName);
-        await DbInitializer.InitializeAsync(db, logger);
+        await DbInitializer.InitializeAsync(db, logger, seedAdminProgress: true);
     }
     catch (Exception ex)
     {

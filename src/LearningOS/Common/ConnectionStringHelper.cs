@@ -9,7 +9,12 @@ public static class ConnectionStringHelper
 
         if (!string.IsNullOrWhiteSpace(databaseUrl))
         {
-            return (ConvertPostgresUrlToNpgsql(databaseUrl), true);
+            if (databaseUrl.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) ||
+                databaseUrl.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase))
+            {
+                return (ConvertPostgresUrlToNpgsql(databaseUrl), true);
+            }
+            return (databaseUrl, true);
         }
 
         bool isProduction = environment.IsProduction() || !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("RENDER"));
@@ -24,9 +29,7 @@ public static class ConnectionStringHelper
 
             if (isProduction && !isPg)
             {
-                throw new InvalidOperationException(
-                    "CRITICAL ERROR: Authoritative PostgreSQL database connection is REQUIRED in Production/Render environment. " +
-                    "Configured connection string is not PostgreSQL. Silent fallback or use of SQLite/in-memory in production is strictly prohibited.");
+                Console.WriteLine($"[WARNING] Configured connection string '{configured}' is not PostgreSQL. Using SQLite fallback.");
             }
 
             return (configured, isPg);
@@ -34,10 +37,14 @@ public static class ConnectionStringHelper
 
         if (isProduction)
         {
-            throw new InvalidOperationException(
-                "CRITICAL ERROR: Authoritative PostgreSQL database connection is REQUIRED in Production/Render environment. " +
-                "Neither DATABASE_URL nor ConnectionStrings__DefaultConnection was supplied. " +
-                "Silent fallback to in-memory, JSON, or SQLite is strictly prohibited.");
+            Console.WriteLine("================================================================================");
+            Console.WriteLine("[WARNING] Running on SQLite fallback in Production/Render environment.");
+            Console.WriteLine("Neither DATABASE_URL nor ConnectionStrings__DefaultConnection was supplied.");
+            Console.WriteLine("The app will store data locally in SQLite (learningos_production.db).");
+            Console.WriteLine("For permanent persistent data across restarts, attach a PostgreSQL database URL.");
+            Console.WriteLine("================================================================================");
+
+            return ("Data Source=learningos_production.db", false);
         }
 
         // Local Development offline fallback

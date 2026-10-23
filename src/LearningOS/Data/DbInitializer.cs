@@ -5,7 +5,7 @@ namespace LearningOS.Data;
 
 public static class DbInitializer
 {
-    public static async Task InitializeAsync(LearningDbContext db, ILogger logger)
+    public static async Task InitializeAsync(LearningDbContext db, ILogger logger, bool seedAdminProgress = false)
     {
         // For PostgreSQL in production, apply migrations; for SQLite/dev/tests, ensure created
         bool isPostgres = db.Database.ProviderName?.Contains("Npgsql", StringComparison.OrdinalIgnoreCase) == true;
@@ -136,6 +136,10 @@ public static class DbInitializer
         if (await db.DayPlans.IgnoreQueryFilters().AnyAsync())
         {
             logger.LogInformation("Database already seeded with learning plan.");
+            if (seedAdminProgress)
+            {
+                await EnsureAdminProgressSeededAsync(db, adminUser.Id, logger);
+            }
             return;
         }
 
@@ -177,7 +181,7 @@ public static class DbInitializer
         await db.SaveChangesAsync();
 
         // 3. Seed 100 Exactly Numbered Learning Days
-        var dayPlans = Generate100DayPlans(phases, settings.RoadmapStartDate, adminUser.Id);
+        var dayPlans = Generate100DayPlans(phases, settings.RoadmapStartDate, adminUser.Id, seedAdminProgress);
         db.DayPlans.AddRange(dayPlans);
 
         // 4. Seed Trackers: DSA, System Design, Interview Questions, Resources, Goals
@@ -198,7 +202,49 @@ public static class DbInitializer
         logger.LogInformation("Successfully initialized LearningOS database with 100 learning days!");
     }
 
-    private static List<DayPlan> Generate100DayPlans(List<Phase> phases, DateOnly startDate, int userId = 1)
+    private static async Task EnsureAdminProgressSeededAsync(LearningDbContext db, int adminUserId, ILogger logger)
+    {
+        var adminCompleted = await db.DayPlans.IgnoreQueryFilters()
+            .CountAsync(d => d.UserId == adminUserId && d.Status == DayStatus.Completed);
+
+        if (adminCompleted < 23)
+        {
+            logger.LogInformation("Admin has {Completed} completed days. Synchronizing Days 1-23 to completed status...", adminCompleted);
+            var adminDays = await db.DayPlans.IgnoreQueryFilters()
+                .Include(d => d.Tasks)
+                .Include(d => d.DailyReview)
+                .Where(d => d.UserId == adminUserId && d.DayNumber >= 1 && d.DayNumber <= 23)
+                .ToListAsync();
+
+            foreach (var day in adminDays)
+            {
+                day.Status = DayStatus.Completed;
+                day.ReviewSummary = $"Completed all curriculum topics and DSA problems for Day {day.DayNumber}.";
+                if (day.DailyReview == null)
+                {
+                    day.DailyReview = new DailyReview
+                    {
+                        DayPlanId = day.Id,
+                        ReviewDate = day.CalendarDate,
+                        Rating = "Completed everything",
+                        WhatHappenedNotes = $"Successfully completed all engineering objectives and DSA challenges for Day {day.DayNumber}.",
+                        TomorrowPriority = day.DayNumber < 23 ? "Continue next day curriculum." : "Proceed with Phase 1 review and upcoming milestones.",
+                        CreatedAt = DateTime.UtcNow
+                    };
+                }
+                foreach (var task in day.Tasks)
+                {
+                    task.Status = "Completed";
+                    task.CompletedAt ??= day.CalendarDate.ToDateTime(TimeOnly.Parse("21:00:00"), DateTimeKind.Utc);
+                }
+            }
+
+            await db.SaveChangesAsync();
+            logger.LogInformation("Successfully synchronized Days 1-23 for Admin user.");
+        }
+    }
+
+    private static List<DayPlan> Generate100DayPlans(List<Phase> phases, DateOnly startDate, int userId = 1, bool seedAdminProgress = false)
     {
         var days = new List<DayPlan>();
         var curDate = startDate;
@@ -209,6 +255,7 @@ public static class DbInitializer
             int weekNum = ((dayNum - 1) / 7) + 1;
 
             var (title, theme, tasks) = GetCurriculumForDay(dayNum);
+            bool isCompletedDay = seedAdminProgress && dayNum <= 23;
 
             var dayPlan = new DayPlan
             {
@@ -216,12 +263,13 @@ public static class DbInitializer
                 DayNumber = dayNum,
                 IsLearningDay = true,
                 CalendarDate = curDate,
-                Status = DayStatus.Planned,
+                Status = isCompletedDay ? DayStatus.Completed : DayStatus.Planned,
                 Title = title,
                 Theme = theme,
                 PhaseId = phase.Id,
                 WeekNumber = weekNum,
                 CreatedAt = DateTime.UtcNow,
+                ReviewSummary = isCompletedDay ? $"Completed all curriculum topics and DSA problems for Day {dayNum}." : null,
                 Tasks = tasks.Select(t => new LearningTask
                 {
                     Title = t.Title,
@@ -229,12 +277,25 @@ public static class DbInitializer
                     Category = t.Category,
                     EstimatedMinutes = t.EstimatedMinutes,
                     Priority = t.Priority,
-                    Status = "Pending",
+                    Status = isCompletedDay ? "Completed" : "Pending",
                     OriginalDayNumber = dayNum,
                     CurrentDayNumber = dayNum,
+                    CompletedAt = isCompletedDay ? curDate.ToDateTime(TimeOnly.Parse("21:00:00"), DateTimeKind.Utc) : null,
                     CreatedAt = DateTime.UtcNow
                 }).ToList()
             };
+
+            if (isCompletedDay)
+            {
+                dayPlan.DailyReview = new DailyReview
+                {
+                    ReviewDate = curDate,
+                    Rating = "Completed everything",
+                    WhatHappenedNotes = $"Successfully completed all engineering objectives and DSA challenges for Day {dayNum}.",
+                    TomorrowPriority = dayNum < 23 ? "Continue next day curriculum." : "Proceed with Phase 1 review and upcoming milestones.",
+                    CreatedAt = DateTime.UtcNow
+                };
+            }
 
             days.Add(dayPlan);
             curDate = curDate.AddDays(1);

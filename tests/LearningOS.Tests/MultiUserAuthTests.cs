@@ -85,6 +85,90 @@ public class MultiUserAuthTests : IDisposable
     }
 
     [Fact]
+    public async Task DbInitializer_WithAdminProgress_Seeds23CompletedDaysAndStreak()
+    {
+        var dbPath = $"admin_progress_{Guid.NewGuid():N}.db";
+        var options = new DbContextOptionsBuilder<LearningDbContext>()
+            .UseSqlite($"Data Source={dbPath}")
+            .Options;
+
+        try
+        {
+            using (var db = new LearningDbContext(options))
+            {
+                await DbInitializer.InitializeAsync(db, NullLogger.Instance, seedAdminProgress: true);
+
+                var admin = await db.Users.FirstAsync(u => u.Role == "Admin");
+                var completedDays = await db.DayPlans
+                    .Include(d => d.Tasks)
+                    .Include(d => d.DailyReview)
+                    .Where(d => d.UserId == admin.Id && d.Status == DayStatus.Completed)
+                    .OrderBy(d => d.DayNumber)
+                    .ToListAsync();
+
+                Assert.Equal(23, completedDays.Count);
+                Assert.All(completedDays, d =>
+                {
+                    Assert.NotNull(d.DailyReview);
+                    Assert.Equal("Completed everything", d.DailyReview.Rating);
+                    Assert.All(d.Tasks, t => Assert.Equal("Completed", t.Status));
+                });
+
+                var completedTasksCount = completedDays.SelectMany(d => d.Tasks).Count();
+                Assert.Equal(47, completedTasksCount);
+
+                var allDays = await db.DayPlans.Where(d => d.UserId == admin.Id).ToListAsync();
+                var streakService = new StreakService();
+                var (currentStreak, bestStreak) = streakService.CalculateStreak(allDays);
+                Assert.Equal(23, currentStreak);
+                Assert.Equal(23, bestStreak);
+            }
+        }
+        finally
+        {
+            if (File.Exists(dbPath))
+            {
+                try { File.Delete(dbPath); } catch { }
+            }
+        }
+    }
+
+    [Fact]
+    public async Task DbInitializer_SynchronizesAdminProgress_OnExistingDatabase()
+    {
+        var dbPath = $"admin_sync_{Guid.NewGuid():N}.db";
+        var options = new DbContextOptionsBuilder<LearningDbContext>()
+            .UseSqlite($"Data Source={dbPath}")
+            .Options;
+
+        try
+        {
+            // Initial run with seedAdminProgress = false
+            using (var db = new LearningDbContext(options))
+            {
+                await DbInitializer.InitializeAsync(db, NullLogger.Instance, seedAdminProgress: false);
+            }
+
+            // Second run with seedAdminProgress = true
+            using (var db = new LearningDbContext(options))
+            {
+                await DbInitializer.InitializeAsync(db, NullLogger.Instance, seedAdminProgress: true);
+
+                var admin = await db.Users.FirstAsync(u => u.Role == "Admin");
+                var completedCount = await db.DayPlans.CountAsync(d => d.UserId == admin.Id && d.Status == DayStatus.Completed);
+                Assert.Equal(23, completedCount);
+            }
+        }
+        finally
+        {
+            if (File.Exists(dbPath))
+            {
+                try { File.Delete(dbPath); } catch { }
+            }
+        }
+    }
+
+    [Fact]
     public async Task Register_WithInviteCode_ActivatesInstantly_AndProvisions100DaysFromCustomDate()
     {
         var config = CreateTestConfig();
