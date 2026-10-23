@@ -127,6 +127,29 @@ public static class ConnectionStringHelper
                 }
             }
 
+            // Supabase IPv6-to-IPv4 auto-translation:
+            // Direct endpoint 'db.[PROJECT_REF].supabase.co' is IPv6-only.
+            // Cloud platforms without outbound IPv6 (like Render free tier) fail with 'Network is unreachable'.
+            // Automatically reroute to the IPv4-compatible pooler.
+            if (host.StartsWith("db.", StringComparison.OrdinalIgnoreCase) && 
+                host.EndsWith(".supabase.co", StringComparison.OrdinalIgnoreCase))
+            {
+                int firstDot = host.IndexOf('.');
+                int secondDot = host.IndexOf('.', firstDot + 1);
+                if (firstDot >= 0 && secondDot > firstDot)
+                {
+                    string projectRef = host.Substring(firstDot + 1, secondDot - firstDot - 1);
+                    string region = Environment.GetEnvironmentVariable("SUPABASE_REGION") ?? "ap-southeast-1";
+
+                    host = $"aws-0-{region}.pooler.supabase.com";
+                    if (!username.Contains('.'))
+                    {
+                        username = $"{username}.{projectRef}";
+                    }
+                    Console.WriteLine($"[INFO] Automatically routed Supabase direct IPv6 endpoint ({projectRef}) to IPv4 pooler '{host}' with user '{username}'.");
+                }
+            }
+
             return $"Host={host};Port={port};Database={database};Username={username};Password={password};SSL Mode=Prefer;Trust Server Certificate=true;";
         }
         catch (Exception ex)

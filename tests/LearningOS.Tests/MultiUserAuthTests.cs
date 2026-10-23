@@ -422,13 +422,26 @@ public class MultiUserAuthTests : IDisposable
     [Fact]
     public void ConvertPostgresUrlToNpgsql_HandlesPasswordsWithSpecialCharacters()
     {
-        string raw = "postgresql://postgres:Shatru102016@#@db.epyxzcrroeanpgrhecqj.supabase.co:5432/postgres";
+        string raw = "postgresql://postgres:Shatru102016@#@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres";
         string converted = LearningOS.Common.ConnectionStringHelper.ConvertPostgresUrlToNpgsql(raw);
 
-        Assert.Contains("Host=db.epyxzcrroeanpgrhecqj.supabase.co;", converted);
+        Assert.Contains("Host=aws-0-ap-southeast-1.pooler.supabase.com;", converted);
         Assert.Contains("Port=5432;", converted);
         Assert.Contains("Database=postgres;", converted);
         Assert.Contains("Username=postgres;", converted);
         Assert.Contains("Password=Shatru102016@#;", converted);
+    }
+
+    [Fact]
+    public void ConvertPostgresUrlToNpgsql_AutoTranslatesDirectSupabaseHostToPooler()
+    {
+        string raw = "postgresql://postgres:Shatru102026%40%23@db.epyxzcrroeanpgrhecqj.supabase.co:5432/postgres";
+        string converted = LearningOS.Common.ConnectionStringHelper.ConvertPostgresUrlToNpgsql(raw);
+
+        Assert.Contains("Host=aws-0-ap-southeast-1.pooler.supabase.com;", converted);
+        Assert.Contains("Port=5432;", converted);
+        Assert.Contains("Database=postgres;", converted);
+        Assert.Contains("Username=postgres.epyxzcrroeanpgrhecqj;", converted);
+        Assert.Contains("Password=Shatru102026@#;", converted);
     }
 }
