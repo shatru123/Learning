@@ -43,11 +43,58 @@ async function initApp() {
     loadSettings();
   }
   checkForInviteInUrl();
+  window.addEventListener('resize', updateNavScrollIndicators);
+  setTimeout(updateNavScrollIndicators, 100);
+  setTimeout(updateNavScrollIndicators, 400);
 }
 
 // TAB NAVIGATION
 let currentTab = 'dashboard';
 let previousTabBeforeDetail = 'roadmap';
+
+function scrollNavTabs(delta) {
+  const container = document.getElementById('nav-tabs-container');
+  if (container) {
+    container.scrollBy({ left: delta, behavior: 'smooth' });
+    setTimeout(updateNavScrollIndicators, 200);
+  }
+}
+
+function updateNavScrollIndicators() {
+  const container = document.getElementById('nav-tabs-container');
+  const btnPrev = document.getElementById('nav-scroll-prev');
+  const btnNext = document.getElementById('nav-scroll-next');
+  const edgeLeft = document.getElementById('nav-edge-left');
+  const edgeRight = document.getElementById('nav-edge-right');
+  const progressBar = document.getElementById('nav-scroll-progress');
+
+  if (!container) return;
+
+  const scrollLeft = container.scrollLeft;
+  const maxScroll = container.scrollWidth - container.clientWidth;
+  const canScrollLeft = scrollLeft > 8;
+  const canScrollRight = maxScroll > 8 && scrollLeft < (maxScroll - 8);
+
+  if (btnPrev) btnPrev.classList.toggle('nav-arrow-visible', canScrollLeft);
+  if (btnNext) btnNext.classList.toggle('nav-arrow-visible', canScrollRight);
+  if (edgeLeft) edgeLeft.classList.toggle('nav-edge-visible', canScrollLeft);
+  if (edgeRight) edgeRight.classList.toggle('nav-edge-visible', canScrollRight);
+
+  if (progressBar) {
+    if (maxScroll > 0) {
+      const thumbWidthPercent = Math.max(12, Math.min(100, (container.clientWidth / container.scrollWidth) * 100));
+      const availableTrackPercent = 100 - thumbWidthPercent;
+      const progressRatio = Math.max(0, Math.min(1, scrollLeft / maxScroll));
+      const thumbLeftPercent = progressRatio * availableTrackPercent;
+
+      progressBar.style.width = `${thumbWidthPercent}%`;
+      progressBar.style.transform = `translateX(${thumbLeftPercent * (100 / thumbWidthPercent)}%)`;
+      if (progressBar.parentElement) progressBar.parentElement.style.opacity = '1';
+    } else {
+      if (progressBar.parentElement) progressBar.parentElement.style.opacity = '0';
+    }
+  }
+}
 
 function switchTab(tabName) {
   const fastBootStyle = document.getElementById('fast-boot-style');
@@ -87,6 +134,8 @@ function switchTab(tabName) {
       }
     }
   });
+
+  setTimeout(updateNavScrollIndicators, 150);
 
   // Handle read-only preview mode banner
   const previewBanner = document.getElementById('preview-mode-banner');
@@ -1753,11 +1802,16 @@ function updateAuthUi() {
   if (user && AuthManager.isAuthenticated()) {
     if (userBadgeContainer) userBadgeContainer.classList.remove('hidden');
     if (btnOpenLogin) btnOpenLogin.classList.add('hidden');
-    if (headerStudyActions) headerStudyActions.classList.remove('hidden');
+    if (headerStudyActions) headerStudyActions.classList.remove('auth-hidden');
     
     const userNameEl = document.getElementById('header-user-name');
+    const userBadgeEl = document.getElementById('header-user-badge');
+    const fullNameWithRole = user.role === 'Admin' ? `${user.fullName} (Admin)` : user.fullName;
     if (userNameEl) {
-      userNameEl.textContent = user.role === 'Admin' ? `${user.fullName} (Admin)` : user.fullName;
+      userNameEl.textContent = fullNameWithRole;
+    }
+    if (userBadgeEl) {
+      userBadgeEl.title = fullNameWithRole;
     }
 
     if (settingsRoleBadge) {
@@ -1773,10 +1827,11 @@ function updateAuthUi() {
   } else {
     if (userBadgeContainer) userBadgeContainer.classList.add('hidden');
     if (btnOpenLogin) btnOpenLogin.classList.remove('hidden');
-    if (headerStudyActions) headerStudyActions.classList.add('hidden');
+    if (headerStudyActions) headerStudyActions.classList.add('auth-hidden');
     if (navLearners) navLearners.classList.add('hidden');
     if (settingsRoleBadge) settingsRoleBadge.textContent = 'Not Signed In';
   }
+  setTimeout(updateNavScrollIndicators, 150);
 }
 
 async function checkPendingApprovalsBadge() {

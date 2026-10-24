@@ -38,9 +38,9 @@
         var style = document.createElement('style');
         style.id = 'fast-boot-style';
         if (isAuth) {
-          style.textContent = '#view-' + targetTab + ' { display: block !important; } #view-login { display: none !important; } #user-badge-container { display: flex !important; } #btn-open-login { display: none !important; } #header-study-actions { display: flex !important; }';
+          style.textContent = '#view-' + targetTab + ' { display: block !important; } #view-login { display: none !important; } #user-badge-container { display: flex !important; } #btn-open-login { display: none !important; }';
         } else {
-          style.textContent = '#view-login { display: block !important; } #view-dashboard { display: none !important; } #user-badge-container { display: none !important; } #btn-open-login { display: flex !important; } #header-study-actions { display: none !important; }';
+          style.textContent = '#view-login { display: block !important; } #view-dashboard { display: none !important; } #user-badge-container { display: none !important; } #btn-open-login { display: flex !important; }';
         }
         document.head.appendChild(style);
       } catch (_) {}
@@ -56,56 +56,58 @@
 
   <!-- App Header -->
   <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 transition-all">
-    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-16 py-2 sm:py-0 flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/25 ring-1 ring-white/10 text-lg sm:text-xl shrink-0 transition-transform active:scale-95">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-16 py-2 flex items-center justify-between gap-2 overflow-hidden">
+      <!-- Left: Logo & Title -->
+      <div class="flex items-center gap-2 sm:gap-3 shrink-0 min-w-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/25 ring-1 ring-white/10 text-base sm:text-xl shrink-0 transition-transform active:scale-95">
           ⚡
         </div>
-        <div>
+        <div class="min-w-0">
           <div class="flex items-center gap-1.5 sm:gap-2">
-            <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight">LearningOS</h1>
-            <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-300 border border-blue-700/50 shadow-sm">100-Day Mastery</span>
+            <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight shrink-0">LearningOS</h1>
+            <span class="hidden md:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-300 border border-blue-700/50 shadow-sm shrink-0">100-Day Mastery</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden md:block">Real-Life Resilient Learning Operating System</p>
+          <p class="text-[11px] text-slate-400 hidden xl:block truncate max-w-[260px]">Real-Life Resilient Learning Operating System</p>
         </div>
       </div>
 
-      <!-- Quick Action Buttons & Status -->
-      <div class="flex items-center gap-1.5 sm:gap-3">
-        <div id="server-status-pill" class="px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5 shrink-0 shadow-sm">
+      <!-- Right: Status & User Profile -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0 min-w-0">
+        <div id="server-status-pill" class="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5 shrink-0 shadow-sm" title="Database Connected">
           <span class="live-dot shrink-0"></span>
-          <span class="hidden sm:inline font-medium">PostgreSQL Connected</span>
-          <span class="sm:hidden font-mono font-medium">Postgres</span>
+          <span class="hidden lg:inline font-medium">PostgreSQL Connected</span>
+          <span class="hidden sm:inline lg:hidden font-mono font-medium">Postgres</span>
+          <span class="sm:hidden font-mono font-bold text-[10px]">PG</span>
         </div>
 
-        <div id="header-study-actions" class="hidden lg:flex items-center gap-2">
-          <button onclick="openRestDayModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-teal-950/60 text-teal-300 border border-teal-800/80 hover:bg-teal-900/50 active:scale-95 transition flex items-center gap-1.5 shadow-sm">
-            <span>🌴</span> <span class="hidden xl:inline">Add</span> Rest Day
+        <div id="header-study-actions" class="auth-hidden hidden xl:flex items-center gap-1.5 shrink-0">
+          <button onclick="openRestDayModal()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-teal-950/60 text-teal-300 border border-teal-800/80 hover:bg-teal-900/50 active:scale-95 transition flex items-center gap-1 shadow-sm shrink-0">
+            <span>🌴</span> <span>Rest Day</span>
           </button>
 
-          <button onclick="openLeaveDayModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 active:scale-95 transition flex items-center gap-1.5 shadow-sm">
-            <span>🏖️</span> <span class="hidden xl:inline">Add</span> Leave Day
+          <button onclick="openLeaveDayModal()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 active:scale-95 transition flex items-center gap-1 shadow-sm shrink-0">
+            <span>🏖️</span> <span>Leave Day</span>
           </button>
 
-          <button onclick="openExtendRoadmapModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 active:scale-95 transition flex items-center gap-1.5 shadow-sm">
-            <span>⏩</span> <span class="hidden xl:inline">Extend</span> Roadmap
+          <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 active:scale-95 transition flex items-center gap-1 shadow-sm shrink-0">
+            <span>⏩</span> <span>Extend</span>
           </button>
         </div>
 
         <!-- User Authentication & Profile Pill -->
-        <div id="auth-user-bar" class="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-slate-800 shrink-0">
-          <div id="user-badge-container" class="hidden flex items-center gap-1 sm:gap-1.5">
-            <span id="header-user-badge" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 flex items-center gap-1.5 shadow-sm max-w-[105px] sm:max-w-[170px] truncate">
-              <span class="text-xs">👤</span> <span id="header-user-name" class="truncate font-medium">User</span>
+        <div id="auth-user-bar" class="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-slate-800 shrink-0 min-w-0">
+          <div id="user-badge-container" class="hidden flex items-center gap-1 sm:gap-1.5 min-w-0">
+            <span id="header-user-badge" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 inline-flex items-center gap-1.5 shadow-sm max-w-[85px] xs:max-w-[115px] sm:max-w-[150px] md:max-w-[180px] xl:max-w-[220px] min-w-0 overflow-hidden" title="User Profile">
+              <span class="text-xs shrink-0">👤</span> <span id="header-user-name" class="truncate font-medium min-w-0 block">User</span>
             </span>
-            <button onclick="openChangePasswordModal()" title="Update Password" class="p-1.5 sm:px-2 sm:py-1 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 active:scale-95 transition cursor-pointer flex items-center gap-1 min-h-[36px]">
-              <span>🔑</span> <span class="hidden xl:inline text-[11px]">Password</span>
+            <button onclick="openChangePasswordModal()" id="btn-header-password" title="Update Password" class="p-1.5 sm:px-2 sm:py-1 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 active:scale-95 transition cursor-pointer flex items-center justify-center gap-1 min-h-[36px] min-w-[36px] shrink-0">
+              <span>🔑</span> <span class="hidden 2xl:inline text-[11px]">Password</span>
             </button>
-            <button onclick="handleLogout()" title="Log out" class="p-1.5 sm:px-2 sm:py-1 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 active:scale-95 transition min-h-[36px]">
+            <button onclick="handleLogout()" id="btn-header-logout" title="Log out" class="p-1.5 sm:p-2 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 active:scale-95 transition flex items-center justify-center min-h-[36px] min-w-[36px] shrink-0">
               <span>🚪</span>
             </button>
           </div>
-          <button id="btn-open-login" onclick="openAuthModal('login')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white active:scale-95 transition flex items-center gap-1.5 shadow-md min-h-[36px]">
+          <button id="btn-open-login" onclick="openAuthModal('login')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white active:scale-95 transition flex items-center gap-1.5 shadow-md min-h-[36px] shrink-0">
             <span>🔑</span> <span>Sign In</span>
           </button>
         </div>
@@ -114,48 +116,75 @@
             var cachedUser = JSON.parse(localStorage.getItem('learningos_user'));
             if (cachedUser && cachedUser.fullName) {
               var uNameEl = document.getElementById('header-user-name');
-              if (uNameEl) uNameEl.textContent = cachedUser.role === 'Admin' ? (cachedUser.fullName + ' (Admin)') : cachedUser.fullName;
+              var uBadgeEl = document.getElementById('header-user-badge');
+              var formattedName = cachedUser.role === 'Admin' ? (cachedUser.fullName + ' (Admin)') : cachedUser.fullName;
+              if (uNameEl) uNameEl.textContent = formattedName;
+              if (uBadgeEl) uBadgeEl.title = formattedName;
             }
           } catch (_) {}
         </script>
       </div>
     </div>
 
-    <!-- Navigation Tabs (Touch-scrollable on mobile) -->
-    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 border-t border-slate-800/60 flex space-x-1 sm:space-x-2 overflow-x-auto py-2 text-xs sm:text-sm scrollbar-none touch-scroll">
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400 shrink-0 min-h-[36px]">
-        <span>📊</span> <span>Dashboard</span>
+    <!-- Navigation Tabs Bar with Scroll Indicators -->
+    <div class="relative border-t border-slate-800/60 bg-slate-900/60 select-none">
+      <!-- Left Edge Fade & Scroll Button -->
+      <div id="nav-edge-left" class="nav-edge-fade nav-edge-left pointer-events-none opacity-0 transition-opacity duration-200"></div>
+      <button id="nav-scroll-prev" onclick="scrollNavTabs(-240)" aria-label="Scroll tabs left" class="nav-scroll-btn left-1 sm:left-2 opacity-0 pointer-events-none transition-all duration-200" title="Scroll left">
+        <svg class="w-4 h-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7" />
+        </svg>
       </button>
-      <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>📅</span> <span>100-Day Roadmap</span>
+
+      <!-- Scrollable Tabs Container -->
+      <div id="nav-tabs-container" class="max-w-7xl mx-auto px-4 sm:px-10 flex space-x-1 sm:space-x-2 overflow-x-auto py-2 text-xs sm:text-sm touch-scroll scrollbar-none relative" onscroll="updateNavScrollIndicators()">
+        <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400 shrink-0 min-h-[36px]">
+          <span>📊</span> <span>Dashboard</span>
+        </button>
+        <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>📅</span> <span>100-Day Roadmap</span>
+        </button>
+        <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>🌌</span> <span>3D Roadmap</span>
+        </button>
+        <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>🕸️</span> <span>Knowledge Graph</span>
+        </button>
+        <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>🔄</span> <span>Recovery Queue</span> <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">0</span>
+        </button>
+        <button onclick="switchTab('daydetail')" id="nav-daydetail" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>📝</span> <span>Day Tasks & Review</span>
+        </button>
+        <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>🧠</span> <span>Trackers</span>
+        </button>
+        <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>📈</span> <span>Analytics</span>
+        </button>
+        <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>📜</span> <span>Audit History</span>
+        </button>
+        <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+          <span>⚙️</span> <span>Schedule & Settings</span>
+        </button>
+        <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30 shrink-0 min-h-[36px]">
+          <span>👥</span> <span>Learners</span> <span id="nav-pending-badge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-red-500 text-white font-bold">0</span>
+        </button>
+      </div>
+
+      <!-- Right Edge Fade & Scroll Button -->
+      <div id="nav-edge-right" class="nav-edge-fade nav-edge-right pointer-events-none opacity-0 transition-opacity duration-200"></div>
+      <button id="nav-scroll-next" onclick="scrollNavTabs(240)" aria-label="Scroll tabs right" class="nav-scroll-btn right-1 sm:right-2 opacity-0 pointer-events-none transition-all duration-200" title="Scroll right for more tabs">
+        <svg class="w-4 h-4 text-slate-300 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
+        </svg>
       </button>
-      <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>🌌</span> <span>3D Roadmap</span>
-      </button>
-      <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>🕸️</span> <span>Knowledge Graph</span>
-      </button>
-      <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>🔄</span> <span>Recovery Queue</span> <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">0</span>
-      </button>
-      <button onclick="switchTab('daydetail')" id="nav-daydetail" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>📝</span> <span>Day Tasks & Review</span>
-      </button>
-      <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>🧠</span> <span>Trackers</span>
-      </button>
-      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>📈</span> <span>Analytics</span>
-      </button>
-      <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>📜</span> <span>Audit History</span>
-      </button>
-      <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
-        <span>⚙️</span> <span>Schedule & Settings</span>
-      </button>
-      <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30 shrink-0 min-h-[36px]">
-        <span>👥</span> <span>Learners</span> <span id="nav-pending-badge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-red-500 text-white font-bold">0</span>
-      </button>
+
+      <!-- Sleek Glowing Scroll Track Indicator -->
+      <div class="w-full bg-slate-800/50 h-[2.5px] overflow-hidden relative">
+        <div id="nav-scroll-progress" class="h-full bg-gradient-to-r from-blue-500 via-indigo-400 to-cyan-400 rounded-full transition-all duration-150 shadow-[0_0_8px_rgba(56,189,248,0.7)]" style="width: 25%; transform: translateX(0);"></div>
+      </div>
     </div>
   </header>
 

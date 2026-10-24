@@ -432,3 +432,115 @@ input:focus, select:focus, textarea:focus {
     opacity: 0;
   }
 }
+
+/* Header Text Overlap & Truncation Guards */
+#header-user-badge {
+  min-width: 0;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+}
+
+#header-user-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  display: block;
+}
+
+/* Responsive visibility for Header Study Actions */
+#header-study-actions {
+  display: none !important;
+}
+
+@media (min-width: 1280px) {
+  #header-study-actions:not(.auth-hidden) {
+    display: flex !important;
+  }
+}
+
+/* Navigation Tabs Scroll Indicator & Chevrons */
+.nav-scroll-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 30;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: rgba(15, 23, 42, 0.94);
+  border: 1px solid rgba(56, 189, 248, 0.4);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 10px rgba(56, 189, 248, 0.25);
+  color: #38bdf8;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease, background 0.2s ease, border-color 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .nav-scroll-btn {
+    width: 32px;
+    height: 32px;
+  }
+}
+
+.nav-scroll-btn:hover {
+  background: rgba(30, 41, 59, 0.98);
+  border-color: #38bdf8;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.6), 0 0 14px rgba(56, 189, 248, 0.5);
+  transform: translateY(-50%) scale(1.08);
+}
+
+.nav-scroll-btn:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+.nav-scroll-btn.nav-arrow-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.nav-edge-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 44px;
+  z-index: 20;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.nav-edge-left {
+  left: 0;
+  background: linear-gradient(to right, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0) 100%);
+}
+
+.nav-edge-right {
+  right: 0;
+  background: linear-gradient(to left, rgba(15, 23, 42, 0.96) 0%, rgba(15, 23, 42, 0) 100%);
+}
+
+.nav-edge-visible {
+  opacity: 1;
+}
+
+/* Nav Tabs Scroll Track */
+#nav-tabs-container::-webkit-scrollbar {
+  height: 3px;
+}
+#nav-tabs-container::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.6);
+}
+#nav-tabs-container::-webkit-scrollbar-thumb {
+  background: rgba(56, 189, 248, 0.4);
+  border-radius: 9999px;
+}
+#nav-tabs-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(56, 189, 248, 0.8);
+}
