@@ -67,47 +67,46 @@
             <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight shrink-0">LearningOS</h1>
             <span class="hidden md:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-300 border border-blue-700/50 shadow-sm shrink-0">100-Day Mastery</span>
           </div>
-          <p class="text-[11px] text-slate-400 hidden xl:block truncate max-w-[260px]">Real-Life Resilient Learning Operating System</p>
+          <p class="text-[11px] text-slate-400 hidden 2xl:block truncate max-w-[260px]">Real-Life Resilient Learning Operating System</p>
         </div>
       </div>
 
       <!-- Right: Status & User Profile -->
-      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0 min-w-0">
-        <div id="server-status-pill" class="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5 shrink-0 shadow-sm" title="Database Connected">
+      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0">
+        <div id="server-status-pill" class="h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-700/50 inline-flex items-center gap-1.5 shrink-0 shadow-sm whitespace-nowrap" title="Database Connected">
           <span class="live-dot shrink-0"></span>
-          <span class="hidden lg:inline font-medium">PostgreSQL Connected</span>
-          <span class="hidden sm:inline lg:hidden font-mono font-medium">Postgres</span>
-          <span class="sm:hidden font-mono font-bold text-[10px]">PG</span>
+          <span class="hidden md:inline font-medium">PostgreSQL Connected</span>
+          <span class="md:hidden font-mono font-bold text-[10px]">PG</span>
         </div>
 
-        <div id="header-study-actions" class="auth-hidden hidden xl:flex items-center gap-1.5 shrink-0">
-          <button onclick="openRestDayModal()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-teal-950/60 text-teal-300 border border-teal-800/80 hover:bg-teal-900/50 active:scale-95 transition flex items-center gap-1 shadow-sm shrink-0">
-            <span>🌴</span> <span>Rest Day</span>
+        <div id="header-study-actions" class="auth-hidden hidden xl:inline-flex items-center gap-1.5 shrink-0">
+          <button onclick="openRestDayModal()" class="h-8 px-3 text-xs font-semibold rounded-lg bg-teal-950/60 text-teal-300 border border-teal-800/80 hover:bg-teal-900/50 active:scale-95 transition inline-flex items-center gap-1.5 shadow-sm shrink-0 whitespace-nowrap">
+            <span class="text-sm">🌴</span> <span>Rest Day</span>
           </button>
 
-          <button onclick="openLeaveDayModal()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 active:scale-95 transition flex items-center gap-1 shadow-sm shrink-0">
-            <span>🏖️</span> <span>Leave Day</span>
+          <button onclick="openLeaveDayModal()" class="h-8 px-3 text-xs font-semibold rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 active:scale-95 transition inline-flex items-center gap-1.5 shadow-sm shrink-0 whitespace-nowrap">
+            <span class="text-sm">🏖️</span> <span>Leave Day</span>
           </button>
 
-          <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 active:scale-95 transition flex items-center gap-1 shadow-sm shrink-0">
-            <span>⏩</span> <span>Extend</span>
+          <button onclick="openExtendRoadmapModal()" class="h-8 px-3 text-xs font-semibold rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 active:scale-95 transition inline-flex items-center gap-1.5 shadow-sm shrink-0 whitespace-nowrap">
+            <span class="text-sm">⏩</span> <span class="hidden 2xl:inline">Extend Roadmap</span><span class="2xl:hidden">Extend</span>
           </button>
         </div>
 
         <!-- User Authentication & Profile Pill -->
-        <div id="auth-user-bar" class="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-slate-800 shrink-0 min-w-0">
-          <div id="user-badge-container" class="hidden flex items-center gap-1 sm:gap-1.5 min-w-0">
-            <span id="header-user-badge" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 inline-flex items-center gap-1.5 shadow-sm max-w-[85px] xs:max-w-[115px] sm:max-w-[150px] md:max-w-[180px] xl:max-w-[220px] min-w-0 overflow-hidden" title="User Profile">
+        <div id="auth-user-bar" class="flex items-center gap-1.5 pl-2 border-l border-slate-800 shrink-0 min-w-0">
+          <div id="user-badge-container" class="hidden flex items-center gap-1.5 min-w-0">
+            <span id="header-user-badge" class="h-8 px-2.5 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 inline-flex items-center gap-1.5 shadow-sm max-w-[85px] xs:max-w-[110px] sm:max-w-[140px] md:max-w-[170px] xl:max-w-[210px] min-w-0 overflow-hidden whitespace-nowrap" title="User Profile">
               <span class="text-xs shrink-0">👤</span> <span id="header-user-name" class="truncate font-medium min-w-0 block">User</span>
             </span>
-            <button onclick="openChangePasswordModal()" id="btn-header-password" title="Update Password" class="p-1.5 sm:px-2 sm:py-1 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 active:scale-95 transition cursor-pointer flex items-center justify-center gap-1 min-h-[36px] min-w-[36px] shrink-0">
+            <button onclick="openChangePasswordModal()" id="btn-header-password" title="Update Password" class="h-8 px-2 sm:px-2.5 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 active:scale-95 transition cursor-pointer inline-flex items-center justify-center gap-1 min-w-[32px] shrink-0 whitespace-nowrap">
               <span>🔑</span> <span class="hidden 2xl:inline text-[11px]">Password</span>
             </button>
-            <button onclick="handleLogout()" id="btn-header-logout" title="Log out" class="p-1.5 sm:p-2 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 active:scale-95 transition flex items-center justify-center min-h-[36px] min-w-[36px] shrink-0">
+            <button onclick="handleLogout()" id="btn-header-logout" title="Log out" class="h-8 w-8 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 active:scale-95 transition inline-flex items-center justify-center shrink-0">
               <span>🚪</span>
             </button>
           </div>
-          <button id="btn-open-login" onclick="openAuthModal('login')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white active:scale-95 transition flex items-center gap-1.5 shadow-md min-h-[36px] shrink-0">
+          <button id="btn-open-login" onclick="openAuthModal('login')" class="h-8 px-3 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white active:scale-95 transition inline-flex items-center gap-1.5 shadow-md shrink-0 whitespace-nowrap">
             <span>🔑</span> <span>Sign In</span>
           </button>
         </div>
@@ -333,14 +332,14 @@
       </div>
 
       <!-- Mobile Quick Actions Bar (Touch-friendly 1-tap Rest / Leave / Extend on mobile) -->
-      <div class="lg:hidden flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none touch-scroll">
-        <button onclick="openRestDayModal()" class="flex-1 min-w-[105px] py-2.5 px-3 rounded-xl bg-teal-950/60 hover:bg-teal-900/70 text-teal-300 border border-teal-800/70 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition min-h-[44px]">
+      <div class="lg:hidden grid grid-cols-3 gap-2">
+        <button onclick="openRestDayModal()" class="w-full py-2.5 px-1.5 rounded-xl bg-teal-950/60 hover:bg-teal-900/70 text-teal-300 border border-teal-800/70 text-xs font-bold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition min-h-[44px] whitespace-nowrap">
           <span>🌴</span> <span>Rest Day</span>
         </button>
-        <button onclick="openLeaveDayModal()" class="flex-1 min-w-[105px] py-2.5 px-3 rounded-xl bg-sky-950/60 hover:bg-sky-900/70 text-sky-300 border border-sky-800/70 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition min-h-[44px]">
+        <button onclick="openLeaveDayModal()" class="w-full py-2.5 px-1.5 rounded-xl bg-sky-950/60 hover:bg-sky-900/70 text-sky-300 border border-sky-800/70 text-xs font-bold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition min-h-[44px] whitespace-nowrap">
           <span>🏖️</span> <span>Leave Day</span>
         </button>
-        <button onclick="openExtendRoadmapModal()" class="flex-1 min-w-[105px] py-2.5 px-3 rounded-xl bg-purple-950/60 hover:bg-purple-900/70 text-purple-300 border border-purple-800/70 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition min-h-[44px]">
+        <button onclick="openExtendRoadmapModal()" class="w-full py-2.5 px-1.5 rounded-xl bg-purple-950/60 hover:bg-purple-900/70 text-purple-300 border border-purple-800/70 text-xs font-bold flex items-center justify-center gap-1 shadow-sm active:scale-95 transition min-h-[44px] whitespace-nowrap">
           <span>⏩</span> <span>Extend</span>
         </button>
       </div>
@@ -350,7 +349,7 @@
         <!-- Intelligent Streak Card -->
         <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden card-hover-lift">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Current Streak</span>
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-tight text-slate-400">Current Streak</span>
             <span class="text-xl sm:text-2xl drop-shadow">🔥</span>
           </div>
           <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
@@ -368,8 +367,8 @@
         <!-- 100 Learning Days Progress -->
         <div class="glass-card rounded-2xl p-4 sm:p-5 card-hover-lift">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Roadmap Progress</span>
-            <span class="text-xl sm:text-2xl drop-shadow">🎯</span>
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-tight text-slate-400 truncate">Roadmap Progress</span>
+            <span class="text-xl sm:text-2xl drop-shadow shrink-0 ml-1">🎯</span>
           </div>
           <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
             <span id="metric-completion-pct" class="text-2xl sm:text-3xl font-black text-blue-400 tracking-tight">0%</span>
@@ -384,12 +383,12 @@
         </div>
 
         <!-- Day Status Breakdown (Requirement 9) -->
-        <div class="glass-card rounded-2xl p-4 sm:p-5 col-span-2 card-hover-lift">
+        <div class="glass-card rounded-2xl p-3 sm:p-5 col-span-2 card-hover-lift">
           <div class="flex items-center justify-between mb-2.5 sm:mb-3">
-            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Day Status (100 Learning Days)</span>
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-tight text-slate-400">Day Status (100 Learning Days)</span>
             <span class="text-[10px] sm:text-xs text-slate-500 hidden sm:inline font-mono">Separated Counts</span>
           </div>
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-2 text-center text-xs">
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 text-center text-xs">
             <div class="card-border-planned bg-slate-900/70 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 shadow-sm transition-transform active:scale-95">
               <div class="text-[10px] sm:text-xs text-slate-400 font-semibold truncate">Planned</div>
               <div id="stat-planned" class="text-base sm:text-lg font-black text-slate-200 mt-0.5">100</div>

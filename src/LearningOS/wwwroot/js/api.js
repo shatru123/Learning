@@ -14,8 +14,9 @@ const OutageManager = {
     }
 
     if (statusPill) {
-      statusPill.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-red-900/40 text-red-400 border border-red-700/50 flex items-center gap-1.5";
-      statusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span> Service Offline / Retrying`;
+      statusPill.className = "h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold rounded-full bg-red-950/60 text-red-400 border border-red-700/50 inline-flex items-center gap-1.5 shrink-0 shadow-sm whitespace-nowrap";
+      statusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-red-500 animate-pulse shrink-0"></span><span class="hidden md:inline font-medium">Offline / Retrying</span><span class="md:hidden font-mono font-bold text-[10px]">Offline</span>`;
+      statusPill.title = "Offline / Retrying";
     }
   },
 
@@ -29,8 +30,9 @@ const OutageManager = {
     }
 
     if (statusPill) {
-      statusPill.className = "px-2.5 py-1 text-xs font-semibold rounded-full bg-emerald-900/40 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5";
-      statusPill.innerHTML = `<span class="w-2 h-2 rounded-full bg-emerald-500"></span> PostgreSQL Connected`;
+      statusPill.className = "h-8 px-2 sm:px-2.5 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-700/50 inline-flex items-center gap-1.5 shrink-0 shadow-sm whitespace-nowrap";
+      statusPill.innerHTML = `<span class="live-dot shrink-0"></span><span class="hidden md:inline font-medium">PostgreSQL Connected</span><span class="md:hidden font-mono font-bold text-[10px]">PG</span>`;
+      statusPill.title = "PostgreSQL Connected";
     }
   }
 };
