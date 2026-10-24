@@ -444,14 +444,17 @@ function renderRoadmapGrid(days) {
     const isMissed = d.status === 'Missed';
     const isRest = d.status === 'RestDay';
     const isLeave = d.status === 'LeaveDay';
+    const isInProgress = d.status === 'InProgress';
+    const isPartial = d.status === 'PartiallyCompleted';
     const completedCount = d.tasks ? d.tasks.filter(t => t.status === 'Completed').length : 0;
     const totalCount = d.tasks ? d.tasks.length : 0;
+    const statusBorderClass = isCompleted ? 'card-border-completed' : (isMissed ? 'card-border-missed' : (isRest ? 'card-border-rest' : (isLeave ? 'card-border-planned' : (isInProgress ? 'card-border-partial' : (isPartial ? 'card-border-partial' : '')))));
 
     return `
-      <div id="day-card-${d.id}" class="rounded-xl border border-slate-800 bg-slate-900/70 p-4 hover:border-slate-700 transition flex flex-col justify-between shadow-sm">
+      <div id="day-card-${d.id}" class="glass-card rounded-2xl p-4 sm:p-5 card-hover-lift flex flex-col justify-between shadow-md ${statusBorderClass}">
         <div>
           <div class="flex items-center justify-between gap-2 mb-2">
-            <span class="text-xs font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-800 text-slate-300">
+            <span class="text-xs font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-slate-800/80 text-slate-300 border border-slate-700/60 shadow-sm">
               ${d.isLearningDay ? `Day ${d.dayNumber}` : (isRest ? '🌴 Rest Day' : '🏖️ Leave')}
             </span>
             <span class="badge-status ${getStatusBadgeClass(d.status)}">
@@ -459,37 +462,37 @@ function renderRoadmapGrid(days) {
             </span>
           </div>
           <div class="text-[11px] text-slate-400 mb-1 font-mono">${d.calendarDate}</div>
-          <h4 class="font-bold text-sm text-white line-clamp-1">${escapeHtml(d.title)}</h4>
-          <p class="text-xs text-slate-400 mt-1 line-clamp-2">${escapeHtml(d.theme)}</p>
+          <h4 class="font-extrabold text-sm sm:text-base text-white line-clamp-1 tracking-tight">${escapeHtml(d.title)}</h4>
+          <p class="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">${escapeHtml(d.theme)}</p>
 
           ${d.isLearningDay ? `
-            <div class="mt-3 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800/80 pt-2">
-              <span>Tasks: ${completedCount}/${totalCount}</span>
-              <div class="w-24 bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                <div class="bg-blue-500 h-1.5 rounded-full" style="width: ${totalCount > 0 ? (completedCount / totalCount * 100) : 0}%"></div>
+            <div class="mt-3.5 flex items-center justify-between text-[11px] text-slate-400 border-t border-slate-800/80 pt-2.5">
+              <span class="font-medium">Tasks: <strong class="text-slate-200">${completedCount}</strong>/${totalCount}</span>
+              <div class="w-24 sm:w-28 bg-slate-800 rounded-full h-2 overflow-hidden shadow-inner">
+                <div class="bg-gradient-to-r from-blue-500 to-emerald-400 h-2 rounded-full transition-all duration-300" style="width: ${totalCount > 0 ? (completedCount / totalCount * 100) : 0}%"></div>
               </div>
             </div>
           ` : ''}
 
           ${isMissed && d.missedRecord ? `
-            <div class="mt-2 p-2 rounded bg-red-950/40 border border-red-800/40 text-[11px] text-red-300">
+            <div class="mt-2.5 p-2.5 rounded-xl bg-red-950/40 border border-red-800/40 text-[11px] text-red-300">
               <strong>Missed:</strong> ${escapeHtml(d.missedRecord.reason)}
               ${d.missedRecord.note ? `<br><em>"${escapeHtml(d.missedRecord.note)}"</em>` : ''}
             </div>
           ` : ''}
         </div>
 
-        <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between gap-1">
-          <button onclick="viewDayDetail(${d.id})" class="text-xs font-semibold text-blue-400 hover:text-blue-300">
-            Open Details →
+        <div class="mt-4 pt-3 border-t border-slate-800/80 flex items-center justify-between gap-1.5">
+          <button onclick="viewDayDetail(${d.id})" class="text-xs font-bold text-blue-400 hover:text-blue-300 py-2 px-1 min-h-[40px] flex items-center gap-1 group">
+            <span>Open Details</span> <span class="group-hover:translate-x-1 transition-transform">→</span>
           </button>
-          <div class="flex gap-1">
+          <div class="flex gap-1.5">
             ${!AuthManager.isAuthenticated() ? '' : (isMissed ? `
-              <button onclick="openRecoverModal(${d.id})" class="px-2 py-1 rounded bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-[11px]">
+              <button onclick="openRecoverModal(${d.id})" class="px-3 py-1.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-xs min-h-[38px] flex items-center shadow">
                 Recover
               </button>
             ` : `
-              <button onclick="openMissedModal(${d.id})" title="Mark Day as Missed" class="px-2 py-1 rounded bg-red-950/50 hover:bg-red-900/60 text-red-300 border border-red-800/50 text-[11px]">
+              <button onclick="openMissedModal(${d.id})" title="Mark Day as Missed" class="px-3 py-1.5 rounded-xl bg-red-950/60 hover:bg-red-900/70 text-red-300 border border-red-800/60 font-semibold text-xs active:scale-95 transition min-h-[38px] flex items-center">
                 Missed
               </button>
             `)}
@@ -602,31 +605,31 @@ function renderDayDetail(day) {
     tasksContainer.innerHTML = `<div class="text-xs text-slate-500 py-4">No tasks assigned to this day.</div>`;
   } else {
     tasksContainer.innerHTML = day.tasks.map(t => `
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-lg border border-slate-800 bg-slate-950/70 gap-3">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-slate-800/80 bg-slate-950/70 hover:border-slate-700 transition gap-3 shadow-sm">
         <div class="flex items-start gap-3">
-          <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} ${!isAuth ? 'disabled title="Sign in to update tasks"' : ''} onchange="toggleTaskStatus(${t.id}, this.checked)" class="mt-1 w-4 h-4 rounded text-blue-600 bg-slate-900 border-slate-700 ${!isAuth ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}">
+          <input type="checkbox" ${t.status === 'Completed' ? 'checked' : ''} ${!isAuth ? 'disabled title="Sign in to update tasks"' : ''} onchange="toggleTaskStatus(${t.id}, this.checked)" class="mt-1 w-5 h-5 rounded text-blue-600 bg-slate-900 border-slate-700 ${!isAuth ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}">
           <div>
-            <div class="font-semibold text-sm ${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-100'}">
+            <div class="font-bold text-sm sm:text-base ${t.status === 'Completed' ? 'line-through text-slate-500' : 'text-slate-100'}">
               ${escapeHtml(t.title)}
             </div>
-            ${t.description ? `<p class="text-xs text-slate-400 mt-1">${escapeHtml(t.description)}</p>` : ''}
+            ${t.description ? `<p class="text-xs text-slate-400 mt-1 leading-relaxed">${escapeHtml(t.description)}</p>` : ''}
             <div class="flex flex-wrap items-center gap-2 mt-2">
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">${t.category}</span>
-              <span class="text-[10px] px-2 py-0.5 rounded ${getPriorityClass(t.priority)}">${t.priority}</span>
-              <span class="text-xs text-slate-500">⏱️ ${t.estimatedMinutes} mins</span>
-              ${t.originalDayNumber !== t.currentDayNumber ? `<span class="text-[10px] px-2 py-0.5 rounded bg-purple-950/60 text-purple-300 border border-purple-800">Moved from Day ${t.originalDayNumber}</span>` : ''}
+              <span class="text-[10px] font-bold px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-300 border border-slate-700">${t.category}</span>
+              <span class="text-[10px] px-2.5 py-0.5 rounded-full ${getPriorityClass(t.priority)}">${t.priority}</span>
+              <span class="text-xs text-slate-400 font-mono">⏱️ ${t.estimatedMinutes} mins</span>
+              ${t.originalDayNumber !== t.currentDayNumber ? `<span class="text-[10px] px-2.5 py-0.5 rounded-full bg-purple-950/60 text-purple-300 border border-purple-800">Moved from Day ${t.originalDayNumber}</span>` : ''}
             </div>
           </div>
         </div>
 
-        <div class="flex items-center gap-2 self-end sm:self-auto">
-          <select ${!isAuth ? 'disabled title="Sign in to update tasks"' : ''} onchange="changeTaskStatusManual(${t.id}, this.value)" class="bg-slate-900 border border-slate-700 rounded text-xs px-2 py-1 text-slate-300 ${!isAuth ? 'cursor-not-allowed opacity-60' : ''}">
+        <div class="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <select ${!isAuth ? 'disabled title="Sign in to update tasks"' : ''} onchange="changeTaskStatusManual(${t.id}, this.value)" class="bg-slate-900 border border-slate-700 rounded-lg text-xs px-2.5 py-1.5 text-slate-200 min-h-[38px] ${!isAuth ? 'cursor-not-allowed opacity-60' : ''}">
             <option value="Pending" ${t.status === 'Pending' ? 'selected' : ''}>Pending</option>
             <option value="InProgress" ${t.status === 'InProgress' ? 'selected' : ''}>In Progress</option>
             <option value="Completed" ${t.status === 'Completed' ? 'selected' : ''}>Completed</option>
             <option value="Skipped" ${t.status === 'Skipped' ? 'selected' : ''}>Skipped</option>
           </select>
-          <button onclick="openTaskHistoryModal(${t.id}, '${escapeHtml(t.title)}')" class="px-2.5 py-1 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium">
+          <button onclick="openTaskHistoryModal(${t.id}, '${escapeHtml(t.title)}')" class="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold active:scale-95 transition min-h-[38px] flex items-center">
             History
           </button>
         </div>

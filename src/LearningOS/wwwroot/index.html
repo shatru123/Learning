@@ -55,16 +55,16 @@
   </div>
 
   <!-- App Header -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur sticky top-0 z-40">
+  <header class="border-b border-slate-800/80 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 transition-all">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 min-h-16 py-2 sm:py-0 flex items-center justify-between gap-2">
       <div class="flex items-center gap-2 sm:gap-3 shrink-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/20 text-lg sm:text-xl shrink-0">
+        <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-blue-600 via-indigo-500 to-purple-500 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-500/25 ring-1 ring-white/10 text-lg sm:text-xl shrink-0 transition-transform active:scale-95">
           ⚡
         </div>
         <div>
           <div class="flex items-center gap-1.5 sm:gap-2">
-            <h1 class="font-bold text-base sm:text-lg text-white tracking-tight">LearningOS</h1>
-            <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-900/50 text-blue-300 border border-blue-700/50">100-Day Mastery</span>
+            <h1 class="font-extrabold text-base sm:text-lg text-white tracking-tight">LearningOS</h1>
+            <span class="hidden sm:inline-block text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-300 border border-blue-700/50 shadow-sm">100-Day Mastery</span>
           </div>
           <p class="text-[11px] text-slate-400 hidden md:block">Real-Life Resilient Learning Operating System</p>
         </div>
@@ -72,22 +72,22 @@
 
       <!-- Quick Action Buttons & Status -->
       <div class="flex items-center gap-1.5 sm:gap-3">
-        <div id="server-status-pill" class="px-2 py-1 sm:px-2.5 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-900/40 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5 shrink-0">
-          <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></span>
-          <span class="hidden sm:inline">PostgreSQL Connected</span>
-          <span class="sm:hidden font-mono">Postgres</span>
+        <div id="server-status-pill" class="px-2.5 py-1 text-[11px] sm:text-xs font-semibold rounded-full bg-emerald-950/60 text-emerald-400 border border-emerald-700/50 flex items-center gap-1.5 shrink-0 shadow-sm">
+          <span class="live-dot shrink-0"></span>
+          <span class="hidden sm:inline font-medium">PostgreSQL Connected</span>
+          <span class="sm:hidden font-mono font-medium">Postgres</span>
         </div>
 
         <div id="header-study-actions" class="hidden lg:flex items-center gap-2">
-          <button onclick="openRestDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-emerald-950/60 text-emerald-300 border border-emerald-800/80 hover:bg-emerald-900/50 transition flex items-center gap-1">
+          <button onclick="openRestDayModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-teal-950/60 text-teal-300 border border-teal-800/80 hover:bg-teal-900/50 active:scale-95 transition flex items-center gap-1.5 shadow-sm">
             <span>🌴</span> <span class="hidden xl:inline">Add</span> Rest Day
           </button>
 
-          <button onclick="openLeaveDayModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 transition flex items-center gap-1">
+          <button onclick="openLeaveDayModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-sky-950/60 text-sky-300 border border-sky-800/80 hover:bg-sky-900/50 active:scale-95 transition flex items-center gap-1.5 shadow-sm">
             <span>🏖️</span> <span class="hidden xl:inline">Add</span> Leave Day
           </button>
 
-          <button onclick="openExtendRoadmapModal()" class="px-2.5 py-1.5 text-xs font-medium rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 transition flex items-center gap-1">
+          <button onclick="openExtendRoadmapModal()" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-purple-950/60 text-purple-300 border border-purple-800/80 hover:bg-purple-900/50 active:scale-95 transition flex items-center gap-1.5 shadow-sm">
             <span>⏩</span> <span class="hidden xl:inline">Extend</span> Roadmap
           </button>
         </div>
@@ -95,17 +95,17 @@
         <!-- User Authentication & Profile Pill -->
         <div id="auth-user-bar" class="flex items-center gap-1 sm:gap-1.5 pl-1.5 sm:pl-2 border-l border-slate-800 shrink-0">
           <div id="user-badge-container" class="hidden flex items-center gap-1 sm:gap-1.5">
-            <span id="header-user-badge" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 flex items-center gap-1 shadow-sm max-w-[100px] sm:max-w-[160px] truncate">
-              <span>👤</span> <span id="header-user-name" class="truncate">User</span>
+            <span id="header-user-badge" class="px-2 sm:px-2.5 py-1 text-xs font-semibold rounded-full bg-blue-950/80 text-blue-300 border border-blue-700/60 flex items-center gap-1.5 shadow-sm max-w-[105px] sm:max-w-[170px] truncate">
+              <span class="text-xs">👤</span> <span id="header-user-name" class="truncate font-medium">User</span>
             </span>
-            <button onclick="openChangePasswordModal()" title="Update Password" class="px-2 py-1 text-xs font-medium rounded-lg bg-slate-800 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 transition cursor-pointer flex items-center gap-1">
+            <button onclick="openChangePasswordModal()" title="Update Password" class="p-1.5 sm:px-2 sm:py-1 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-blue-950/80 text-slate-300 hover:text-blue-300 border border-slate-700 hover:border-blue-700/50 active:scale-95 transition cursor-pointer flex items-center gap-1 min-h-[36px]">
               <span>🔑</span> <span class="hidden xl:inline text-[11px]">Password</span>
             </button>
-            <button onclick="handleLogout()" title="Log out" class="px-2 py-1 text-xs font-medium rounded-lg bg-slate-800 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 transition">
+            <button onclick="handleLogout()" title="Log out" class="p-1.5 sm:px-2 sm:py-1 text-xs font-medium rounded-lg bg-slate-800/80 hover:bg-red-950/80 text-slate-300 hover:text-red-300 border border-slate-700 hover:border-red-700/50 active:scale-95 transition min-h-[36px]">
               <span>🚪</span>
             </button>
           </div>
-          <button id="btn-open-login" onclick="openAuthModal('login')" class="px-2.5 py-1.5 text-xs font-semibold rounded-lg bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1 shadow">
+          <button id="btn-open-login" onclick="openAuthModal('login')" class="px-3 py-1.5 text-xs font-bold rounded-lg bg-blue-600 hover:bg-blue-500 text-white active:scale-95 transition flex items-center gap-1.5 shadow-md min-h-[36px]">
             <span>🔑</span> <span>Sign In</span>
           </button>
         </div>
@@ -122,38 +122,38 @@
     </div>
 
     <!-- Navigation Tabs (Touch-scrollable on mobile) -->
-    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 border-t border-slate-800/60 flex space-x-1 sm:space-x-3 overflow-x-auto py-2 text-xs sm:text-sm scrollbar-none touch-scroll">
-      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400 shrink-0">
+    <div class="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 border-t border-slate-800/60 flex space-x-1 sm:space-x-2 overflow-x-auto py-2 text-xs sm:text-sm scrollbar-none touch-scroll">
+      <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap active-tab bg-slate-800 text-blue-400 shrink-0 min-h-[36px]">
         <span>📊</span> <span>Dashboard</span>
       </button>
-      <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('roadmap')" id="nav-roadmap" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>📅</span> <span>100-Day Roadmap</span>
       </button>
-      <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" id="nav-roadmap3d" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>🌌</span> <span>3D Roadmap</span>
       </button>
-      <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('roadmap3d'); switch3DLayout('graph');" id="nav-roadmap3d-graph" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>🕸️</span> <span>Knowledge Graph</span>
       </button>
-      <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
-        <span>🔄</span> <span>Recovery Queue</span> <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">0</span>
+      <button onclick="switchTab('recovery')" id="nav-recovery" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
+        <span>🔄</span> <span>Recovery Queue</span> <span id="nav-recovery-count" class="hidden px-1.5 py-0.2 rounded-full text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40 font-bold">0</span>
       </button>
-      <button onclick="switchTab('daydetail')" id="nav-daydetail" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('daydetail')" id="nav-daydetail" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>📝</span> <span>Day Tasks & Review</span>
       </button>
-      <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('curriculum')" id="nav-curriculum" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>🧠</span> <span>Trackers</span>
       </button>
-      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('analytics')" id="nav-analytics" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>📈</span> <span>Analytics</span>
       </button>
-      <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('audit')" id="nav-audit" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>📜</span> <span>Audit History</span>
       </button>
-      <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0">
+      <button onclick="switchTab('settings')" id="nav-settings" class="nav-tab px-3 py-1.5 rounded-lg font-medium text-slate-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap shrink-0 min-h-[36px]">
         <span>⚙️</span> <span>Schedule & Settings</span>
       </button>
-      <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30 shrink-0">
+      <button onclick="switchTab('learners')" id="nav-learners" class="hidden nav-tab px-3 py-1.5 rounded-lg font-medium text-amber-300 hover:text-white hover:bg-slate-800/50 transition flex items-center gap-1.5 whitespace-nowrap border border-amber-600/40 bg-amber-950/30 shrink-0 min-h-[36px]">
         <span>👥</span> <span>Learners</span> <span id="nav-pending-badge" class="hidden ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-red-500 text-white font-bold">0</span>
       </button>
     </div>
@@ -175,7 +175,7 @@
   </div>
 
   <!-- Main Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 pb-24 sm:pb-8">
 
     <!-- VIEW 0: LOGIN & ONBOARDING (Shown first when not authenticated) -->
     <section id="view-login" class="hidden space-y-4 sm:space-y-6 max-w-xl mx-auto py-2 sm:py-4">
@@ -290,32 +290,45 @@
     <!-- VIEW 1: DASHBOARD -->
     <section id="view-dashboard" class="hidden space-y-4 sm:space-y-6">
       <!-- Recovery Queue Warning Card (Requirement 12) -->
-      <div id="dash-recovery-banner" class="hidden rounded-xl border border-amber-500/30 bg-amber-950/20 p-3.5 sm:p-4 shadow-lg backdrop-blur flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+      <div id="dash-recovery-banner" class="hidden rounded-2xl border border-amber-500/40 bg-amber-950/30 p-4 sm:p-5 shadow-xl backdrop-blur-md flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 transition-all">
         <div class="flex items-start gap-3">
-          <div class="text-2xl mt-0.5">⚠️</div>
+          <div class="text-2xl mt-0.5 shrink-0">⚠️</div>
           <div>
-            <h3 id="dash-recovery-title" class="text-sm sm:text-base font-bold text-amber-300">0 tasks need attention</h3>
-            <p id="dash-recovery-desc" class="text-xs sm:text-sm text-slate-300">You have missed days or incomplete tasks in your recovery queue.</p>
+            <h3 id="dash-recovery-title" class="text-sm sm:text-base font-extrabold text-amber-300">0 tasks need attention</h3>
+            <p id="dash-recovery-desc" class="text-xs sm:text-sm text-slate-300 mt-0.5">You have missed days or incomplete tasks in your recovery queue.</p>
           </div>
         </div>
-        <button onclick="switchTab('recovery')" class="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs sm:text-sm transition shrink-0 shadow text-center">
+        <button onclick="switchTab('recovery')" class="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 active:scale-95 text-slate-950 font-bold text-xs sm:text-sm transition shrink-0 shadow-lg text-center min-h-[44px] flex items-center justify-center">
           Open Recovery Manager →
+        </button>
+      </div>
+
+      <!-- Mobile Quick Actions Bar (Touch-friendly 1-tap Rest / Leave / Extend on mobile) -->
+      <div class="lg:hidden flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none touch-scroll">
+        <button onclick="openRestDayModal()" class="flex-1 min-w-[105px] py-2.5 px-3 rounded-xl bg-teal-950/60 hover:bg-teal-900/70 text-teal-300 border border-teal-800/70 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition min-h-[44px]">
+          <span>🌴</span> <span>Rest Day</span>
+        </button>
+        <button onclick="openLeaveDayModal()" class="flex-1 min-w-[105px] py-2.5 px-3 rounded-xl bg-sky-950/60 hover:bg-sky-900/70 text-sky-300 border border-sky-800/70 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition min-h-[44px]">
+          <span>🏖️</span> <span>Leave Day</span>
+        </button>
+        <button onclick="openExtendRoadmapModal()" class="flex-1 min-w-[105px] py-2.5 px-3 rounded-xl bg-purple-950/60 hover:bg-purple-900/70 text-purple-300 border border-purple-800/70 text-xs font-bold flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition min-h-[44px]">
+          <span>⏩</span> <span>Extend</span>
         </button>
       </div>
 
       <!-- Top Metrics Breakdown (Requirement 9 & 10) -->
       <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <!-- Intelligent Streak Card -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 sm:p-5 relative overflow-hidden">
+        <div class="glass-card rounded-2xl p-4 sm:p-5 relative overflow-hidden card-hover-lift">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Current Streak</span>
-            <span class="text-xl sm:text-2xl">🔥</span>
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Current Streak</span>
+            <span class="text-xl sm:text-2xl drop-shadow">🔥</span>
           </div>
           <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
-            <span id="metric-current-streak" class="text-2xl sm:text-3xl font-extrabold text-white">0</span>
-            <span class="text-[10px] sm:text-xs text-slate-400">days active</span>
+            <span id="metric-current-streak" class="text-2xl sm:text-3xl font-black text-white tracking-tight">0</span>
+            <span class="text-[10px] sm:text-xs text-slate-400 font-medium">days active</span>
           </div>
-          <div class="mt-2 text-[11px] sm:text-xs text-emerald-400 flex items-center gap-1">
+          <div class="mt-2 text-[11px] sm:text-xs text-emerald-400 flex items-center gap-1 font-medium">
             <span>🌴</span> <span class="truncate">Protected by Rest/Leave</span>
           </div>
           <div class="mt-1 text-[10px] sm:text-[11px] text-slate-500">
@@ -324,53 +337,53 @@
         </div>
 
         <!-- 100 Learning Days Progress -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 sm:p-5">
+        <div class="glass-card rounded-2xl p-4 sm:p-5 card-hover-lift">
           <div class="flex items-center justify-between">
-            <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Roadmap Progress</span>
-            <span class="text-xl sm:text-2xl">🎯</span>
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Roadmap Progress</span>
+            <span class="text-xl sm:text-2xl drop-shadow">🎯</span>
           </div>
           <div class="mt-2 sm:mt-3 flex items-baseline gap-1.5 sm:gap-2">
-            <span id="metric-completion-pct" class="text-2xl sm:text-3xl font-extrabold text-blue-400">0%</span>
-            <span class="text-[10px] sm:text-xs text-slate-400">completed</span>
+            <span id="metric-completion-pct" class="text-2xl sm:text-3xl font-black text-blue-400 tracking-tight">0%</span>
+            <span class="text-[10px] sm:text-xs text-slate-400 font-medium">completed</span>
           </div>
-          <div class="mt-2 w-full bg-slate-800 rounded-full h-2 overflow-hidden">
-            <div id="metric-progress-bar" class="bg-gradient-to-r from-blue-500 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+          <div class="mt-2.5 w-full bg-slate-800 rounded-full h-2 overflow-hidden shadow-inner">
+            <div id="metric-progress-bar" class="bg-gradient-to-r from-blue-500 via-indigo-400 to-emerald-400 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
           </div>
           <div class="mt-2 text-[10px] sm:text-[11px] text-slate-400 truncate">
-            <span id="metric-completed-tasks">0</span> / <span id="metric-total-tasks">0</span> tasks done
+            <span id="metric-completed-tasks" class="font-semibold text-slate-200">0</span> / <span id="metric-total-tasks">0</span> tasks done
           </div>
         </div>
 
         <!-- Day Status Breakdown (Requirement 9) -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-3.5 sm:p-5 col-span-2">
-          <div class="flex items-center justify-between mb-2 sm:mb-3">
-            <span class="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-slate-400">Day Status (100 Learning Days)</span>
-            <span class="text-[10px] sm:text-xs text-slate-500 hidden sm:inline">Separated Counts</span>
+        <div class="glass-card rounded-2xl p-4 sm:p-5 col-span-2 card-hover-lift">
+          <div class="flex items-center justify-between mb-2.5 sm:mb-3">
+            <span class="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-slate-400">Day Status (100 Learning Days)</span>
+            <span class="text-[10px] sm:text-xs text-slate-500 hidden sm:inline font-mono">Separated Counts</span>
           </div>
-          <div class="grid grid-cols-3 sm:grid-cols-6 gap-1.5 sm:gap-2 text-center text-xs">
-            <div class="bg-slate-800/50 p-1.5 sm:p-2 rounded-lg border border-slate-700/50">
-              <div class="text-[10px] sm:text-xs text-slate-400 font-medium truncate">Planned</div>
-              <div id="stat-planned" class="text-base sm:text-lg font-bold text-slate-200 mt-0.5">100</div>
+          <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-2 text-center text-xs">
+            <div class="card-border-planned bg-slate-900/70 p-2 sm:p-2.5 rounded-xl border border-slate-700/60 shadow-sm transition-transform active:scale-95">
+              <div class="text-[10px] sm:text-xs text-slate-400 font-semibold truncate">Planned</div>
+              <div id="stat-planned" class="text-base sm:text-lg font-black text-slate-200 mt-0.5">100</div>
             </div>
-            <div class="bg-emerald-950/30 p-1.5 sm:p-2 rounded-lg border border-emerald-700/40">
-              <div class="text-[10px] sm:text-xs text-emerald-400 font-medium truncate">Completed</div>
-              <div id="stat-completed" class="text-base sm:text-lg font-bold text-emerald-300 mt-0.5">0</div>
+            <div class="card-border-completed bg-emerald-950/30 p-2 sm:p-2.5 rounded-xl border border-emerald-700/40 shadow-sm transition-transform active:scale-95">
+              <div class="text-[10px] sm:text-xs text-emerald-400 font-semibold truncate">Completed</div>
+              <div id="stat-completed" class="text-base sm:text-lg font-black text-emerald-300 mt-0.5">0</div>
             </div>
-            <div class="bg-indigo-950/30 p-1.5 sm:p-2 rounded-lg border border-indigo-700/40">
-              <div class="text-[10px] sm:text-xs text-indigo-400 font-medium truncate">Partial</div>
-              <div id="stat-partial" class="text-base sm:text-lg font-bold text-indigo-300 mt-0.5">0</div>
+            <div class="card-border-partial bg-indigo-950/30 p-2 sm:p-2.5 rounded-xl border border-indigo-700/40 shadow-sm transition-transform active:scale-95">
+              <div class="text-[10px] sm:text-xs text-indigo-400 font-semibold truncate">Partial</div>
+              <div id="stat-partial" class="text-base sm:text-lg font-black text-indigo-300 mt-0.5">0</div>
             </div>
-            <div class="bg-slate-800/40 p-1.5 sm:p-2 rounded-lg border border-slate-600/40">
-              <div class="text-[10px] sm:text-xs text-slate-400 font-medium truncate">Skipped</div>
-              <div id="stat-skipped" class="text-base sm:text-lg font-bold text-slate-300 mt-0.5">0</div>
+            <div class="card-border-skipped bg-slate-900/50 p-2 sm:p-2.5 rounded-xl border border-slate-700/40 shadow-sm transition-transform active:scale-95">
+              <div class="text-[10px] sm:text-xs text-slate-400 font-semibold truncate">Skipped</div>
+              <div id="stat-skipped" class="text-base sm:text-lg font-black text-slate-300 mt-0.5">0</div>
             </div>
-            <div class="bg-teal-950/30 p-1.5 sm:p-2 rounded-lg border border-teal-700/40">
-              <div class="text-[10px] sm:text-xs text-teal-400 font-medium truncate">🌴 Rest</div>
-              <div id="stat-rest" class="text-base sm:text-lg font-bold text-teal-300 mt-0.5">0</div>
+            <div class="card-border-rest bg-teal-950/30 p-2 sm:p-2.5 rounded-xl border border-teal-700/40 shadow-sm transition-transform active:scale-95">
+              <div class="text-[10px] sm:text-xs text-teal-400 font-semibold truncate">🌴 Rest</div>
+              <div id="stat-rest" class="text-base sm:text-lg font-black text-teal-300 mt-0.5">0</div>
             </div>
-            <div class="bg-red-950/30 p-1.5 sm:p-2 rounded-lg border border-red-700/40">
-              <div class="text-[10px] sm:text-xs text-red-400 font-medium truncate">❌ Missed</div>
-              <div id="stat-missed" class="text-base sm:text-lg font-bold text-red-300 mt-0.5">0</div>
+            <div class="card-border-missed bg-red-950/30 p-2 sm:p-2.5 rounded-xl border border-red-700/40 shadow-sm transition-transform active:scale-95">
+              <div class="text-[10px] sm:text-xs text-red-400 font-semibold truncate">❌ Missed</div>
+              <div id="stat-missed" class="text-base sm:text-lg font-black text-red-300 mt-0.5">0</div>
             </div>
           </div>
         </div>
@@ -378,13 +391,13 @@
 
       <!-- Today's Focus & Active Plan -->
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div class="lg:col-span-2 rounded-xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+        <div class="glass-card rounded-2xl p-4 sm:p-6 lg:col-span-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800/80 pb-4">
             <div>
-              <span class="text-xs font-semibold text-blue-400 uppercase tracking-wider">Today's Focus</span>
-              <h2 id="today-title" class="text-lg sm:text-xl font-bold text-white mt-1">Loading today's plan...</h2>
+              <span class="text-xs font-bold text-blue-400 uppercase tracking-wider">Today's Focus</span>
+              <h2 id="today-title" class="text-lg sm:text-xl font-extrabold text-white mt-1 tracking-tight">Loading today's plan...</h2>
               <p id="today-theme" class="text-xs sm:text-sm text-slate-400 mt-0.5">...</p>
-              <div id="today-schedule-window" class="mt-2 text-[10px] sm:text-[11px] text-indigo-400 font-mono flex flex-wrap items-center gap-1.5">
+              <div id="today-schedule-window" class="mt-2 text-[10px] sm:text-[11px] text-indigo-300 font-mono flex flex-wrap items-center gap-1.5 bg-indigo-950/40 border border-indigo-800/40 px-2.5 py-1 rounded-lg w-fit">
                 <span>🕒</span> <span>Study Window: 20:00 - 22:30 (Work Hours 09:00-18:00 Protected)</span>
               </div>
             </div>
@@ -399,28 +412,28 @@
           </div>
 
           <!-- Action buttons for today -->
-          <div class="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
+          <div class="mt-6 pt-4 border-t border-slate-800/80 flex flex-col sm:flex-row gap-3 justify-between items-stretch sm:items-center">
             <div class="flex flex-wrap gap-2">
-              <button onclick="openReviewModalForCurrent()" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-medium text-xs transition flex items-center justify-center gap-1">
+              <button onclick="openReviewModalForCurrent()" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 shadow-md min-h-[44px]">
                 <span>📋</span> Daily Review
               </button>
-              <button id="today-btn-missed" onclick="openMissedModalForCurrent()" class="flex-1 sm:flex-initial px-3 py-2 rounded-lg bg-red-900/40 hover:bg-red-900/70 text-red-300 border border-red-700/50 font-medium text-xs transition flex items-center justify-center gap-1 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none">
+              <button id="today-btn-missed" onclick="openMissedModalForCurrent()" class="flex-1 sm:flex-initial px-4 py-2.5 rounded-xl bg-red-950/50 hover:bg-red-900/70 text-red-300 border border-red-700/60 font-bold text-xs active:scale-95 transition flex items-center justify-center gap-1.5 disabled:opacity-40 disabled:cursor-not-allowed disabled:pointer-events-none min-h-[44px]">
                 <span>❌</span> Mark Day as Missed
               </button>
             </div>
-            <button onclick="viewCurrentDayFull()" class="text-xs text-blue-400 hover:text-blue-300 font-semibold text-center sm:text-right py-1">
-              Open Full Day Plan →
+            <button onclick="viewCurrentDayFull()" class="text-xs text-blue-400 hover:text-blue-300 font-bold text-center sm:text-right py-2 min-h-[44px] flex items-center justify-center sm:justify-end gap-1 group">
+              <span>Open Full Day Plan</span> <span class="group-hover:translate-x-1 transition-transform">→</span>
             </button>
           </div>
         </div>
 
         <!-- Recent Activity Feed (Requirement 15) -->
-        <div class="rounded-xl border border-slate-800 bg-slate-900/60 p-4 sm:p-6 flex flex-col">
-          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="glass-card rounded-2xl p-4 sm:p-6 flex flex-col">
+          <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
             <h3 class="text-sm font-bold text-white uppercase tracking-wider">Activity History</h3>
-            <button onclick="switchTab('audit')" class="text-xs text-blue-400 hover:underline">View all</button>
+            <button onclick="switchTab('audit')" class="text-xs text-blue-400 hover:underline font-semibold">View all</button>
           </div>
-          <div id="dash-activity-feed" class="mt-4 space-y-3 flex-1 overflow-y-auto max-h-80 sm:max-h-96 pr-1 text-xs">
+          <div id="dash-activity-feed" class="mt-4 space-y-3 flex-1 overflow-y-auto max-h-80 sm:max-h-96 pr-1 text-xs touch-scroll">
             <div class="text-slate-500 py-4 text-center">Loading activity...</div>
           </div>
         </div>
@@ -1270,16 +1283,44 @@
     </div>
   </footer>
 
+  <!-- Fixed Mobile Bottom Navigation Dock (Thumb-friendly navigation on mobile devices) -->
+  <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-xl border-t border-slate-800/90 shadow-2xl px-1 sm:px-2 py-1.5 flex items-center justify-around safe-bottom">
+    <button onclick="switchTab('dashboard')" class="flex flex-col items-center justify-center p-1 text-slate-400 hover:text-blue-400 active:scale-90 transition min-w-[48px] min-h-[44px]">
+      <span class="text-lg">📊</span>
+      <span class="text-[10px] font-bold tracking-tight mt-0.5">Home</span>
+    </button>
+    <button onclick="switchTab('roadmap')" class="flex flex-col items-center justify-center p-1 text-slate-400 hover:text-blue-400 active:scale-90 transition min-w-[48px] min-h-[44px]">
+      <span class="text-lg">📅</span>
+      <span class="text-[10px] font-bold tracking-tight mt-0.5">Roadmap</span>
+    </button>
+    <button onclick="switchTab('roadmap3d'); switch3DLayout('helix');" class="flex flex-col items-center justify-center p-1 text-slate-400 hover:text-blue-400 active:scale-90 transition min-w-[48px] min-h-[44px]">
+      <span class="text-lg">🌌</span>
+      <span class="text-[10px] font-bold tracking-tight mt-0.5">3D Galaxy</span>
+    </button>
+    <button onclick="switchTab('recovery')" class="relative flex flex-col items-center justify-center p-1 text-slate-400 hover:text-blue-400 active:scale-90 transition min-w-[48px] min-h-[44px]">
+      <span class="text-lg">🔄</span>
+      <span class="text-[10px] font-bold tracking-tight mt-0.5">Recovery</span>
+    </button>
+    <button onclick="switchTab('curriculum')" class="flex flex-col items-center justify-center p-1 text-slate-400 hover:text-blue-400 active:scale-90 transition min-w-[48px] min-h-[44px]">
+      <span class="text-lg">🧠</span>
+      <span class="text-[10px] font-bold tracking-tight mt-0.5">Trackers</span>
+    </button>
+    <button onclick="switchTab('settings')" class="flex flex-col items-center justify-center p-1 text-slate-400 hover:text-blue-400 active:scale-90 transition min-w-[48px] min-h-[44px]">
+      <span class="text-lg">⚙️</span>
+      <span class="text-[10px] font-bold tracking-tight mt-0.5">Settings</span>
+    </button>
+  </nav>
+
   <!-- MODALS CONTAINER -->
 
   <!-- 1. Mark Day as Missed Modal (Requirement 3) -->
-  <div id="modal-missed" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6">
+  <div id="modal-missed" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-missed')">
+    <div class="modal-content p-4 sm:p-6" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>❌</span> Mark Day as Missed
         </h3>
-        <button onclick="closeModal('modal-missed')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-missed')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div class="mt-4 space-y-4">
         <p class="text-xs text-slate-300">
@@ -1304,20 +1345,20 @@
         </div>
       </div>
       <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
-        <button onclick="closeModal('modal-missed')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-        <button onclick="submitMarkMissed()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-bold text-white shadow text-center">Confirm Missed Day</button>
+        <button onclick="closeModal('modal-missed')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+        <button onclick="submitMarkMissed()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-red-600 hover:bg-red-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Confirm Missed Day</button>
       </div>
     </div>
   </div>
 
   <!-- 2. Recover Day Modal (Requirement 4 & 5) -->
-  <div id="modal-recover" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-xl">
+  <div id="modal-recover" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-recover')">
+    <div class="modal-content p-4 sm:p-6 max-w-xl" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>🔄</span> Recover Day &amp; Incomplete Tasks
         </h3>
-        <button onclick="closeModal('modal-recover')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-recover')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div class="mt-4 space-y-4">
         <p class="text-xs text-slate-300">
@@ -1326,7 +1367,7 @@
 
         <div class="space-y-3 text-xs">
           <!-- Option A -->
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition">
+          <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition active:scale-[0.99]">
             <input type="radio" name="recovery-strategy" value="MoveToTomorrow" checked class="mt-1 text-blue-600">
             <div>
               <div class="font-bold text-white">Option A — Move Tasks to Tomorrow (Smart Workload Protected)</div>
@@ -1335,22 +1376,22 @@
           </label>
 
           <!-- Option B -->
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition">
+          <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition active:scale-[0.99]">
             <input type="radio" name="recovery-strategy" value="Reschedule" class="mt-1 text-blue-600">
             <div class="flex-1">
               <div class="font-bold text-white">Option B — Reschedule to Specific Date</div>
               <div class="text-slate-400 mt-0.5 mb-2">Move incomplete tasks to another date.</div>
-              <input type="date" id="recover-reschedule-date" class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-slate-200">
+              <input type="date" id="recover-reschedule-date" class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200">
             </div>
           </label>
 
           <!-- Option C -->
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition">
+          <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition active:scale-[0.99]">
             <input type="radio" name="recovery-strategy" value="Compress" class="mt-1 text-blue-600">
             <div>
               <div class="font-bold text-white">Option C — Compress Across Next 3–7 Days</div>
               <div class="text-slate-400 mt-0.5 mb-2">Evenly distribute incomplete tasks across the upcoming days without overloading.</div>
-              <select id="recover-compress-days" class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded p-1.5 text-xs text-slate-200">
+              <select id="recover-compress-days" class="w-full sm:w-auto bg-slate-950 border border-slate-700 rounded-lg p-2 text-xs text-slate-200">
                 <option value="3">Distribute across next 3 days</option>
                 <option value="5">Distribute across next 5 days</option>
                 <option value="7">Distribute across next 7 days</option>
@@ -1359,7 +1400,7 @@
           </label>
 
           <!-- Option D -->
-          <label class="flex items-start gap-3 p-3 rounded-lg border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition">
+          <label class="flex items-start gap-3 p-3.5 rounded-xl border border-slate-800 bg-slate-900/80 cursor-pointer hover:border-blue-500 transition active:scale-[0.99]">
             <input type="radio" name="recovery-strategy" value="Skip" class="mt-1 text-blue-600">
             <div>
               <div class="font-bold text-white">Option D — Permanently Skip Incomplete Tasks</div>
@@ -1369,20 +1410,20 @@
         </div>
       </div>
       <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
-        <button onclick="closeModal('modal-recover')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-        <button onclick="submitRecoverDay()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow text-center">Apply Recovery</button>
+        <button onclick="closeModal('modal-recover')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+        <button onclick="submitRecoverDay()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Apply Recovery</button>
       </div>
     </div>
   </div>
 
   <!-- 3. Add Rest Day Modal (Requirement 6) -->
-  <div id="modal-rest" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6">
+  <div id="modal-rest" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-rest')">
+    <div class="modal-content p-4 sm:p-6" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-emerald-400 flex items-center gap-2">
           <span>🌴</span> Schedule Planned Rest Day
         </h3>
-        <button onclick="closeModal('modal-rest')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-rest')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <div class="p-3 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-emerald-300">
@@ -1402,20 +1443,20 @@
         </label>
       </div>
       <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
-        <button onclick="closeModal('modal-rest')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-        <button onclick="submitAddRestDay()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow text-center">Schedule Rest Day</button>
+        <button onclick="closeModal('modal-rest')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+        <button onclick="submitAddRestDay()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Schedule Rest Day</button>
       </div>
     </div>
   </div>
 
   <!-- 4. Add Leave Day Modal (Requirement 7) -->
-  <div id="modal-leave" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6">
+  <div id="modal-leave" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-leave')">
+    <div class="modal-content p-4 sm:p-6" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-sky-400 flex items-center gap-2">
           <span>🏖️</span> Schedule Leave Days
         </h3>
-        <button onclick="closeModal('modal-leave')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-leave')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <p class="text-slate-300">
@@ -1447,20 +1488,20 @@
         </div>
       </div>
       <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
-        <button onclick="closeModal('modal-leave')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-        <button onclick="submitAddLeaveDay()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white shadow text-center">Record Leave</button>
+        <button onclick="closeModal('modal-leave')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+        <button onclick="submitAddLeaveDay()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Record Leave</button>
       </div>
     </div>
   </div>
 
   <!-- 5. Extend Roadmap Modal (Requirement 8) -->
-  <div id="modal-extend" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6">
+  <div id="modal-extend" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-extend')">
+    <div class="modal-content p-4 sm:p-6" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-purple-400 flex items-center gap-2">
           <span>⏩</span> Extend My Roadmap
         </h3>
-        <button onclick="closeModal('modal-extend')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-extend')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <div class="p-3 rounded-lg bg-purple-950/40 border border-purple-800/50 text-purple-300">
@@ -1482,20 +1523,20 @@
         </div>
       </div>
       <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
-        <button onclick="closeModal('modal-extend')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-        <button onclick="submitExtendRoadmap()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow text-center">Confirm Extension</button>
+        <button onclick="closeModal('modal-extend')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+        <button onclick="submitExtendRoadmap()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Confirm Extension</button>
       </div>
     </div>
   </div>
 
   <!-- 6. Daily Review Modal (Requirement 11) -->
-  <div id="modal-review" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-lg">
+  <div id="modal-review" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-review')">
+    <div class="modal-content p-4 sm:p-6 max-w-lg" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>📋</span> End-of-Day Daily Review
         </h3>
-        <button onclick="closeModal('modal-review')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-review')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div class="mt-4 space-y-4 text-xs">
         <div>
@@ -1522,25 +1563,25 @@
         </div>
       </div>
       <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2">
-        <button onclick="closeModal('modal-review')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-        <button onclick="submitDailyReview()" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow text-center">Save Daily Review</button>
+        <button onclick="closeModal('modal-review')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+        <button onclick="submitDailyReview()" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Save Daily Review</button>
       </div>
     </div>
   </div>
 
   <!-- 7. Task History Modal (Requirement 14) -->
-  <div id="modal-taskhistory" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-lg">
+  <div id="modal-taskhistory" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-taskhistory')">
+    <div class="modal-content p-4 sm:p-6 max-w-lg" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
           <h3 id="history-task-title" class="text-sm sm:text-base font-bold text-white">Task History</h3>
           <span class="text-xs text-slate-400">Complete immutable audit trail</span>
         </div>
-        <button onclick="closeModal('modal-taskhistory')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-taskhistory')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div id="task-history-timeline" class="mt-4 space-y-3 max-h-96 overflow-y-auto text-xs touch-scroll"></div>
       <div class="mt-6 flex justify-end">
-        <button onclick="closeModal('modal-taskhistory')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-semibold text-center">Close</button>
+        <button onclick="closeModal('modal-taskhistory')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs text-slate-300 font-semibold text-center min-h-[44px] flex items-center justify-center">Close</button>
       </div>
     </div>
   </div>
@@ -1597,19 +1638,19 @@
   </div>
 
   <!-- 9. Authentication Modal (Login & Register) -->
-  <div id="modal-auth" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-md">
+  <div id="modal-auth" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-auth')">
+    <div class="modal-content p-4 sm:p-6 max-w-md" onclick="event.stopPropagation()">
       <!-- Tabs for Login / Register -->
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div class="flex items-center gap-2">
-          <button id="auth-tab-login" onclick="switchAuthTab('login')" class="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition">
+          <button id="auth-tab-login" onclick="switchAuthTab('login')" class="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-bold border-b-2 border-blue-500 text-blue-400 transition min-h-[36px]">
             Sign In
           </button>
-          <button id="auth-tab-register" onclick="switchAuthTab('register')" class="px-2.5 sm:px-3 py-1 text-xs sm:text-sm font-medium text-slate-400 hover:text-slate-200 transition">
+          <button id="auth-tab-register" onclick="switchAuthTab('register')" class="px-2.5 sm:px-3 py-1.5 text-xs sm:text-sm font-medium text-slate-400 hover:text-slate-200 transition min-h-[36px]">
             Create Account
           </button>
         </div>
-        <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-auth')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
 
       <!-- Login Form -->
@@ -1624,12 +1665,12 @@
         </div>
         <div id="login-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 p-2.5 rounded-lg border border-red-800/50"></div>
         <div class="pt-2">
-          <button type="submit" id="btn-submit-login" class="w-full py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs sm:text-sm shadow transition flex items-center justify-center gap-2">
+          <button type="submit" id="btn-submit-login" class="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 min-h-[44px]">
             <span>🚀</span> Sign In
           </button>
         </div>
         <div class="text-center text-xs text-slate-400 pt-1">
-          Don't have an account? <button type="button" onclick="switchAuthTab('register')" class="text-blue-400 hover:underline font-semibold">Register here</button>
+          Don't have an account? <button type="button" onclick="switchAuthTab('register')" class="text-blue-400 hover:underline font-semibold py-1">Register here</button>
         </div>
       </form>
 
@@ -1659,20 +1700,20 @@
         </div>
         <div id="register-error-msg" class="hidden text-xs text-red-400 bg-red-950/40 p-2.5 rounded-lg border border-red-800/50"></div>
         <div class="pt-2">
-          <button type="submit" id="btn-submit-register" class="w-full py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs sm:text-sm shadow transition flex items-center justify-center gap-2">
+          <button type="submit" id="btn-submit-register" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md transition flex items-center justify-center gap-2 min-h-[44px]">
             <span>✨</span> Create Account
           </button>
         </div>
         <div class="text-center text-xs text-slate-400 pt-1">
-          Already registered? <button type="button" onclick="switchAuthTab('login')" class="text-blue-400 hover:underline font-semibold">Sign in here</button>
+          Already registered? <button type="button" onclick="switchAuthTab('login')" class="text-blue-400 hover:underline font-semibold py-1">Sign in here</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- 10. Pending Approval Notification Modal -->
-  <div id="modal-pending-approval" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-md text-center">
+  <div id="modal-pending-approval" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-pending-approval')">
+    <div class="modal-content p-4 sm:p-6 max-w-md text-center" onclick="event.stopPropagation()">
       <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/40 flex items-center justify-center text-2xl sm:text-3xl mx-auto mb-3">
         ⏳
       </div>
@@ -1686,7 +1727,7 @@
         <div class="text-slate-400 text-[11px] pt-1">You will gain full access to your personalized 100-day roadmap as soon as your account is approved.</div>
       </div>
       <div class="mt-6 flex justify-center">
-        <button onclick="closeModal('modal-pending-approval')" class="w-full sm:w-auto px-6 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition text-center">
+        <button onclick="closeModal('modal-pending-approval')" class="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-bold text-slate-200 active:scale-95 transition text-center min-h-[44px] flex items-center justify-center">
           Understood
         </button>
       </div>
@@ -1694,13 +1735,13 @@
   </div>
 
   <!-- 11. Generate Invite Code Modal -->
-  <div id="modal-create-invite" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-md">
+  <div id="modal-create-invite" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-create-invite')">
+    <div class="modal-content p-4 sm:p-6 max-w-md" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
           <span>🎟️</span> Generate Cohort Invite Code
         </h3>
-        <button onclick="closeModal('modal-create-invite')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-create-invite')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <form onsubmit="handleCreateInviteSubmit(event)" class="mt-4 space-y-3">
         <div>
@@ -1722,16 +1763,16 @@
           </div>
         </div>
         <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2">
-          <button type="button" onclick="closeModal('modal-create-invite')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-          <button type="submit" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow text-center">Create Code</button>
+          <button type="button" onclick="closeModal('modal-create-invite')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+          <button type="submit" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-xs font-bold text-white shadow text-center min-h-[44px] flex items-center justify-center">Create Code</button>
         </div>
       </form>
     </div>
   </div>
 
   <!-- 12. Mentor Inspection: Learner Roadmap Modal -->
-  <div id="modal-inspect-roadmap" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-4xl max-h-[90dvh] flex flex-col">
+  <div id="modal-inspect-roadmap" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-inspect-roadmap')">
+    <div class="modal-content p-4 sm:p-6 max-w-4xl max-h-[90dvh] flex flex-col" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <div>
           <h3 id="inspect-learner-name" class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
@@ -1739,13 +1780,13 @@
           </h3>
           <p id="inspect-learner-meta" class="text-xs text-slate-400 mt-0.5">Mentor Mode: Read-only inspection</p>
         </div>
-        <button onclick="closeModal('modal-inspect-roadmap')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-inspect-roadmap')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <div id="inspect-days-container" class="mt-4 overflow-y-auto space-y-3 flex-1 pr-1 touch-scroll">
         <!-- Populated by JS -->
       </div>
       <div class="mt-4 pt-3 border-t border-slate-800 flex justify-end">
-        <button onclick="closeModal('modal-inspect-roadmap')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 text-center">
+        <button onclick="closeModal('modal-inspect-roadmap')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 text-center min-h-[44px] flex items-center justify-center">
           Close Inspection
         </button>
       </div>
@@ -1753,13 +1794,13 @@
   </div>
 
   <!-- 13. Change Password Modal -->
-  <div id="modal-change-password" class="modal-backdrop hidden">
-    <div class="modal-content p-4 sm:p-6 max-w-md">
+  <div id="modal-change-password" class="modal-backdrop hidden" onclick="if (event.target === this) closeModal('modal-change-password')">
+    <div class="modal-content p-4 sm:p-6 max-w-md" onclick="event.stopPropagation()">
       <div class="flex items-center justify-between border-b border-slate-800 pb-3">
         <h3 class="text-sm sm:text-base font-bold text-white flex items-center gap-2">
           <span>🔐</span> Update Account Password
         </h3>
-        <button onclick="closeModal('modal-change-password')" class="text-slate-400 hover:text-white p-1">✕</button>
+        <button onclick="closeModal('modal-change-password')" class="text-slate-400 hover:text-white p-2 min-h-[36px] min-w-[36px] flex items-center justify-center rounded-lg hover:bg-slate-800">✕</button>
       </div>
       <form id="form-change-password" onsubmit="submitChangePassword(event)" class="mt-4 space-y-4">
         <div id="change-password-error" class="hidden p-3 rounded-lg bg-red-950/80 border border-red-800/80 text-xs text-red-300"></div>
@@ -1781,8 +1822,8 @@
         </div>
 
         <div class="mt-6 flex flex-col-reverse sm:flex-row justify-end gap-2 pt-2 border-t border-slate-800">
-          <button type="button" onclick="closeModal('modal-change-password')" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center">Cancel</button>
-          <button type="submit" id="btn-submit-change-password" class="w-full sm:w-auto px-4 py-2 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow flex items-center justify-center gap-1.5 cursor-pointer">
+          <button type="button" onclick="closeModal('modal-change-password')" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-300 text-center min-h-[44px] flex items-center justify-center">Cancel</button>
+          <button type="submit" id="btn-submit-change-password" class="w-full sm:w-auto px-4 py-2.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-xs font-bold text-white shadow flex items-center justify-center gap-1.5 cursor-pointer min-h-[44px]">
             <span>💾</span> Update Password
           </button>
         </div>
