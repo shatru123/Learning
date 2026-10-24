@@ -40,6 +40,11 @@ public class RecoveryQueueItemDto
     public List<string> IncompleteTaskTitles { get; set; } = new();
 }
 
+public class UpdateDayNotesRequestDto
+{
+    public string? Notes { get; set; }
+}
+
 public class DayPlanDto
 {
     public int Id { get; set; }

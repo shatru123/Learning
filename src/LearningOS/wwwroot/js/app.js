@@ -693,10 +693,7 @@ async function saveDayNotes() {
   const val = document.getElementById('detail-notes-input').value;
 
   try {
-    const day = await apiCall(`/api/days/${currentActiveDay.id}`);
-    day.notes = val;
-    // Call day status update or save notes
-    await apiCall(`/api/days/${currentActiveDay.id}/status`, 'POST', day.status);
+    await apiCall(`/api/days/${currentActiveDay.id}/notes`, 'POST', { notes: val });
     DraftStore.clear(`day_${currentActiveDay.id}_notes`);
 
     const draftStatus = document.getElementById('draft-note-status');

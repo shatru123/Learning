@@ -114,6 +114,37 @@ public class DaysController : ControllerBase
     }
 
     [Authorize]
+    [HttpPost("{id}/notes")]
+    [HttpPut("{id}/notes")]
+    public async Task<ActionResult<DayPlanDto>> UpdateNotes(int id, [FromBody] UpdateDayNotesRequestDto request)
+    {
+        var day = await _db.DayPlans
+            .Include(d => d.Tasks).ThenInclude(t => t.History)
+            .Include(d => d.StatusHistory)
+            .Include(d => d.MissedRecord)
+            .Include(d => d.RestRecord)
+            .Include(d => d.LeaveRecord)
+            .Include(d => d.DailyReview)
+            .FirstOrDefaultAsync(d => d.Id == id);
+
+        if (day == null)
+            return NotFound(new { message = $"DayPlan {id} not found." });
+
+        day.Notes = request?.Notes;
+        day.UpdatedAt = DateTime.UtcNow;
+
+        await _db.SaveChangesAsync();
+
+        await _auditService.LogActivityAsync(
+            "DayNotesUpdated",
+            "DayPlan",
+            day.Id.ToString(),
+            $"Day {day.DayNumber ?? 0} notes updated");
+
+        return Ok(MapDayPlan(day));
+    }
+
+    [Authorize]
     [HttpPost("{id}/missed")]
     public async Task<ActionResult<DayPlanDto>> MarkDayMissed(int id, [FromBody] MissedDayRequestDto request)
     {
