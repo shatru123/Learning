@@ -140,6 +140,53 @@ public static class DbInitializer
             {
                 await EnsureAdminProgressSeededAsync(db, adminUser.Id, logger);
             }
+
+            // Ensure any non-admin users with unstarted curriculum start from current date
+            try
+            {
+                var today = DateOnly.FromDateTime(DateTime.UtcNow);
+                var nonAdminUsers = await db.Users.IgnoreQueryFilters()
+                    .Where(u => u.Id != adminUser.Id)
+                    .ToListAsync();
+
+                foreach (var learner in nonAdminUsers)
+                {
+                    var firstDay = await db.DayPlans.IgnoreQueryFilters()
+                        .Where(d => d.UserId == learner.Id && d.DayNumber == 1)
+                        .FirstOrDefaultAsync();
+
+                    if (firstDay != null && firstDay.CalendarDate < today && !await db.DayPlans.IgnoreQueryFilters().AnyAsync(d => d.UserId == learner.Id && d.Status == DayStatus.Completed))
+                    {
+                        logger.LogInformation("Adjusting unstarted roadmap for learner {Email} to start from current date {Today}", learner.Email, today);
+                        var learnerDays = await db.DayPlans.IgnoreQueryFilters()
+                            .Where(d => d.UserId == learner.Id)
+                            .OrderBy(d => d.DayNumber)
+                            .ToListAsync();
+
+                        for (int i = 0; i < learnerDays.Count; i++)
+                        {
+                            learnerDays[i].CalendarDate = today.AddDays(i);
+                        }
+
+                        learner.RequestedStartDate = today;
+
+                        var s = await db.UserSettings.IgnoreQueryFilters()
+                            .FirstOrDefaultAsync(setting => setting.UserId == learner.Id);
+                        if (s != null)
+                        {
+                            s.RoadmapStartDate = today;
+                            s.RoadmapEndDate = today.AddDays(101);
+                        }
+
+                        await db.SaveChangesAsync();
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.LogWarning(ex, "Learner start date synchronization note: {Msg}", ex.Message);
+            }
+
             return;
         }
 

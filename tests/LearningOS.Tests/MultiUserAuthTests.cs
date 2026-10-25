@@ -209,6 +209,43 @@ public class MultiUserAuthTests : IDisposable
     }
 
     [Fact]
+    public async Task Register_WithoutStartDate_DefaultsToCurrentDate()
+    {
+        var config = CreateTestConfig();
+        var hasher = new PasswordHasher();
+        var tokenService = new TokenService(config);
+
+        using var db = new LearningDbContext(_dbOptions);
+        var prov = new CurriculumProvisioningService(db, NullLogger<CurriculumProvisioningService>.Instance);
+        var currentUserService = MockUserContext(null);
+
+        var controller = new AuthController(db, hasher, tokenService, prov, currentUserService, NullLogger<AuthController>.Instance);
+
+        var today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var regReq = new RegisterRequestDto
+        {
+            FullName = "New Learner Today",
+            Email = "today_learner@example.com",
+            Password = "Password123!",
+            StartDate = null, // No start date provided!
+            InviteCode = "MASTERY-2026"
+        };
+
+        var result = await controller.Register(regReq);
+        var ok = Assert.IsType<OkObjectResult>(result.Result);
+        var resp = Assert.IsType<AuthResponseDto>(ok.Value);
+
+        Assert.Equal(today, resp.User.RequestedStartDate);
+
+        var userContext = MockUserContext(resp.User.Id);
+        using var userDb = new LearningDbContext(_dbOptions, userContext);
+        var userDays = await userDb.DayPlans.OrderBy(d => d.DayNumber).ToListAsync();
+
+        Assert.Equal(100, userDays.Count);
+        Assert.Equal(today, userDays.First().CalendarDate);
+    }
+
+    [Fact]
     public async Task Register_WithoutInviteCode_SetsPendingApproval_AndBlocksLoginUntilApproved()
     {
         var config = CreateTestConfig();
@@ -476,7 +513,9 @@ public class MultiUserAuthTests : IDisposable
             var okDays = Assert.IsType<OkObjectResult>(daysResult.Result);
             var daysList = Assert.IsType<List<DayPlanDto>>(okDays.Value);
 
+            var today = DateOnly.FromDateTime(DateTime.UtcNow);
             Assert.Equal(100, daysList.Count);
+            Assert.Equal(today, daysList.First().CalendarDate);
             Assert.All(daysList, d =>
             {
                 Assert.Equal("Planned", d.Status);
@@ -488,11 +527,12 @@ public class MultiUserAuthTests : IDisposable
                 Assert.All(d.Tasks, t => Assert.Equal("Pending", t.Status));
             });
 
-            // Verify single day details for Day 1 is planned and clean
+            // Verify single day details for Day 1 is planned and clean, starting today
             var day1Result = await daysController.GetDay(1);
             var okDay1 = Assert.IsType<OkObjectResult>(day1Result.Result);
             var day1Dto = Assert.IsType<DayPlanDto>(okDay1.Value);
             Assert.Equal("Planned", day1Dto.Status);
+            Assert.Equal(today, day1Dto.CalendarDate);
             Assert.Null(day1Dto.Notes);
             Assert.All(day1Dto.Tasks, t => Assert.Equal("Pending", t.Status));
 

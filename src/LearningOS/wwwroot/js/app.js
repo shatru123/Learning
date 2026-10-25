@@ -16,6 +16,16 @@ async function initApp() {
     try { fastBootStyle.remove(); } catch (_) {}
   }
 
+  const todayStr = new Date().toISOString().split('T')[0];
+  const landingDateInput = document.getElementById('landing-register-date');
+  if (landingDateInput && !landingDateInput.value) {
+    landingDateInput.value = todayStr;
+  }
+  const regDate = document.getElementById('register-start-date');
+  if (regDate && !regDate.value) {
+    regDate.value = todayStr;
+  }
+
   const isAuth = AuthManager.isAuthenticated();
   const savedTab = sessionStorage.getItem('learningos_active_tab');
   const validTabs = ['login', 'dashboard', 'roadmap', 'roadmap3d', 'recovery', 'daydetail', 'curriculum', 'analytics', 'audit', 'settings', 'learners'];

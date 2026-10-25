@@ -261,7 +261,7 @@ public class DaysController : ControllerBase
     private async Task<List<DayPlanDto>> GetCanonicalPlannedRoadmapAsync()
     {
         var phases = await _db.Phases.OrderBy(p => p.PhaseNumber).ToListAsync();
-        var defaultStartDate = new DateOnly(2026, 9, 21);
+        var defaultStartDate = DateOnly.FromDateTime(DateTime.UtcNow);
         var canonicalDays = new List<DayPlanDto>();
 
         for (int dayNum = 1; dayNum <= 100; dayNum++)
