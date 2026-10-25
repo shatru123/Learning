@@ -15,22 +15,50 @@ public class DashboardController : ControllerBase
     private readonly IStreakService _streakService;
     private readonly IRecoveryService _recoveryService;
     private readonly IAuditService _auditService;
+    private readonly ICurrentUserService? _currentUserService;
 
     public DashboardController(
         LearningDbContext db,
         IStreakService streakService,
         IRecoveryService recoveryService,
-        IAuditService auditService)
+        IAuditService auditService,
+        ICurrentUserService? currentUserService = null)
     {
         _db = db;
         _streakService = streakService;
         _recoveryService = recoveryService;
         _auditService = auditService;
+        _currentUserService = currentUserService;
     }
 
     [HttpGet]
     public async Task<ActionResult<DashboardSummaryDto>> GetSummary()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            return Ok(new DashboardSummaryDto
+            {
+                TotalPlannedDays = 100,
+                CompletedDaysCount = 0,
+                PartiallyCompletedDaysCount = 0,
+                SkippedDaysCount = 0,
+                RestDaysCount = 0,
+                MissedDaysCount = 0,
+                InProgressDaysCount = 0,
+                PlannedDaysRemainingCount = 100,
+                TotalTasksCount = 200,
+                CompletedTasksCount = 0,
+                TaskCompletionPercent = 0,
+                CurrentStreak = 0,
+                BestStreak = 0,
+                RecoveryQueueCount = 0,
+                RecoveryQueue = new List<RecoveryQueueItemDto>(),
+                TodayPlan = null,
+                RecentActivity = new List<ActivityAuditDto>()
+            });
+        }
+
         var dayPlans = await _db.DayPlans
             .Include(d => d.Tasks).ThenInclude(t => t.History)
             .Include(d => d.MissedRecord)

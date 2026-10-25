@@ -693,7 +693,7 @@ function renderDayDetail(day) {
 
   if (!isAuth) {
     if (notesEl) {
-      notesEl.value = day.notes || '';
+      notesEl.value = '';
       notesEl.readOnly = true;
       notesEl.placeholder = "Sign in to save personal notes and insights for this day...";
     }

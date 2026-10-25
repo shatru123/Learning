@@ -444,4 +444,228 @@ public class MultiUserAuthTests : IDisposable
         Assert.Contains("Username=postgres.epyxzcrroeanpgrhecqj;", converted);
         Assert.Contains("Password=Shatru102026@#;", converted);
     }
+
+    [Fact]
+    public async Task UnauthenticatedUser_GetsCanonicalPlannedRoadmap_WithoutAdminCompletedData()
+    {
+        string testDbPath = $"unauth_test_{Guid.NewGuid():N}.db";
+        var options = new DbContextOptionsBuilder<LearningDbContext>()
+            .UseSqlite($"Data Source={testDbPath}")
+            .Options;
+
+        try
+        {
+            // Seed DB with Admin progress (Days 1-23 completed)
+            using (var initDb = new LearningDbContext(options))
+            {
+                await DbInitializer.InitializeAsync(initDb, NullLogger.Instance, seedAdminProgress: true);
+            }
+
+            // 1. Unauthenticated context (No JWT token / null user)
+            var unauthContext = MockUserContext(null);
+            using var unauthDb = new LearningDbContext(options, unauthContext);
+
+            var audit = new AuditService(unauthDb, NullLogger<AuditService>.Instance);
+            var recovery = new RecoveryService(unauthDb, audit, NullLogger<RecoveryService>.Instance);
+            var daysController = new DaysController(unauthDb, recovery, audit, unauthContext);
+            var dashController = new DashboardController(unauthDb, new StreakService(), recovery, audit, unauthContext);
+            var currController = new CurriculumController(unauthDb, audit, unauthContext);
+
+            // Verify GetDays() returns 100 planned days with 0 completed tasks and no reviews/notes
+            var daysResult = await daysController.GetDays(null, null, null);
+            var okDays = Assert.IsType<OkObjectResult>(daysResult.Result);
+            var daysList = Assert.IsType<List<DayPlanDto>>(okDays.Value);
+
+            Assert.Equal(100, daysList.Count);
+            Assert.All(daysList, d =>
+            {
+                Assert.Equal("Planned", d.Status);
+                Assert.Null(d.Notes);
+                Assert.Null(d.ReviewSummary);
+                Assert.Null(d.MissedRecord);
+                Assert.Null(d.RestRecord);
+                Assert.Null(d.LeaveRecord);
+                Assert.All(d.Tasks, t => Assert.Equal("Pending", t.Status));
+            });
+
+            // Verify single day details for Day 1 is planned and clean
+            var day1Result = await daysController.GetDay(1);
+            var okDay1 = Assert.IsType<OkObjectResult>(day1Result.Result);
+            var day1Dto = Assert.IsType<DayPlanDto>(okDay1.Value);
+            Assert.Equal("Planned", day1Dto.Status);
+            Assert.Null(day1Dto.Notes);
+            Assert.All(day1Dto.Tasks, t => Assert.Equal("Pending", t.Status));
+
+            // Verify Dashboard summary has 0 streak, 0 completed tasks, 0 completed days
+            var dashResult = await dashController.GetSummary();
+            var okDash = Assert.IsType<OkObjectResult>(dashResult.Result);
+            var dashDto = Assert.IsType<DashboardSummaryDto>(okDash.Value);
+
+            Assert.Equal(0, dashDto.CurrentStreak);
+            Assert.Equal(0, dashDto.BestStreak);
+            Assert.Equal(0, dashDto.CompletedDaysCount);
+            Assert.Equal(0, dashDto.CompletedTasksCount);
+            Assert.Equal(0, dashDto.TaskCompletionPercent);
+            Assert.Equal(100, dashDto.PlannedDaysRemainingCount);
+            Assert.Empty(dashDto.RecoveryQueue);
+            Assert.Empty(dashDto.RecentActivity);
+
+            // Verify Curriculum Trackers for unauthenticated visitor
+            var dsaResult = await currController.GetDSAProblems(null, null);
+            var okDsa = Assert.IsType<OkObjectResult>(dsaResult.Result);
+            var dsaList = Assert.IsType<List<DSAProblem>>(okDsa.Value);
+            Assert.NotEmpty(dsaList);
+            Assert.All(dsaList, p => Assert.Equal("Planned", p.Status));
+
+            var jobsResult = await currController.GetJobApplications();
+            var okJobs = Assert.IsType<OkObjectResult>(jobsResult.Result);
+            var jobsList = Assert.IsType<List<JobApplication>>(okJobs.Value);
+            Assert.Empty(jobsList);
+
+            var journalResult = await currController.GetJournalEntries();
+            var okJournal = Assert.IsType<OkObjectResult>(journalResult.Result);
+            var journalList = Assert.IsType<List<JournalEntry>>(okJournal.Value);
+            Assert.Empty(journalList);
+
+            // 2. Authenticated Admin context (Shatrughna, UserId = 1)
+            var adminContext = MockUserContext(1, "Admin", "ambhoreshatrughna@gmail.com");
+            using var adminDb = new LearningDbContext(options, adminContext);
+
+            var adminDaysController = new DaysController(adminDb, recovery, audit, adminContext);
+            var adminDashController = new DashboardController(adminDb, new StreakService(), recovery, audit, adminContext);
+
+            var adminDaysResult = await adminDaysController.GetDays(null, null, null);
+            var adminOkDays = Assert.IsType<OkObjectResult>(adminDaysResult.Result);
+            var adminDaysList = Assert.IsType<List<DayPlanDto>>(adminOkDays.Value);
+
+            int adminCompletedDays = adminDaysList.Count(d => d.Status == "Completed");
+            Assert.Equal(23, adminCompletedDays);
+
+            var adminDashResult = await adminDashController.GetSummary();
+            var adminOkDash = Assert.IsType<OkObjectResult>(adminDashResult.Result);
+            var adminDashDto = Assert.IsType<DashboardSummaryDto>(adminOkDash.Value);
+
+            Assert.Equal(23, adminDashDto.CompletedDaysCount);
+            Assert.True(adminDashDto.CompletedTasksCount >= 46);
+            Assert.True(adminDashDto.CurrentStreak >= 23);
+        }
+        finally
+        {
+            if (File.Exists(testDbPath))
+            {
+                try { File.Delete(testDbPath); } catch { }
+            }
+        }
+    }
+
+    [Fact]
+    public async Task LearnerAlice_CannotSeeAdminProgress_AndUnauthenticatedCannotSeeAliceProgress()
+    {
+        string testDbPath = $"alice_iso_test_{Guid.NewGuid():N}.db";
+        var options = new DbContextOptionsBuilder<LearningDbContext>()
+            .UseSqlite($"Data Source={testDbPath}")
+            .Options;
+
+        try
+        {
+            // Seed DB with Admin progress (Days 1-23 completed)
+            using (var initDb = new LearningDbContext(options))
+            {
+                await DbInitializer.InitializeAsync(initDb, NullLogger.Instance, seedAdminProgress: true);
+
+                // Register and provision Alice (Learner, UserId = 2)
+                var prov = new CurriculumProvisioningService(initDb, NullLogger<CurriculumProvisioningService>.Instance);
+                var alice = new AppUser
+                {
+                    FullName = "Alice Learner",
+                    Email = "alice@example.com",
+                    Username = "alice",
+                    PasswordHash = "hash",
+                    Role = "Learner",
+                    Status = "Active",
+                    RequestedStartDate = new DateOnly(2026, 10, 1)
+                };
+                initDb.Users.Add(alice);
+                await initDb.SaveChangesAsync();
+                await prov.ProvisionCurriculumForUserAsync(alice.Id, new DateOnly(2026, 10, 1));
+            }
+
+            // Alice context (UserId = 2)
+            var aliceContext = MockUserContext(2, "Learner", "alice@example.com");
+            using (var aliceDb = new LearningDbContext(options, aliceContext))
+            {
+                var audit = new AuditService(aliceDb, NullLogger<AuditService>.Instance);
+                var recovery = new RecoveryService(aliceDb, audit, NullLogger<RecoveryService>.Instance);
+                var aliceDaysController = new DaysController(aliceDb, recovery, audit, aliceContext);
+                var aliceDashController = new DashboardController(aliceDb, new StreakService(), recovery, audit, aliceContext);
+
+                // Alice initially has 0 completed days
+                var initialResult = await aliceDaysController.GetDays(null, null, null);
+                var okInit = Assert.IsType<OkObjectResult>(initialResult.Result);
+                var aliceInitialDays = Assert.IsType<List<DayPlanDto>>(okInit.Value);
+                Assert.Equal(100, aliceInitialDays.Count);
+                Assert.Equal(0, aliceInitialDays.Count(d => d.Status == "Completed")); // Alice does NOT see Admin's 23 completed days!
+
+                // Alice completes Day 1
+                var aliceDay1 = await aliceDb.DayPlans.FirstAsync(d => d.DayNumber == 1);
+                aliceDay1.Status = DayStatus.Completed;
+                await aliceDb.SaveChangesAsync();
+
+                // Alice dashboard shows 1 completed day, NOT Admin's 23
+                var aliceDashResult = await aliceDashController.GetSummary();
+                var okDash = Assert.IsType<OkObjectResult>(aliceDashResult.Result);
+                var aliceDashDto = Assert.IsType<DashboardSummaryDto>(okDash.Value);
+                Assert.Equal(1, aliceDashDto.CompletedDaysCount);
+            }
+
+            // Unauthenticated context: does NOT see Alice's Day 1 completion or Admin's Day 1-23 completion
+            var unauthContext = MockUserContext(null);
+            using (var unauthDb = new LearningDbContext(options, unauthContext))
+            {
+                var audit = new AuditService(unauthDb, NullLogger<AuditService>.Instance);
+                var recovery = new RecoveryService(unauthDb, audit, NullLogger<RecoveryService>.Instance);
+                var unauthDaysController = new DaysController(unauthDb, recovery, audit, unauthContext);
+                var unauthDashController = new DashboardController(unauthDb, new StreakService(), recovery, audit, unauthContext);
+
+                var unauthDaysResult = await unauthDaysController.GetDays(null, null, null);
+                var okUnauth = Assert.IsType<OkObjectResult>(unauthDaysResult.Result);
+                var unauthDays = Assert.IsType<List<DayPlanDto>>(okUnauth.Value);
+                Assert.Equal(0, unauthDays.Count(d => d.Status == "Completed"));
+
+                var unauthDashResult = await unauthDashController.GetSummary();
+                var okUnauthDash = Assert.IsType<OkObjectResult>(unauthDashResult.Result);
+                var unauthDash = Assert.IsType<DashboardSummaryDto>(okUnauthDash.Value);
+                Assert.Equal(0, unauthDash.CompletedDaysCount);
+            }
+
+            // Admin context: Shatrughna sees his 23 completed days, AND admin monitoring sees both Shatrughna and Alice
+            var adminContext = MockUserContext(1, "Admin", "ambhoreshatrughna@gmail.com");
+            using (var adminDb = new LearningDbContext(options, adminContext))
+            {
+                var audit = new AuditService(adminDb, NullLogger<AuditService>.Instance);
+                var recovery = new RecoveryService(adminDb, audit, NullLogger<RecoveryService>.Instance);
+                var prov = new CurriculumProvisioningService(adminDb, NullLogger<CurriculumProvisioningService>.Instance);
+                var adminController = new AdminController(adminDb, prov, adminContext, NullLogger<AdminController>.Instance);
+
+                var learnersResult = await adminController.GetLearners();
+                var okLearners = Assert.IsType<OkObjectResult>(learnersResult.Result);
+                var learners = Assert.IsType<List<LearnerSummaryDto>>(okLearners.Value);
+
+                var aliceSummary = learners.FirstOrDefault(l => l.Email == "alice@example.com");
+                Assert.NotNull(aliceSummary);
+                Assert.Equal(1, aliceSummary.CompletedDaysCount);
+
+                var adminSummary = learners.FirstOrDefault(l => l.Email == "ambhoreshatrughna@gmail.com");
+                Assert.NotNull(adminSummary);
+                Assert.Equal(23, adminSummary.CompletedDaysCount);
+            }
+        }
+        finally
+        {
+            if (File.Exists(testDbPath))
+            {
+                try { File.Delete(testDbPath); } catch { }
+            }
+        }
+    }
 }

@@ -15,20 +15,52 @@ public class DaysController : ControllerBase
     private readonly LearningDbContext _db;
     private readonly IRecoveryService _recoveryService;
     private readonly IAuditService _auditService;
+    private readonly ICurrentUserService? _currentUserService;
 
     public DaysController(
         LearningDbContext db,
         IRecoveryService recoveryService,
-        IAuditService auditService)
+        IAuditService auditService,
+        ICurrentUserService? currentUserService = null)
     {
         _db = db;
         _recoveryService = recoveryService;
         _auditService = auditService;
+        _currentUserService = currentUserService;
     }
 
     [HttpGet]
     public async Task<ActionResult<List<DayPlanDto>>> GetDays([FromQuery] int? phase, [FromQuery] string? status, [FromQuery] string? search)
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+
+        if (isUnauthenticated)
+        {
+            var canonicalDays = await GetCanonicalPlannedRoadmapAsync();
+
+            if (phase.HasValue)
+            {
+                canonicalDays = canonicalDays.Where(d => d.PhaseId == phase.Value).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<DayStatus>(status, true, out var parsedStatus))
+            {
+                canonicalDays = canonicalDays.Where(d => d.Status.Equals(parsedStatus.ToString(), StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                canonicalDays = canonicalDays.Where(d =>
+                    (d.Title != null && d.Title.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+                    (d.Theme != null && d.Theme.Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+                    (d.DayNumber.HasValue && $"Day {d.DayNumber}".Contains(search, StringComparison.OrdinalIgnoreCase)) ||
+                    (d.Tasks != null && d.Tasks.Any(t => t.Title.Contains(search, StringComparison.OrdinalIgnoreCase) || t.Category.Contains(search, StringComparison.OrdinalIgnoreCase)))
+                ).ToList();
+            }
+
+            return Ok(canonicalDays);
+        }
+
         var query = _db.DayPlans
             .Include(d => d.Tasks).ThenInclude(t => t.History)
             .Include(d => d.MissedRecord)
@@ -42,9 +74,9 @@ public class DaysController : ControllerBase
             query = query.Where(d => d.PhaseId == phase.Value);
         }
 
-        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<DayStatus>(status, true, out var parsedStatus))
+        if (!string.IsNullOrWhiteSpace(status) && Enum.TryParse<DayStatus>(status, true, out var parsedStatusAuth))
         {
-            query = query.Where(d => d.Status == parsedStatus);
+            query = query.Where(d => d.Status == parsedStatusAuth);
         }
 
         if (!string.IsNullOrWhiteSpace(search))
@@ -57,12 +89,24 @@ public class DaysController : ControllerBase
             .ThenBy(d => d.DayNumber)
             .ToListAsync();
 
-        return Ok(days.Select(MapDayPlan));
+        return Ok(days.Select(MapDayPlan).ToList());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<DayPlanDto>> GetDay(int id)
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+
+        if (isUnauthenticated)
+        {
+            var canonicalDays = await GetCanonicalPlannedRoadmapAsync();
+            var dayDto = canonicalDays.FirstOrDefault(d => d.Id == id || d.DayNumber == id);
+            if (dayDto == null)
+                return NotFound(new { message = $"DayPlan {id} not found." });
+
+            return Ok(dayDto);
+        }
+
         var day = await _db.DayPlans
             .Include(d => d.Tasks).ThenInclude(t => t.History)
             .Include(d => d.StatusHistory)
@@ -205,8 +249,63 @@ public class DaysController : ControllerBase
     [HttpGet("unfinished-count")]
     public async Task<ActionResult<int>> GetUnfinishedCount()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            return Ok(new { unfinishedDays = 0 });
+        }
         int count = await _recoveryService.GetUnfinishedDaysCountAsync();
         return Ok(new { unfinishedDays = count });
+    }
+
+    private async Task<List<DayPlanDto>> GetCanonicalPlannedRoadmapAsync()
+    {
+        var phases = await _db.Phases.OrderBy(p => p.PhaseNumber).ToListAsync();
+        var defaultStartDate = new DateOnly(2026, 9, 21);
+        var canonicalDays = new List<DayPlanDto>();
+
+        for (int dayNum = 1; dayNum <= 100; dayNum++)
+        {
+            var phase = phases.FirstOrDefault(p => dayNum >= p.StartDay && dayNum <= p.EndDay);
+            int phaseId = phase?.Id ?? (dayNum <= 25 ? 1 : dayNum <= 50 ? 2 : dayNum <= 75 ? 3 : dayNum <= 90 ? 4 : 5);
+            int weekNum = ((dayNum - 1) / 7) + 1;
+            var (title, theme, tasks) = DbInitializer.GetCurriculumForDay(dayNum);
+
+            canonicalDays.Add(new DayPlanDto
+            {
+                Id = dayNum,
+                DayNumber = dayNum,
+                IsLearningDay = true,
+                CalendarDate = defaultStartDate.AddDays(dayNum - 1),
+                Status = DayStatus.Planned.ToString(),
+                Title = title,
+                Theme = theme,
+                Notes = null,
+                ReviewSummary = null,
+                PhaseId = phaseId,
+                WeekNumber = weekNum,
+                Tasks = tasks.Select((t, idx) => new LearningTaskDto
+                {
+                    Id = (dayNum * 100) + idx + 1,
+                    DayPlanId = dayNum,
+                    Title = t.Title,
+                    Description = t.Description,
+                    Category = t.Category,
+                    EstimatedMinutes = t.EstimatedMinutes,
+                    Priority = t.Priority,
+                    Status = "Pending",
+                    OriginalDayNumber = dayNum,
+                    CurrentDayNumber = dayNum,
+                    CompletedAt = null,
+                    History = new List<TaskHistoryDto>()
+                }).ToList(),
+                MissedRecord = null,
+                RestRecord = null,
+                LeaveRecord = null
+            });
+        }
+
+        return canonicalDays;
     }
 
     private static DayPlanDto MapDayPlan(DayPlan d)

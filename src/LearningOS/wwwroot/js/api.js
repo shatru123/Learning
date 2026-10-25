@@ -68,6 +68,7 @@ const AuthManager = {
   clear() {
     localStorage.removeItem(this.tokenKey);
     localStorage.removeItem(this.userKey);
+    localStorage.removeItem('learningos_dashboard_cache');
   },
 
   isAuthenticated() {

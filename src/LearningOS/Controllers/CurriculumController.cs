@@ -13,17 +13,43 @@ public class CurriculumController : ControllerBase
 {
     private readonly LearningDbContext _db;
     private readonly IAuditService _auditService;
+    private readonly ICurrentUserService? _currentUserService;
 
-    public CurriculumController(LearningDbContext db, IAuditService auditService)
+    public CurriculumController(
+        LearningDbContext db,
+        IAuditService auditService,
+        ICurrentUserService? currentUserService = null)
     {
         _db = db;
         _auditService = auditService;
+        _currentUserService = currentUserService;
     }
 
     // DSA Problems
     [HttpGet("dsa")]
     public async Task<ActionResult<List<DSAProblem>>> GetDSAProblems([FromQuery] string? status, [FromQuery] string? difficulty)
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            var problems = await _db.DSAProblems.IgnoreQueryFilters()
+                .Where(d => d.UserId == 1)
+                .AsNoTracking()
+                .OrderBy(d => d.Id)
+                .ToListAsync();
+
+            foreach (var p in problems)
+            {
+                p.Status = "Planned";
+                p.SolvedAt = null;
+            }
+
+            if (!string.IsNullOrWhiteSpace(status)) problems = problems.Where(d => d.Status.Equals(status, StringComparison.OrdinalIgnoreCase)).ToList();
+            if (!string.IsNullOrWhiteSpace(difficulty)) problems = problems.Where(d => d.Difficulty.Equals(difficulty, StringComparison.OrdinalIgnoreCase)).ToList();
+
+            return Ok(problems);
+        }
+
         var query = _db.DSAProblems.AsQueryable();
         if (!string.IsNullOrWhiteSpace(status)) query = query.Where(d => d.Status == status);
         if (!string.IsNullOrWhiteSpace(difficulty)) query = query.Where(d => d.Difficulty == difficulty);
@@ -58,6 +84,23 @@ public class CurriculumController : ControllerBase
     [HttpGet("systemdesign")]
     public async Task<ActionResult<List<SystemDesignTopic>>> GetSystemDesignTopics()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            var topics = await _db.SystemDesignTopics.IgnoreQueryFilters()
+                .Where(s => s.UserId == 1)
+                .AsNoTracking()
+                .OrderBy(s => s.Id)
+                .ToListAsync();
+
+            foreach (var t in topics)
+            {
+                t.Status = "Planned";
+            }
+
+            return Ok(topics);
+        }
+
         return Ok(await _db.SystemDesignTopics.OrderBy(s => s.Id).ToListAsync());
     }
 
@@ -86,6 +129,23 @@ public class CurriculumController : ControllerBase
     [HttpGet("interview")]
     public async Task<ActionResult<List<InterviewQuestion>>> GetInterviewQuestions([FromQuery] string? category)
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            var questions = await _db.InterviewQuestions.IgnoreQueryFilters()
+                .Where(q => q.UserId == 1)
+                .AsNoTracking()
+                .OrderBy(q => q.Id)
+                .ToListAsync();
+
+            if (!string.IsNullOrWhiteSpace(category))
+            {
+                questions = questions.Where(q => q.Category.Equals(category, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            return Ok(questions);
+        }
+
         var query = _db.InterviewQuestions.AsQueryable();
         if (!string.IsNullOrWhiteSpace(category)) query = query.Where(q => q.Category == category);
         return Ok(await query.OrderBy(q => q.Id).ToListAsync());
@@ -105,6 +165,12 @@ public class CurriculumController : ControllerBase
     [HttpGet("jobs")]
     public async Task<ActionResult<List<JobApplication>>> GetJobApplications()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            return Ok(new List<JobApplication>());
+        }
+
         return Ok(await _db.JobApplications.OrderByDescending(j => j.AppliedDate).ToListAsync());
     }
 
@@ -134,6 +200,12 @@ public class CurriculumController : ControllerBase
     [HttpGet("journal")]
     public async Task<ActionResult<List<JournalEntry>>> GetJournalEntries()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            return Ok(new List<JournalEntry>());
+        }
+
         return Ok(await _db.JournalEntries.OrderByDescending(j => j.EntryDate).ToListAsync());
     }
 
@@ -153,6 +225,23 @@ public class CurriculumController : ControllerBase
     [HttpGet("resources")]
     public async Task<ActionResult<List<LearningResource>>> GetResources()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            var resources = await _db.LearningResources.IgnoreQueryFilters()
+                .Where(r => r.UserId == 1)
+                .AsNoTracking()
+                .OrderByDescending(r => r.AddedAt)
+                .ToListAsync();
+
+            foreach (var r in resources)
+            {
+                r.IsCompleted = false;
+            }
+
+            return Ok(resources);
+        }
+
         return Ok(await _db.LearningResources.OrderByDescending(r => r.AddedAt).ToListAsync());
     }
 
@@ -171,6 +260,23 @@ public class CurriculumController : ControllerBase
     [HttpGet("goals")]
     public async Task<ActionResult<List<Goal>>> GetGoals()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            var goals = await _db.Goals.IgnoreQueryFilters()
+                .Where(g => g.UserId == 1)
+                .AsNoTracking()
+                .OrderBy(g => g.Id)
+                .ToListAsync();
+
+            foreach (var g in goals)
+            {
+                g.ProgressPercent = 0;
+            }
+
+            return Ok(goals);
+        }
+
         return Ok(await _db.Goals.OrderBy(g => g.Id).ToListAsync());
     }
 
@@ -188,6 +294,12 @@ public class CurriculumController : ControllerBase
     [HttpGet("sessions")]
     public async Task<ActionResult<List<StudySession>>> GetStudySessions()
     {
+        bool isUnauthenticated = _currentUserService != null && !_currentUserService.IsAuthenticated;
+        if (isUnauthenticated)
+        {
+            return Ok(new List<StudySession>());
+        }
+
         return Ok(await _db.StudySessions.OrderByDescending(s => s.SessionDate).ToListAsync());
     }
 
